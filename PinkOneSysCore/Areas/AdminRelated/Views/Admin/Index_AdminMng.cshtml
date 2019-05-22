@@ -1,0 +1,346 @@
+﻿
+@{
+    ViewBag.Title = "园所管理";
+    Layout = "~/Areas/AdminRelated/Views/Shared/Admin_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        园所管理&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> 管理主页</a></li>
+        <li class="breadcrumb-item active"><a href="#">园所管理</a></li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-xl-12 col-md-12 col-12">
+            <div class="box box-body bg-dark">
+                @*<h6 class="text-uppercase text-white">班级概况</h6>*@
+                <div class="flexbox mt-2">
+                    <span class="font-size-20 text-white" id="itemCount"></span>
+                    <div>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#schoolModal" id="addNewBtn"><i class="fa fa-plus">&ensp;</i>新建学校</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="schoolModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">新建学校</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="schoolName">学校名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" placeholder="至少3个字符" id="schoolName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phoneNo">联系电话</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" placeholder="至少7个字符" id="phoneNo">
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="workNo">账号</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" placeholder="至少5个字符" id="username">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="idNumber">密码</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" placeholder="至少6个字符" id="password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>类型</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2" style="width: 100%;" id="typeSelect">
+                                        <option value="0">请选择</option>
+                                        <option value="1" selected="selected">幼儿园</option>
+                                        <option value="2">小学</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>状态</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2" style="width: 100%;" id="statusSelect">
+                                        <option value="0">请选择</option>
+                                        <option value="1" selected="selected">正常</option>
+                                        <option value="2">试用</option>
+                                        <option value="3">暂停使用</option>
+                                        <option value="4">注销</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="idNumber">地址</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" placeholder="至少4个字符" id="address">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary float-right" onclick="addOrModifySchool();">保存</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h4 class="box-title">学校列表</h4>
+                    <div class="box-controls pull-right">
+                        <div class="lookup lookup-sm lookup-right">
+                            <input type="text" name="queryIpt" id="queryIpt" autocomplete="off" style="width:180px;" placeholder="输入学校名查询">
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                    <div class="table-responsive">
+                        <table class="table table-hover text-center">
+                            <thead>
+                                <tr class="bg-gray-light">
+                                    @*<th>编号</th>*@
+                                    <th>学校名</th>
+                                    <th>账号</th>
+                                    <th>类型</th>
+                                    <th>状态</th>
+                                    <th>电话</th>
+                                    <th>地址</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="objListTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+</section>
+<script>
+    //变量
+    var glbEntity;
+    var glbQuery = '';
+
+    //初始化
+    $("#adminMngLi").addClass('active');
+
+    //刷新
+    $("#refresh").click(function () {
+        getSchoolInfo("");
+    })
+
+    //使能搜索
+    $("#queryIpt").bind("input propertychange", function () {
+        glbQuery = $("#queryIpt").val();
+        getSchoolInfo(glbQuery);
+    })
+
+    //新建清除
+    $("#addNewBtn").click(function () {
+        $(".modal-title").html("新增学校");
+        $("#schoolName").val("");
+        $("#phoneNo").val("");
+        $("#username").val("");
+        $("#password").val("");
+        $("#typeSelect").val(1);
+        $("#statusSelect").val(1);
+        $("#address").val("");
+    });
+
+    //获取要修改的实体
+    function modifySchool(schoolId) {
+        $.ajax({
+            url: "/AdminRelated/Admin/GetSchoolById",
+            type: "GET",
+            data: {
+                "ID": schoolId,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    glbEntity = JSON.parse(result.content);
+                    $("#schoolName").val(glbEntity.SchoolName);
+                    $("#phoneNo").val(glbEntity.ContactInfo);
+                    $("#username").val(glbEntity.Username);
+                    $("#password").val(glbEntity.Password);
+                    $("#typeSelect").val(glbEntity.Type);
+                    $("#statusSelect").val(glbEntity.Status);
+                    $("#address").val(glbEntity.Address);
+                    
+
+                    $(".modal-title").html("修改学校");
+                    $("#schoolModal").modal();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //执行添加或修改
+    function addOrModifySchool() {
+        var schoolName = $.trim($("#schoolName").val());
+        var phoneNo = $.trim($("#phoneNo").val());
+        var username = $.trim($("#username").val());
+        var password = $.trim($("#password").val());
+        var typeSelect = $("#typeSelect").val();
+        var statusSelect = $("#statusSelect").val();
+        var address = $.trim($("#address").val());
+
+        if (schoolName.length < 3 || phoneNo.length < 7 || username.length < 5 || password.length < 6 || typeSelect < 1 || statusSelect < 1 || address.length<4) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+
+        var obj = {
+            SchoolName: schoolName,
+            ContactInfo: phoneNo,
+            Username: username,
+            Password: password,
+            Type: typeSelect,
+            Status: statusSelect,
+            Address: address
+        }
+
+        //修改
+        var otype = 1;
+        if ($(".modal-title").html().indexOf('修改') >= 0) {
+            otype = 2;
+            glbEntity.SchoolName = schoolName;
+            glbEntity.ContactInfo = phoneNo;
+            glbEntity.Username = username;
+            glbEntity.Password = password;
+            glbEntity.Type = typeSelect;
+            glbEntity.Status = statusSelect;
+            glbEntity.Address = address;
+            obj = glbEntity
+        }
+
+
+        //关闭modal
+        $("#schoolModal").modal('hide');
+        //清除数据
+        $("#schoolName").val("");
+        $("#phoneNo").val("");
+        $("#username").val("");
+        $("#password").val("");
+        $("#typeSelect").val(1);
+        $("#statusSelect").val(1);
+        $("#address").val("");
+
+        //AddOrModifySchool
+        $.ajax({
+            url: "/AdminRelated/Admin/AddOrModifySchool",
+            type: "POST",
+            data: {
+                "type": otype,
+                "entity": JSON.stringify(obj),
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getSchoolInfo(glbQuery);
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+        $(".modal-title").html("新增学校");
+    }
+    //删除个体
+    function delSchool(id) {
+        swal({
+            title: "确定要删除吗？",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/AdminRelated/Admin/DelSchoolById",
+                type: "GET",
+                data: { "id": id },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        getSchoolInfo(glbQuery);
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+    }
+
+    //打开学生详情页
+    function openSchoolDetailPage(schoolId) {
+        window.location.href = "/AdminRelated/Admin/SchoolDetail?id=" + schoolId;
+    }
+
+    //获取所有学校数据
+    getSchoolInfo(glbQuery);
+    function getSchoolInfo(qy) {
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/AdminRelated/Admin/GetSchoolsInfo",
+            type: "GET",
+            data: { "query": qy },
+            success: function (result) {
+                if (result.code == 1) {
+                    //var obj = JSON.parse(result.content);
+                    $("#objListTable").html(result.content);
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>

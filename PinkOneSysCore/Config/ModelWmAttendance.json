@@ -1,0 +1,29 @@
+﻿{
+  "touser": "",
+  "template_id": "VI2oqigjU10SR6DXKHdfkb7XPI8lTW0DUmdansKiLAI",
+  "url": "",
+  "topcolor": "#FF0000",
+  "data": {
+    "keyword1": {
+      "value": "name",
+      "color": "#173177"
+    },
+    "keyword2": {
+      "value": "time",
+      "color": "#173177"
+    },
+    "keyword3": {
+      "value": "school",
+      "color": "#173177"
+    },
+    "first": {
+      "value": "亲爱的家长，您的宝宝已打卡{0}",
+      "color": "#FF0000"
+    },
+    "remark": {
+      "value": "欢迎使用PinOne校园管理系统",
+      "color": "#4F9F5F"
+    }
+  }
+}
+

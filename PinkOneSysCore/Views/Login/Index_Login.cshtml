@@ -1,0 +1,226 @@
+﻿@{ 
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>陪绮幼教 登录 </title>
+
+    <!-- Bootstrap 4.0-->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="~/template-bootstrap/css/bootstrap.min.css" rel="stylesheet" />*@
+
+    <!-- Bootstrap extend-->
+    @*<link href="~/template-bootstrap/css/bootstrap-extend.css" rel="stylesheet" />*@
+    <link href="~/template-bootstrap/css/bootstrap-extend.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    @*<link href="~/template-bootstrap/css/master_style.css" rel="stylesheet" />*@
+    <link href="~/template-bootstrap/css/master_style.min.css" rel="stylesheet" />
+    <!-- Sweet-Alert  -->
+    @*<link href="~/template-bootstrap/css/sweetalert.css" rel="stylesheet" />*@
+    <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+
+</head>
+<body class="hold-transition login-page" style="background:#18e6e6">
+
+    <div class="container h-p100">
+        <div class="row">
+            <div class="margin">
+                <div class="box-body">
+                    <img src="~/Images/pinkone_logo.png" />&emsp;<span class="font-size-40 text-white vertical-align-middle">陪绮幼教</span>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center justify-content-md-center h-p75">
+            <div class="col-lg-3 col-md-8 col-12 d-none d-lg-block">
+                <div class="box mb-0 b-0 bg-transparent">
+                    <div class="box-body login-slider p-0">
+                        <div id="carousel-example-generic-captions" class="carousel slide" data-ride="carousel">
+                            <!-- Indicators -->
+                            <ol class="carousel-indicators">
+                                <li data-target="#carousel-example-generic-captions" data-slide-to="0" class="active"></li>
+                                <li data-target="#carousel-example-generic-captions" data-slide-to="1"></li>
+                                <li data-target="#carousel-example-generic-captions" data-slide-to="2"></li>
+                            </ol>
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner" role="listbox">
+                                <div class="carousel-item active">
+                                    <img src="~/Images/login_slide1.jpg" class="img-fluid"/>
+                                    @*<img src="../../../images/slider/slide-1.jpg" class="img-fluid" alt="">*@
+                                    <div class="carousel-caption">
+                                        @*<h3>First here</h3>
+                                        <p>this is the subcontent you can use this</p>*@
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="~/Images/login_slide2.jpg" class="img-fluid" />
+                                    <div class="carousel-caption">
+                                        @*<h3>Second here</h3>
+                                        <p>this is the subcontent you can use this</p>*@
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="~/Images/login_slide3.jpg" class="img-fluid" />
+                                    <div class="carousel-caption">
+                                        @*<h3>Third here</h3>
+                                        <p>this is the subcontent you can use this</p>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-8 col-12">
+                <div class="login-box">
+                    <div class="login-box-body">
+                        <h3 class="text-center">Pink One 陪绮幼教</h3>
+                        <p class="login-box-msg">丰富便捷地幼教管理平台</p>
+
+                        <div class="form-group has-feedback">
+                            <input type="text" id="username" class="form-control rounded" placeholder="用户名" autocomplete="on" value="">
+                            <span class="ion ion-person form-control-feedback"></span>
+                        </div>
+                        <div class="form-group has-feedback">
+                            <input type="password" id="password" class="form-control rounded" placeholder="密码" autocomplete="on" value="">
+                            <span class="ion ion-locked form-control-feedback"></span>
+                        </div>
+                        
+                        <div class="row">
+                            @*<div class="col-12">
+                                <div class="checkbox text-center">
+                                    <input type="checkbox" id="basic_checkbox_1">
+                                    <label for="basic_checkbox_1">记住我</label>
+                                </div>
+                            </div>*@
+                            
+                            @*<div class="col-12">
+                                <div class="fog-pwd text-center">
+                                    <a href="javascript:void(0)" class="text-danger"><i class="ion ion-locked"></i> 忘记密码?</a><br>
+                                </div>
+                            </div>*@
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-info btn-block margin-top-10" onclick="login();">登录 <i id="waitingFa" class="fa fa-spinner fa-pulse hide"></i></button>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                        @*<div class="social-auth-links text-center">
+                                <p>- OR -</p>
+                                <a href="#" class="btn btn-outline btn-light btn-social-icon"><i class="fa fa-facebook"></i></a>
+                                <a href="#" class="btn btn-outline btn-light btn-social-icon"><i class="fa fa-google-plus"></i></a>
+                                <a href="#" class="btn btn-outline btn-light btn-social-icon"><i class="fa fa-twitter"></i></a>
+                                <a href="#" class="btn btn-outline btn-light btn-social-icon"><i class="fa fa-instagram"></i></a>
+                            </div>*@
+
+                        <div class="margin-top-30 text-center">
+                            @*<p>Don't have an account? <a href="register.html" class="text-warning ml-5">Sign Up</a></p>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery 3 -->
+    @*<script src="~/template-bootstrap/js/jquery.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap 4.0-->
+    @*<script src="~/template-bootstrap/js/bootstrap.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Sweet-Alert  -->
+    @*<script src="~/template-bootstrap/js/sweetalert.min.js"></script>*@
+    <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+    <script>
+        $(function () {
+            if (navigator.userAgent.toLowerCase().indexOf("chrome") != -1) {
+                var selectors = document.getElementsByTagName("input");
+                for (var i = 0; i < selectors.length; i++) {
+                    if ((selectors[i].type !== "submit") && (selectors[i].type !== "password")) {
+                        var input = selectors[i];
+                        var inputName = selectors[i].name;
+                        var inputid = selectors[i].id;
+                        selectors[i].removeAttribute("name");
+                        selectors[i].removeAttribute("id");
+                        setTimeout(function () {
+                            input.setAttribute("name", inputName);
+                            input.setAttribute("id", inputid);
+                        }, 1)
+                    }
+
+                }
+            }
+        })
+
+        function login() {
+            $("#waitingFa").show();
+            var name = $.trim($("#username").val());
+            var pwd = $.trim($("#password").val());
+            if (name.length < 2 || pwd.length < 6) {
+                $("#waitingFa").hide();
+                swal({
+                    title: "",
+                    text: "用户名至少2个字符\r\n密码至少6个字符",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                return;
+            }
+            $.ajax({
+                url: "/Login/Verify",
+                type: "POST",
+                data: {
+                    'name': name,
+                    'pwd': pwd
+                },
+                success: function (result) {
+                    $("#waitingFa").hide();
+                    if (result.code == 1) {
+                        var data = JSON.parse(result.content);
+                        if (data == "1") {
+                            window.location.href = '/AdminRelated/Admin';
+                        }
+                        else if (data == '2') {
+                            window.location.href = '/Home';
+                        }
+                        else {
+                            swal({
+                                title: "",
+                                text: "未知错误",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    }
+                    else {
+                        swal({
+                            title: "",
+                            text: "用户名或密码错误，请重试",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                },
+                error: function () {
+                    $("#waitingFa").hide();
+                    swal({
+                        title: "",
+                        text: "网络开小差了",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            })
+        }
+    </script>
+
+
+</body>
+</html>

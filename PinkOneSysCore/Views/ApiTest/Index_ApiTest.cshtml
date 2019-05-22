@@ -1,0 +1,317 @@
+﻿
+@{
+    ViewBag.Title = "Index_ApiTest";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <!-- Bootstrap 4.0-->
+    <link href="~/template-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Popup CSS -->
+    <link href="~/template-bootstrap/css/magnific-popup.css" rel="stylesheet" />
+    <!-- Bootstrap extend-->
+    <link href="~/template-bootstrap/css/bootstrap-extend.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/template-bootstrap/css/master_style.css" rel="stylesheet" />
+    <!-- Fab Admin skins -->
+    <link href="~/template-bootstrap/css/skins/_all-skins.css" rel="stylesheet" />
+    <!-- Sweet-Alert  -->
+    <link href="~/template-bootstrap/css/sweetalert.css" rel="stylesheet" />
+
+
+    <!-- jQuery 3 -->
+    <script src="~/template-bootstrap/js/jquery.min.js" charset="utf-8"></script>
+    <!-- popper -->
+    <script src="~/template-bootstrap/js/popper.min.js" charset="utf-8"></script>
+    <!-- Bootstrap 4.0-->
+    <script src="~/template-bootstrap/js/bootstrap.min.js" charset="utf-8"></script>
+    <!-- Sweet-Alert  -->
+    <script src="~/template-bootstrap/js/sweetalert.min.js"></script>
+    <style>
+        input[type=checkbox] {
+            left: 0px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <section class="content">
+            <div class="box box-body">
+                <div class="row margin">
+                    <div class="col-7">
+                        <div>
+                            学校Id：
+                            <input type="text" class="form-control" id="schoolId" value="1" />
+                        </div>
+                        <div>
+                            username：
+                            <input type="text" class="form-control" id="username" value="admin" />
+                        </div>
+                        <div>
+                            password：
+                            <input type="text" class="form-control" id="password" value="123456" />
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="margin"></div>
+                        @*<div class="form-group">
+                                <button class="btn btn-default btn-sm" onclick="getToken();" >获取token</button>
+                            </div>*@
+                        <div class="form-group">
+                            <button class="btn btn-default btn-sm" onclick="getSchoolInfo();">获取学校信息</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-body">
+                <div class="row margin">
+
+                    <div class="col-7">
+                        <div>
+                            <div>
+                                学生/职员：
+                                <select class="form-control" id="select">
+                                    <option value="0">请选择学生或职员</option>
+                                    <optgroup id="stuSelect" label="学生"></optgroup>
+                                    <optgroup id="staffSelect" label="职员">
+                                        <option></option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                考勤模板：
+                                <select class="form-control select2">
+                                    <option value="1" selected>签入</option>
+                                    <option value="2">签出</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            考勤图片：
+                            <input type="file" id="fileIpt" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="margin"></div>
+                        <div class="form-group">
+                            <button class="btn btn-default btn-sm" onclick="uploadAtt();">上传考勤数据和图片</button>
+                        </div>
+                        @*<div class="form-group">
+                                <button class="btn btn-default btn-sm">上传图片</button>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+            <div class="box box-body">
+                <div class="row margin" id="resDiv">
+                    asdfasdfasdfas
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        var glbToken = "";
+
+        var glbDateTime;
+
+        //处理返回错误
+        function handleResult(result) {
+            if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                window.location.href = result.split(',')[1];
+            }
+            else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+            }
+            else {
+                swal({ title: "", text: result.errMsg });
+            }
+        }
+
+        //获取时间并格式化为yyyyMMddHHmmssfff
+        function getFormateDateTime() {
+            var date = new Date();
+            //月
+            var month = date.getMonth() + 1;
+            if (month < 10) month = "0" + month;
+            //日
+            var onlyDate = date.getDate();
+            if (onlyDate < 10) onlyDate = "0" + onlyDate;
+            //时
+            var hour = date.getHours();
+            if (hour < 10) hour = "0" + hour;
+            //分
+            var min = date.getMinutes();
+            if (min < 10) min = "0" + min;
+            //秒
+            var sec = date.getSeconds();
+            if (sec < 10) sec = "0" + sec;
+            //微秒
+            var mSec = date.getMilliseconds();
+            if (mSec < 10) mSec = "00" + mSec;
+            if (mSec >= 10 && mSec < 100) mSec = "0" + mSec;
+
+            var datetime = "" + date.getFullYear() + month + onlyDate + hour + min + sec + mSec;
+
+            return $.trim(datetime);
+        }
+
+        function uploadAtt() {
+            var slt = $("#select").val();
+            if (slt == 0) {
+                swal({ title: "", text: "请选择测试对象", type: "warning", timer: 2000, showConfirmButton: false });
+                return;
+            }
+            var personType = 1;
+            var personId = slt.substring(3);
+            var attWay = 1;
+            var cardNo = "6666";
+
+            glbDateTime = getFormateDateTime();
+
+            if (slt.indexOf("a") > 0) {
+                personType = 2;
+            }
+            $("#resDiv").empty();
+            $.ajax({
+                url: "/api/LocalApp/UploadAttendance",
+                type: "POST",
+                async: true,
+                data: {
+                    'schoolId': $("#schoolId").val(),
+                    //'token': glbToken,
+                    'dateTime': glbDateTime,
+                    'personType': personType,
+                    'personId': personId,
+                    'attWay': attWay,
+                    'cardNo': cardNo,
+                    'deviceId': 66
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        var json = result.content;
+                        $("#resDiv").append("<p>上传数据 OK！</p>");
+                    }
+                    else {
+                        handleResult(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+
+            var filePath = $("#fileIpt").val();
+            if (personType == 1 && filePath.length > 0) {
+                var fd = new FormData();
+                var file = document.getElementById("fileIpt").files[0]
+                fd.append("file", file);
+                //fd.append("token",glbToken);
+                fd.append("schoolId", $("#schoolId").val());
+                fd.append("dateTime", glbDateTime);
+                fd.append("personId", personId);
+
+                $.ajax({
+                    url: "/api/LocalApp/UploadAttImg", //用于文件上传的服务器端请求地址
+                    type: "POST",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    async: true,
+                    success: function (result) {
+                        if (result.code == 1) {
+                            var json = result.content;
+                            $("#resDiv").append("<p>上传图片 OK！</p>");
+                        }
+                        else {
+                            handleResult(result);
+                        }
+                    },
+                    error: function () {//服务器响应失败处理函数
+                        swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                    }
+                });
+            }
+        }
+        getSchoolInfo();
+        function getSchoolInfo() {
+            $("#resDiv").empty();
+            $.ajax({
+                url: "/api/LocalApp/GetSchoolInfo",
+                type: "POST",
+                data: {
+                    'username': $("#username").val(),
+                    'password': $("#password").val(),
+                    'schoolId': $("#schoolId").val(),
+                    //'token': glbToken,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        var json = result.content;
+                        var jsonStr = JSON.stringify(json);
+                        $("#resDiv").html(jsonStr);
+                        //渲染选择框
+                        $("#stuSelect").empty();
+                        for (var i = 0; i < json.Students.length; i++) {
+                            $("#stuSelect").append("<option value=stu" + json.Students[i].StuId + ">" + json.Students[i].StuName + "</option>")
+                        }
+                        $("#staffSelect").empty();
+                        for (var i = 0; i < json.Staffs.length; i++) {
+                            $("#staffSelect").append("<option value=sta" + json.Staffs[i].StaffId + ">" + json.Staffs[i].StaffName + "</option>")
+                        }
+
+                    }
+                    else {
+                        handleResult(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        }
+
+        //getToken();
+        function getToken() {
+            $.ajax({
+                url: "/api/LocalApp/OAuth",
+                type: "GET",
+                data: {
+                    'schoolId': $("#schoolId").val(),
+                    'username': $("#username").val(),
+                    'password': $("#password").val(),
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        var json = result.content;
+                        glbToken = json.Token;
+                        $("#resDiv").html(glbToken);
+                        //swal({ title: "", text: "Token："+json.Token, type: "success"});
+                        getSchoolInfo();
+                    }
+                    else {
+                        handleResult(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        }
+    </script>
+
+</body>
+</html>
+

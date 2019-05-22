@@ -1,0 +1,323 @@
+﻿
+@{
+    ViewBag.Title = "后台设置";
+    Layout = "~/Areas/AdminRelated/Views/Shared/Admin_Layout.cshtml";
+}
+
+<section class="content-header">
+    <h1>
+        基础设置&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> 管理主页</a></li>
+        <li class="breadcrumb-item active"><a href="#">基础设置</a></li>
+    </ol>
+</section>
+
+<section class="content">
+    <div class="box pad">
+        <div class="box-title">
+            <div class="row">
+                <div class="col-12">
+                    <label class="font-size-16 font-weight-bold">通用角色管理</label>
+                    <button class="btn btn-info btn-sm no-border pull-right" data-toggle="modal" data-target="#roleModal">新增通用角色</button>
+                </div>
+            </div>
+            <div class="modal fade" id="roleModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label>新增通用角色</label>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="roleName">角色名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" id="roleName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="roleLevel">权限等级</label>
+                                        <select class="form-control select2" style="width: 100%;" id="roleLevel">
+                                            <option value="0">请选择</option>
+                                            <option value="1">园长级</option>
+                                            <option value="2">管理员级</option>
+                                            <option value="3">教师级</option>
+                                            <option value="4">后勤级</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary float-right" data-dismiss="modal" onclick="addStaffRole();">保存</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+        <div class="font-size-14">
+            <div class="row margin">
+                已有通用角色：
+               <div id="staffRoleDiv"></div>
+            </div>
+        </div>
+    </div>
+    <div class="box pad hide" id="adminsMngDiv">
+        <div class="box-title">
+            <div class="row">
+                <div class="col-12">
+                    <label class="font-size-16 font-weight-bold">管理员管理</label>
+                    <button class="btn btn-info btn-sm no-border pull-right" data-toggle="modal" data-target="#adminModal">新增管理员</button>
+                </div>
+            </div>
+            <div class="modal fade" id="adminModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label>新增管理员</label>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="roleName">账号</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" placeholder="至少6位字符" id="username">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="roleName">密码</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" placeholder="至少6位字符" id="password">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="roleName">姓名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" placeholder="至少3位字符" id="personName">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="roleName">电话</label>
+                                        <input type="text" class="form-control" id="phone">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="addNewAdmin();">保存</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+        <div class="font-size-14" >
+            <div class="row margin">
+                <div class="box-body no-padding">
+                    <div class="table-responsive">
+                        <table class="table table-hover text-center">
+                            <thead>
+                                <tr class="bg-gray-light">
+                                    <th>账号</th>
+                                    <th>密码</th>
+                                    <th>姓名</th>
+                                    <th>电话</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="objListTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    //初始化
+    $("#adminSettingLi").addClass('active');
+
+    //刷新
+    $("#refresh").click(function () {
+        getAdminSettingInfo();
+    })
+
+    //添加管理员
+    function addNewAdmin() {
+        var username = $.trim($("#username").val());
+        var password = $.trim($("#password").val());
+        var personName = $.trim($("#personName").val());
+        var phone = $.trim($("#phone").val());
+        if (username.length < 6 || password.length < 6 || personName.length < 3) {
+            swal({ title: "", text: "您的输入有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        $("#adminModal").modal("hide");
+        $.ajax({
+            url: "/AdminRelated/Admin/AddNewAdmin",
+            type: "POST",
+            data: {
+                "username": username,
+                "password": password,
+                "personName": personName,
+                "phone":phone
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getAdminSettingInfo();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+    //删除管理员
+    function delAdmin(id) {
+        swal({
+            title: "",
+            text: '确定删除吗？',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "是",
+            cancelButtonText: "否",
+            closeOnConfirm: false,
+            //closeOnCancel:false
+        }, function () {
+            $.ajax({
+                url: "/AdminRelated/Admin/DelAdmin",
+                type: "POST",
+                data: {
+                    "id": id,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        getAdminSettingInfo();
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+    }
+
+
+    //添加通用角色
+    function addStaffRole() {
+        var roleName = $.trim($("#roleName").val());
+        var roleLevel = $("#roleLevel").val();
+        if (roleName.length <= 0 || roleLevel <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        $.ajax({
+            url: "/AdminRelated/Admin/AddStaffBaseRole",
+            type: "POST",
+            data: {
+                "roleName": roleName,
+                "roleLevel": roleLevel,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getAdminSettingInfo();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+    //删除角色
+    function delStaffRole(id) {
+        swal({
+            title: "",
+            text: '确定删除吗？',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "是",
+            cancelButtonText: "否",
+            closeOnConfirm: false,
+            //closeOnCancel:false
+        }, function () {
+            $.ajax({
+                url: "/AdminRelated/Admin/DelStaffBaseRole",
+                type: "POST",
+                data: {
+                    "id": id,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        getAdminSettingInfo();
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+
+    }
+
+    //获取设置数据
+    getAdminSettingInfo();
+    function getAdminSettingInfo() {
+        $("#staffRoleDiv").empty();
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/AdminRelated/Admin/GetAdminSettingInfo",
+            type: "GET",
+            success: function (result) {
+                if (result.code == 1) {
+                    var obj = JSON.parse(result.content);
+                    $("#staffRoleDiv").html(obj.baseStaffRoles);
+                    if (obj.admins.length>6) {
+                        $("#adminsMngDiv").show();
+                        $("#objListTable").html(obj.admins);
+                    }
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>
+

@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "个人中心";
+    Layout = "~/Areas/WxRelated/Views/Shared/Wx_Layout.cshtml";
+}
+@model ModelSysWxUser
+
+<style>
+    #menuList div{
+        margin:12px 0;
+        width:100%;
+    }
+
+    #menuList div::after {
+        content: "";
+        width:90%;
+        height:1px;
+        background-color:rgba(225, 225, 225, 0.6);
+       
+        position:absolute;
+        margin-top:8%;
+        z-index:1;
+        left:5%;
+       
+    }
+</style>
+<div class="container">
+    <div class="row margin bg-aqua">
+        <div class="box-body">
+            <div class="col-12 text-center">
+                <img src="@Model.AvatarPic" style="border-radius:66px;" />
+            </div>
+        </div>
+    </div>
+    <div class="row margin">
+        <div class="body font-size-20" style="width:100%;">
+            <div id="menuList">
+                <div>
+                    <a href="/WxRelated/Center/WxBind">
+                        <i class="fa fa-wechat text-green"></i>&emsp; 微信关联
+                        <i class="fa fa-chevron-right" style="float:right; right:0px;"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="#">
+                        <i class="fa fa-user-circle text-info"></i>&emsp; 我的信息
+                        <i class="fa fa-chevron-right" style="float:right; right:0px;"></i>
+                    </a>
+                </div>
+                <div>
+                    <a href="#">
+                        <i class="fa fa-exclamation-circle "></i>&emsp; 关于
+                        <i class="fa fa-chevron-right" style="float:right; right:0px;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "管理主页";
+    Layout = "~/Areas/AdminRelated/Views/Shared/Admin_Layout.cshtml";
+}
+@model ModelSchoolsSummary
+<style>
+    .body-row{
+        display:flex;
+        margin:10px;
+    }
+</style>
+<section class="content-header">
+<h1>
+    园所总览&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> 管理主页</a></li>
+    <li class="breadcrumb-item active"><a href="#">园所总览</a></li>
+</ol>
+</section>
+<div class="content">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row box margin">
+                <div class="box-body font-size-16 text-middle">
+                    <label class="font-weight-bold">园所统计</label>
+                    <div class="body-row">
+                        学校总数：<label>@Model.TotalSchool</label>&ensp;所
+                    </div>
+                    <div class="body-row">
+                        累计服务学生总数：<label>@Model.TotalAllStudent</label>&ensp;人
+                    </div>
+                    <div class="body-row">
+                        在校学生总数：<label>@Model.TotalOnSchoolStudent</label>&ensp;人
+                    </div>
+                    <div class="body-row">
+                        在职员工总数：<label>@Model.TotalStaff</label>&ensp;位
+                    </div>
+                    <div class="body-row">
+                        已发出卡总数：<label>@Model.TotalUseCard</label>&ensp;张
+                    </div>
+                    @*<div class="body-row">
+            正活跃卡数：<label>6000</label>&ensp;张
+        </div>*@
+                </div>
+                  
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row box margin">
+                <div class="box-body font-size-16 text-middle">
+                    <label class="font-weight-bold">潜在客户</label>
+                    <div class="body-row">
+                        试用学校数：<label>2</label>&ensp;所
+                    </div>
+                    <div class="body-row">
+                        <div>苏州阳光幼儿园、园区翰林园</div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //初始化
+    $("#adminHomeLi").addClass('active');
+
+    //刷新
+    $("#refresh").click(function () {
+        window.location.href = "/AdminRelated/Admin";
+    })
+</script>
+

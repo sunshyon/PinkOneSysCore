@@ -1,0 +1,93 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    
+    <!-- Bootstrap 4.0-->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="~/wwwroot/template-bootstrap/css/bootstrap.min.css" rel="stylesheet" />*@
+    <!-- Popup CSS -->
+    @*<link href="~/wwwroot/template-bootstrap/css/magnific-popup.css" rel="stylesheet" />*@
+
+    <!-- Bootstrap extend-->
+    @*<link href="~/wwwroot/template-bootstrap/css/bootstrap-extend.css" rel="stylesheet" />*@
+    <link href="~/wwwroot/template-bootstrap/css/bootstrap-extend.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    @*<link href="~/wwwroot/template-bootstrap/css/master_style.css" rel="stylesheet" />*@
+    <link href="~/wwwroot/template-bootstrap/css/master_style.min.css" rel="stylesheet" />
+    <!-- Fab Admin skins -->
+    @*<link href="~/wwwroot/template-bootstrap/css/skins/_all-skins.css" rel="stylesheet" />*@
+    <!-- Sweet-Alert  -->
+    <link href="~/wwwroot/template-bootstrap/css/sweetalert.css" rel="stylesheet" />
+
+
+    <!-- jQuery 3 -->
+    @*<script src="~/wwwroot/template-bootstrap/js/jquery.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <!-- popper -->
+    @*<script src="~/wwwroot/template-bootstrap/js/popper.min.js" charset="utf-8"></script>*@
+    <!-- Bootstrap 4.0-->
+    @*<script src="~/wwwroot/template-bootstrap/js/bootstrap.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Sweet-Alert  -->
+    <script src="~/wwwroot/template-bootstrap/js/sweetalert.min.js"></script>
+    <style>
+        input[type=checkbox] {
+            left: 0px;
+            opacity: 1;
+        }
+        footer {
+            background:rgba(225, 225, 225, 0.3) !important;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            z-index: 10;
+            background-color: #ffc0cb;
+            margin-left:0 !important;
+        }
+        .footNav{
+            text-align:center;
+            cursor:pointer;
+        }
+        input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+            color: rgba(156, 156, 156, 0.6) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pale-primary text-center " style="padding:4px;">
+        <div class="font-size-24 text-warning" id="headTextDiv"></div>
+    </div>
+    <div class="">
+        @RenderBody()
+    </div>
+    <footer class="main-footer navbar-fixed-bottom font-size-26">
+            <div class="row">
+                <div class="col-4">
+                    <div class="footNav text-dark" onclick="window.location.href = '/WxRelated/WxHome'"><i class="glyphicon glyphicon-home"></i>主页</div>
+                </div>
+                <div class="col-4">
+                    <div class="footNav text-purple" onclick="window.location.href='#'"><i class="glyphicon glyphicon-blackboard"></i>班级</div>
+                </div>
+                <div class="col-4">
+                    <div class="footNav text-brown" onclick="window.location.href='/WxRelated/Center'"><i class="glyphicon glyphicon-user"></i>我的</div>
+                </div>
+            </div>
+    </footer>
+
+    
+    <script>
+        var glbSchoolName = '@ViewBag.SchoolName';
+      
+        $("#headTextDiv").html(glbSchoolName);
+    </script>
+</body>
+</html>

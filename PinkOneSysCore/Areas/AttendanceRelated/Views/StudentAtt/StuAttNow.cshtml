@@ -1,0 +1,269 @@
+﻿@{ Layout = "~/Views/Shared/_Layout.cshtml";}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            学生考勤<small>(<b>实时</b>)</small>&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+            <li class="breadcrumb-item"><a href="#">考勤相关</a></li>
+            <li class="breadcrumb-item active"><a href="#">学生考勤</a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">实时签到</h4>
+                        <div class="box-header-actions pull-right">
+                            <div style="float:left;">
+                                <select class="select2 form-control float-right" style="border-radius:5px;" id="searchClassSelect">
+                                    <option value="0" selected="selected">全部班级</option>
+                                </select>
+                            </div>
+                            <div class="pull-right">
+                                <div class="lookup lookup-sm lookup-right">
+                                    <input class="form-control" type="text" name="queryIpt" id="queryIpt" autocomplete="off" placeholder="输入姓名查询">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>班级</th>
+                                        <th>姓名</th>
+                                        <th>在校</th>
+                                        <th>离校</th>
+                                        <th>未签到</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="objListTable">
+                                    <tr><td colspan='6'>未找到数据</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </section>
+<div class="modal fade bs-e " id="stuAttModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增学生考勤记录</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>进出类型</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <select class="form-control select2" style="width: 100%;" id="attTypeSelect">
+                                <option value="0" selected="selected">请选择</option>
+                                <option value="1">签入</option>
+                                <option value="2">签出</option>
+                                <option value="3">体测</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="attTime">时间</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <input type="text" class="form-control" id="attTime">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="attTemp">体温</label>
+                            <input type="text" class="form-control" id="attTemp" placeholder="36.5">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="attRemark">备注</label>
+                            <input type="text" class="form-control" id="attRemark">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary float-right" onclick="confirmAddStuAtt();">保存</button>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<script>
+    var glbNameQuery = "";
+    var glbClassQuery = 0;
+    var glbStuId = 0;
+
+    //初始化
+    $("#stuAttNowLi").addClass('active');
+    $("#stuAttNowLi").parent().parent().addClass("menu-open");
+    $("#stuAttNowLi").parent().parent().parent().show();
+    $("#stuAttNowLi").parent().parent().parent().parent().addClass("menu-open");
+
+    //考勤时间
+    var date = new Date();
+    var initDate = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() +" "+date.getHours()+":"+date.getMinutes();
+    $('#attTime').datetimepicker({
+        language: 'cn',
+        format: 'yyyy-mm-dd hh:ii',
+        initialDate: initDate,
+        weekStart: 1,
+        todayBtn: 0,
+        monthsShort: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 1,
+        minView: 1,
+        maxView: 3,
+        forceParse: 1
+    });
+
+    //查看签到详情
+    function stuAttDetail(stuName) {
+        GoToPage("", "/AttendanceRelated/StudentAtt/StuAttDetailByName?stuName=" + stuName);
+    }
+  
+    //手动添加学生考勤记录
+    function addStuAtt(stuId) {
+        glbStuId = stuId;
+        $("#attTime").val(initDate);
+        $("#stuAttModal").modal("show");
+    }
+    function confirmAddStuAtt() {
+        var attType = $("#attTypeSelect").val();
+        var attTime = $("#attTime").val();
+        var attTemp = $("#attTemp").val();
+        var attRemark = $("#attRemark").val();
+        if (attType <= 0 || attTime.length <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        $("#stuAttModal").modal("hide");
+
+        $.ajax({
+            url: "/AttendanceRelated/StudentAtt/AddStuAttManually",
+            type: "POST",
+            data: {
+                'stuId':glbStuId,
+                'attType': attType,
+                'attTime': attTime,
+                'attTemp': attTemp,
+                'attRemark': attRemark
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getStuAttNow();
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //刷新
+    $("#refresh").click(function () {
+        getStuAttNow();
+    })
+
+    //使能搜索事件
+    $("#queryIpt").bind("input propertychange", function () {
+        glbNameQuery = $("#queryIpt").val();
+        getStuAttNow();
+    })
+    $("#searchClassSelect").bind("change", function () {
+        glbClassQuery = $("#searchClassSelect").val();
+        getStuAttNow();
+    })
+
+    //渲染班级Select
+    function renderClassSelect(list) {
+        if (list.length > 0) {
+            $("#searchClassSelect").empty();
+            $("#searchClassSelect").append('<option value="0" selected="selected">全部班级</option>');
+            for (var i = 0; i < list.length; i++) {
+                var key = list[i].ID;
+                var val = list[i].ClassName;
+                //classEnum[key] = val;
+                $("#searchClassSelect").append('<option value="' + key + '">' + val + '</option>');
+            }
+        }
+        else {
+            swal({ title: "", text: "您还没添加班级，请先添加", type: "warning", });
+            return;
+        }
+    }
+
+    getStuAttNow();
+    //获取所有班级统计数据
+    function getStuAttNow() {
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/AttendanceRelated/StudentAtt/GetStuAttNow",
+            type: "GET",
+            data:{
+                'nameQuery': glbNameQuery,
+                'classQuery': glbClassQuery,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    var jsonRes = JSON.parse(result.content);
+                    if (glbClassQuery == 0) {
+                        renderClassSelect(jsonRes.classes);
+
+                        //如果请求带有班级id，需要设置特定班级
+                        var classId='@ViewBag.ClassId';
+                        if(classId!=null&&classId!=undefined&&classId>0){
+                            $("#searchClassSelect").val(classId);
+                            glbClassQuery = $("#searchClassSelect").val();
+                            getStuAttNow();
+                        }
+                    }
+                    $("#objListTable").html(jsonRes.stuStr);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>

@@ -1,0 +1,24 @@
+{
+  //Base
+  "Base_ID": "41A0D5B6-19C0-4C9F-882F-45F6A0D918E2",
+  "Base_AppID": "wx699c568db6a2b968",
+  "Base_AppName": "陪绮在线",
+  "Base_AppSecret": "f44f27e2ebad96f1694bdbcc44ccaf50",
+
+
+  //WxApi
+  "Api_BaseUrl": "https://api.weixin.qq.com",
+  "Api_GetToken": "/cgi-bin/token?grant_type=client_credential{0}appid={1}{0}secret={2}",
+  "Api_GetAuthToken": "/sns/oauth2/access_token?appid={1}{0}secret={2}{0}code={3}{0}grant_type={4}",
+  "Api_GetUserInfo": "/sns/userinfo?access_token={1}{0}openid={2}{0}lang={3}",
+  "Api_SendMessage": "/cgi-bin/message/template/send?access_token={0}",
+  "Api_GetTicket": "/cgi-bin/ticket/getticket?access_token={1}{0}type=jsapi",
+
+
+  //公众号Url
+  "PubUrl_Host": "http://www.wxposinda.com",
+  "PubUrl_WxHome": "/WxRelated/WxHome/Index",
+  "PubUrl_Center": "/WxRelated/Center/Index",
+  "PubUrl_WxBind": "/WxRelated/Center/WxBind",
+  "PubUrl_AttDetail": "/WxRelated/Center/AttDetail"
+}

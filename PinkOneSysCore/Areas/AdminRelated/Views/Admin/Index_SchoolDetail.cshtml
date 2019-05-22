@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "Index_SchoolDetail";
+    Layout = "~/Areas/AdminRelated/Views/Shared/Admin_Layout.cshtml";
+}
+@model ModelSchoolDetail
+
+<style>
+    .publicAppDiv input{
+        width:60%;
+    }
+</style>
+<section class="content-header">
+    <h1>
+        园所详情@*&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@&ensp;<button class="btn btn-default btn-sm" id="backBtn"><i class="fa fa-reply fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> 管理主页</a></li>
+        <li class="breadcrumb-item active"><a href="#">园所详情</a></li>
+    </ol>
+</section>
+
+<section>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row margin">
+                <div class="box box-body">
+                    <h2 class="text-pink">@Model.School.SchoolName</h2>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <p>账号：@Model.School.Username</p>
+                                <p>密码：@Model.School.Password</p>
+                                <p>类型：@{var type = ((SchoolType)Model.School.Type).ToString();}@type</p>
+                                <p>状态：@{var status = ((SchoolStatus)Model.School.Status).ToString();}@status</p>
+                                <p>联系方式：@Model.School.ContactInfo</p>
+                                <p>地址：@Model.School.Address</p>
+                                <p>创建时间：@Model.School.CreateTime</p>
+                            </div>
+                            <div class="col-3 text-center">
+                                @{
+                                    if (Model.School.AvatarPic.Length > 10)
+                                    {
+                                        <img id="schoolAvaImg" src="@Model.School.AvatarPic" />
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row margin">
+                <div class="box box-body publicAppDiv">
+                    <label class="font-weight-bold">学校自有公众号关联</label>
+                    <div class="box-body">
+                        <div class="margin">
+                            AppId：<input/>
+                        </div>
+                        <div class="margin">
+                            AppName：<input />
+                        </div>
+                        <div class="margin">
+                            AppSecret：<input />
+                        </div>
+                        <div class="margin">
+                            AccessToken：<input />
+                        </div>
+                        <div class="margin">
+                            JsApiTicket：<input />
+                        </div>
+                        <div class="margin">
+                            上次更新时间：
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row margin">
+                <div class="box box-body">
+                    <label class="font-weight-bold">数据统计</label>
+                    <div class="box-body">
+                        <p>学生总计：@Model.TotalStudent  &ensp;人</p>
+                        <p>职员总计：@Model.TotalStaff &ensp;位</p>
+                        <p>班级总计：@Model.TotalClass &ensp;个</p>
+                        <p>办卡总计：@Model.TotalCard &ensp;张</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    //返回
+    $("#backBtn").click(function () {
+        window.location.href = "/AdminRelated/Admin/AdminMng";
+    })
+</script>
+

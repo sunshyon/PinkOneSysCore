@@ -1,0 +1,475 @@
+﻿@{ Layout = "~/Views/Shared/_Layout.cshtml";}
+
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            职员管理&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+            <li class="breadcrumb-item"><a href="#">人员管理</a></li>
+            <li class="breadcrumb-item active"><a href="#">职员管理</a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xl-12 col-md-12 col-12">
+                <div class="box box-body">
+                    @*<h6 class="text-uppercase text-white">班级概况</h6>*@
+                    <div class="flexbox mt-2">
+                        <span class="font-size-20" id="itemCount">职员数：0</span>
+                        <div>
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#staffModal" id="addNewBtn">新增职员</button>
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal" >批量导入</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="staffModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">新增职员</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="staffName">姓名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" id="staffName">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phoneNo">手机号</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" id="phoneNo">
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="workNo">工号</label>
+                                        <input type="text" class="form-control" id="workNo">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="idNumber">身份证</label>
+                                        <input type="text" class="form-control" id="idNumber">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>角色</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <select class="form-control select2" style="width: 100%;" id="roleSelect">
+                                            <option value="0" selected="selected">请选择</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="cardNo">卡号</label>
+                                        <input type="text" class="form-control" id="cardNo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary float-right" onclick="addOrModifyStaff();">保存</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+        </div>
+        <!-- /.modal -->
+
+        <div class="modal fade" id="importModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">批量导入</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            @*<div class="col-md-6">
+                                <div class="form-group">
+                                    <label>班级</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2" style="width: 100%;" id="importClassSelect">
+                                        <option value="0" selected="selected">请选择</option>
+
+                                    </select>
+                                </div>
+                            </div>*@
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="fileIpt">Excel文件</label>
+                                    <input type="file" class="form-control" id="fileIpt">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="emampleDiv">
+                            <div class="col-12">
+                                <h5>导入格式示例：</h5>
+                                <img src="~/Images/Staff_Ipt_Example.jpg" />
+                            </div>
+                        </div>
+                        <div class="row margin-top-10 text-center">
+                            <div class="col-12" id="importResDiv">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary float-right" id="doImportBtn" onclick="doImport();">导入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">职员列表</h4>
+                        <div class="box-header-actions pull-right">
+                            <div class="lookup lookup-sm lookup-right">
+                                <input class="form-control" type="text" name="queryIpt" id="queryIpt" autocomplete="off" placeholder="输入姓名查询">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr class="bg-gray-light">
+                                        @*<th>编号</th>*@
+                                        <th>姓名</th>
+                                        <th>手机号</th>
+                                        <th>工号</th>
+                                        @*<th>身份证</th>*@
+                                        <th>类型</th>
+                                        <th>卡号</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="objListTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+<script>
+    //全局变量
+    var glbEntity;
+    var glbQuery = '';
+
+    $("#staffManageLi").parent().parent().addClass("active");
+    $("#staffManageLi").addClass("active");
+
+    //打开批量模态框
+    $('#importModal').on('show.bs.modal', function (e) {
+        $("#emampleDiv").show();
+        $("#fileIpt").val("");
+        $("#importResDiv").empty();
+    })
+    //开始批量导入
+    function doImport() {
+        var filePath = $("#fileIpt").val();
+        if (filePath.length <= 0) {
+            swal({ title: "", text: "请选择文件", type: "error", timer: 2000, showConfirmButton: false });
+            return;
+        }
+        //添加动画
+        $("#emampleDiv").hide();
+        $("#importResDiv").html('<i class="fa fa-spinner fa-pulse fa-2x"></i>');
+
+        var fd = new FormData();
+        var file = document.getElementById("fileIpt").files[0]
+        fd.append("file", file);
+
+        //提交
+        $.ajax({
+            url: "/SchoolRelated/Staff/ImportStaffs", //用于文件上传的服务器端请求地址
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                $("#importResDiv").empty();
+                if (result.code == 1) {
+                    //swal({ title: "", text: "导入成功", type: "success", timer: 700, showConfirmButton: false });
+                    $("#importResDiv").html(result.content);
+                    getStaffInfo(glbQuery);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning" });
+                }
+            },
+            error: function () {//服务器响应失败处理函数
+                $("#importResDiv").empty();
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        });
+    }
+
+    //新建清除
+    $("#addNewBtn").click(function () {
+        $(".modal-title").html("新增职员");
+        $("#staffName").val("");
+        $("#phoneNo").val("");
+        $("#workNo").val("");
+        $("#idNumber").val("");
+        $("#roleSelect").val(0);
+        $("#cardNo").val("");
+    });
+
+    //获取要修改的实体
+    function modifyStaff(staffId) {
+        $.ajax({
+            url: "/SchoolRelated/Staff/GetStaffById",
+            type: "GET",
+            data: {
+                "ID": staffId,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    glbEntity = JSON.parse(result.content);
+                    $("#staffName").val(glbEntity.StaffName);
+                    $("#phoneNo").val(glbEntity.Phone);
+                    $("#workNo").val(glbEntity.WorkNo);
+                    $("#idNumber").val(glbEntity.IdNumber);
+                    $("#roleSelect").val(glbEntity.RoleId);
+                    $("#cardNo").val(glbEntity.CardNo);
+                    if (glbEntity.CardNo!=null&&glbEntity.CardNo.length > 0) {
+                        $("#cardNo").attr("readonly", true);
+                    }
+                    else {
+                        $("#cardNo").attr("readonly", false);
+                    }
+
+                    $(".modal-title").html("修改职员");
+                    $("#staffModal").modal();
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了",type:"warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+   
+    //执行添加或修改
+    function addOrModifyStaff() {
+        var staffName = $.trim($("#staffName").val());
+        var phoneNo = $.trim($("#phoneNo").val());
+        var workNo = $.trim($("#workNo").val());
+        var idNumber = $.trim($("#idNumber").val());
+        var roleId = $("#roleSelect").val();
+        var cardNo = $("#cardNo").val();
+        if (staffName.length <= 0 || phoneNo.length != 11 || roleId <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试",type:"warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        if (cardNo.length > 3 && (/^\d+$/).test(cardNo) == false || cardNo.length > 0 && cardNo.length < 4) {
+            swal({ title: "", text: "卡号必须为4位以上数字", timer: 1000, showConfirmButton: false });
+            return;
+        }
+       
+        var obj = {
+            StaffName: staffName,
+            Phone: phoneNo,
+            WorkNo: workNo,
+            IdNumber: idNumber,
+            RoleId: roleId,
+            CardNo: cardNo
+        }
+
+        //修改
+        var otype = 1;
+        if ($(".modal-title").html().indexOf('修改') >= 0) {
+            otype = 2;
+            glbEntity.StaffName = staffName;
+            glbEntity.Phone = phoneNo;
+            glbEntity.workNo = workNo;
+            glbEntity.IdNumber = idNumber;
+            glbEntity.RoleId = roleId;
+            glbEntity.CardNo = cardNo;
+            obj = glbEntity
+        }
+      
+
+        //关闭modal
+        $("#staffModal").modal('hide');
+
+        //清除数据
+        $("#staffName").val("");
+        $("#phoneNo").val("");
+        $("#workNo").val("");
+        $("#idNumber").val("");
+        $("#roleSelect").val(0);
+        $("#cardNo").val("");
+       
+
+        //AddOrModifyStaff
+        $.ajax({
+            url: "/SchoolRelated/Staff/AddOrModifyStaff",
+            type: "POST",
+            data: {
+                "type":otype,
+                "entity":JSON.stringify(obj),
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type:"success", timer: 700, showConfirmButton: false });
+                    getStaffInfo(glbQuery);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg });
+                   
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+        $(".modal-title").html("新增职员");
+    }
+    //删除个体
+    function delStaff(id) {
+        swal({
+            title: "确定要删除吗？",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/SchoolRelated/Staff/DelStaffById",
+                type: "GET",
+                data: { "id": id },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        getStaffInfo(glbQuery);
+                    }
+                    else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                        window.location.href = result.split(',')[1];
+                    }
+                    else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                        swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                    }
+                    else {
+                        swal({ title: "", text: result.errMsg });
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+    }
+
+    //刷新
+    $("#refresh").click(function () {
+        getStaffInfo("");
+    })
+
+    //使能搜索
+    $("#queryIpt").bind("input propertychange", function () {
+        glbQuery = $("#queryIpt").val();
+        getStaffInfo(glbQuery);
+    })
+    //获取所有职员数据
+    getStaffInfo(glbQuery);
+    function getStaffInfo(qy) {
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/SchoolRelated/Staff/GetStaffInfo",
+            type: "GET",
+            data: { "query": qy },
+            success: function (result) {
+                if (result.code == 1) {
+                    var obj = JSON.parse(result.content);
+                    $("#objListTable").html(obj.Staffs);
+                    $("#itemCount").html("职员数：" + $("#objListTable").children().length);
+
+                    renderRoleSelect(obj.StaffRoles);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    //swal({ title: "", text: result.errMsg});
+                    var sb = "<tr><td colspan='6'>未找到数据</td></tr>";
+                    $("#objListTable").html(sb);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //渲染角色选择框
+    function renderRoleSelect(list) {
+        $("#roleSelect").empty();
+        $("#roleSelect").append('<option value="0" selected="selected">请选择</option>');
+        if (list.length > 0) {
+            for (var i = 0; i < list.length; i++) {
+                $("#roleSelect").append('<option value="' + list[i].ID + '">' + list[i].RoleName + '</option>');
+            }
+        }
+    }
+</script>

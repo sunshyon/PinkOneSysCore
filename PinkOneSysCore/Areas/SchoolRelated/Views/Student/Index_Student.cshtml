@@ -1,0 +1,718 @@
+﻿
+@{ Layout = "~/Views/Shared/_Layout.cshtml";}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        学生管理&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item"><a href="#">人员管理</a></li>
+        <li class="breadcrumb-item active"><a href="#">学生管理</a></li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xl-12 col-md-12 col-12">
+            <div class="box box-body">
+                @*<h6 class="text-uppercase text-white">班级概况</h6>*@
+                <div class="flexbox mt-2">
+                    <span class="font-size-20" id="itemCount">学生数：0</span>
+                    <div>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#stuModal" id="addNewBtn">新增学生</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal" >批量导入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="stuModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">新增学生</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuName">姓名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" id="stuName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phoneNo">家长手机</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" id="phoneNo">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>性别</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2" style="width: 100%;" id="sexSelect">
+                                        <option value="0" selected="selected">请选择</option>
+                                        <option value="1">男生</option>
+                                        <option value="2">女生</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>班级</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2 classSelect" style="width: 100%;" id="classSelect">
+                                        <option value="0" selected="selected">请选择</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">学号</label>
+                                    <input type="text" class="form-control" id="stuNo">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthday">生日</label>
+                                    <input type="text" class="form-control" id="birthday">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="address">地址</label>
+                                    <input type="text" class="form-control" id="address">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡1（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt1">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡2（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="cardDiv2">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡3（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt3">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡4（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="cardDiv3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡5（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt5">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stuNo">卡6（卡号）</label>
+                                    <input type="text" class="form-control cardClass" id="cardNoIpt6">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row text-center" id="addCardBtnDiv">
+                            <button class="btn btn-default btn-sm" style="margin-left:47.8%;" onclick="addCardDiv();"><i class="fa fa-plus"></i></button>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary float-right" onclick="addOrModifyStu();">保存</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
+        <div class="modal fade" id="importModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">批量导入</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>班级</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <select class="form-control select2" style="width: 100%;" id="importClassSelect">
+                                        <option value="0" selected="selected">请选择</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fileIpt">Excel文件</label>
+                                    <input type="file" class="form-control" id="fileIpt">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="emampleDiv">
+                            <div class="col-12">
+                                <h5>导入格式示例：</h5>
+                                <img src="~/Images/Stu_Ipt_Example.jpg" />
+                            </div>
+                        </div>
+                        <div class="row margin-top-10 text-center">
+                            <div class="col-12" id="importResDiv">
+                               
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary float-right" id="doImportBtn" onclick="doImport();">导入</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h4 class="box-title">学生列表</h4>
+                    <div class="box-header-actions pull-right">
+                        <div style="float:left;">
+                            <select class="select2 form-control float-right" style="border-radius:5px;" id="searchClassSelect">
+                                <option value="0" selected="selected">全部班级</option>
+                            </select>
+                        </div>
+                        <div class="pull-right">
+                            <div class="lookup lookup-sm lookup-right">
+                                <input class="form-control" type="text" name="queryIpt" id="queryIpt" autocomplete="off" placeholder="输入姓名查询">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                    <div class="table-responsive">
+                        <table class="table table-hover text-center">
+                            <thead>
+                                <tr>
+                                    @*<th>选择</th>*@
+                                    <th>姓名</th>
+                                    <th>学号/座号</th>
+                                    <th>班级</th>
+                                    <th>家长手机</th>
+                                    <th>性别</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="objListTable">
+                                @*<tr>
+                                        <td><input type="checkbox" id="1" class="filled-in" checked /><label for="1" class="text-middle"></label></td>
+                                    </tr>*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+</section>
+
+<script>
+    //全局变量
+    var glbEntity;
+    var glbStuList;
+    var glbClassList;
+    var glbNameQuery = "";
+    var glbClassQuery = 0;
+    var glbCardDivCount = 1;
+
+
+    $("#stuManageLi").parent().parent().addClass("active");
+    $("#stuManageLi").addClass("active");
+
+    //生日
+    var date = new Date();
+    var initDate = (date.getFullYear() - 3) + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    $('#birthday').datetimepicker({
+        language: 'cn',
+        format: 'yyyy-mm-dd',
+        initialDate: initDate,
+        weekStart: 1,
+        todayBtn: 0,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        maxView: 3,
+        forceParse: 1
+    });
+
+
+    //添加卡div
+    function addCardDiv() {
+        glbCardDivCount += 1;
+        if (glbCardDivCount > 3) {
+            return;
+        }
+            
+        $("#cardDiv" + (glbCardDivCount-1)).show();
+        $("#cardDiv" + glbCardDivCount).show();
+        if (glbCardDivCount == 3) {
+            $("#addCardBtnDiv").hide();
+        }
+    }
+    //新增学生按钮
+    $("#addNewBtn").click(function () {
+        //新建清除
+        $(".modal-title").html("新增学生");
+        $("#stuName").val("");
+        $("#phoneNo").val("");
+        $("#sexSelect").val(0);
+        $("#classSelect").val(0);
+        $("#stuNo").val("");
+        $("#birthday").val("");
+        $("#address").val("");
+        $("#cardNoIpt1").val("");
+        $("#cardNoIpt2").val("");
+        $("#cardNoIpt3").val("");
+        $("#cardNoIpt4").val("");
+        $("#cardNoIpt5").val("");
+        $("#cardNoIpt6").val("");
+
+        $("#addCardBtnDiv").show();
+        glbCardDivCount = 1;
+        for (var i = glbCardDivCount + 1; i < 4; i++) {
+            $("#cardDiv" + i).hide();
+        }
+        if (glbCardDivCount >= 3) {
+            $("#addCardBtnDiv").hide();
+        }
+    })
+
+    //打开批量模态框
+    $('#importModal').on('show.bs.modal', function (e) {
+        $("#emampleDiv").show();
+        $("#fileIpt").val("");
+        $("#importResDiv").empty();
+    })
+    //开始批量导入
+    function doImport() {
+        var importClassId = $("#importClassSelect").val();
+        var filePath = $("#fileIpt").val();
+        if (importClassId <= 0 || filePath.length <= 0) {
+            swal({ title: "", text: "请选择班级或文件", type: "error", timer: 2000, showConfirmButton: false });
+            return;
+        }
+        //添加动画
+        $("#emampleDiv").hide();
+        $("#importResDiv").html('<i class="fa fa-spinner fa-pulse fa-2x"></i>');
+
+        var fd = new FormData();
+        var file = document.getElementById("fileIpt").files[0]
+        fd.append("classId", importClassId);
+        fd.append("file", file);
+        //提交
+        $("#fileIpt").val("");
+        $.ajax({
+            url: "/SchoolRelated/Student/ImportStus", //用于文件上传的服务器端请求地址
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                $("#importResDiv").empty();
+                if (result.code == 1) {
+                    //swal({ title: "", text: "导入成功", type: "success", timer: 700, showConfirmButton: false });
+                    $("#importResDiv").html(result.content);
+                    getStuInfo(glbNameQuery, glbClassQuery);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning" });
+                }
+            },
+            error: function () {//服务器响应失败处理函数
+                $("#importResDiv").empty();
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        });
+    }
+
+
+    //获取要修改的实体
+    function modifyStu(stuId) {
+        glbCardDivCount = 1;
+        for (var i = glbCardDivCount+1; i < 4; i++) {
+            $("#cardDiv" + i).hide();
+        }
+        $.ajax({
+            url: "/SchoolRelated/Student/GetStuById",
+            type: "GET",
+            data: {
+                "ID": stuId,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    glbEntity = JSON.parse(result.content);
+                    $("#stuName").val(glbEntity.Student.StuName);
+                    $("#phoneNo").val(glbEntity.Student.Phone);
+                    $("#sexSelect").val(glbEntity.Student.Sex);
+                    $("#classSelect").val(glbEntity.Student.ClassId);
+                    $("#stuNo").val(glbEntity.Student.StuNo);
+                    if (glbEntity.Student.Birthday!=null&&glbEntity.Student.Birthday.length > 10)
+                        $("#birthday").val(glbEntity.Student.Birthday.substring(0, 10));
+                    $("#address").val(glbEntity.Student.Address);
+
+                    //cards
+                    for (var i = 0; i < 6; i++) {
+                        if (glbEntity.Cards[i] != null && glbEntity.Cards[i].length > 0) {
+                            $("#cardNoIpt" + (i + 1)).val(glbEntity.Cards[i]);
+                            $("#cardNoIpt" + (i + 1)).attr("readonly", true);
+                        }
+                        else {
+                            $("#cardNoIpt" + (i + 1)).val("");
+                            $("#cardNoIpt" + (i + 1)).attr("readonly", false);
+                        }
+                    }
+                    glbCardDivCount = parseInt(glbEntity.Cards.length / 2 + 0.5);
+                    $("#cardDiv" + (glbCardDivCount - 1)).show();
+                    $("#cardDiv" + glbCardDivCount).show();
+                  
+
+                    $(".modal-title").html("修改学生");
+                    $("#stuModal").modal();
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning"});
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //执行添加或修改
+    function addOrModifyStu() {
+        var stuName = $.trim($("#stuName").val());
+        var phoneNo = $.trim($("#phoneNo").val());
+        var sexSelect = $.trim($("#sexSelect").val());
+        var classSelect = $.trim($("#classSelect").val()); stuNo
+        var stuNo = $.trim($("#stuNo").val());
+        var birthday = $.trim($("#birthday").val());
+        var address = $.trim($("#address").val());
+
+        var cardNo = new Array(6); 
+         cardNo[0] = $.trim($("#cardNoIpt1").val());
+         cardNo[1] = $.trim($("#cardNoIpt2").val());
+         cardNo[2] = $.trim($("#cardNoIpt3").val());
+         cardNo[3] = $.trim($("#cardNoIpt4").val());
+         cardNo[4] = $.trim($("#cardNoIpt5").val());
+         cardNo[5] = $.trim($("#cardNoIpt6").val());
+
+        if (stuName.length <= 0 || phoneNo.length != 11 || classSelect <= 0 || sexSelect <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        var isCardOk = true;
+        for (var i = 0; i < 6; i++) {
+            if (cardNo[i].length > 3 && (/^\d+$/).test(cardNo[i]) == false || cardNo[i].length > 0 && cardNo[i].length<4) {
+                isCardOk = false;
+                break;
+            }
+        }
+        if (!isCardOk) {
+            swal({ title: "", text: "卡号必须为4位以上数字", timer: 1000, showConfirmButton: false });
+            return;
+        }
+        //关闭modal
+        $("#stuModal").modal('hide');
+        //清除表单
+        $("#stuName").val("");
+        $("#phoneNo").val("");
+        $("#sexSelect").val(0);
+        $("#classSelect").val(0);
+        $("#stuNo").val("");
+        $("#birthday").val("");
+        $("#address").val("");
+        $("#cardNoIpt1").val("");
+        $("#cardNoIpt2").val("");
+        $("#cardNoIpt3").val("");
+        $("#cardNoIpt4").val("");
+        $("#cardNoIpt5").val("");
+        $("#cardNoIpt6").val("");
+
+        var stuObj = {
+            StuName: stuName,
+            Phone: phoneNo,
+            Sex: sexSelect,
+            ClassId: classSelect,
+            StuNo: stuNo,
+            Birthday: birthday,
+            Address: address,
+        }
+        var cards = [];
+        for (var i = 0; i < 6; i++) {
+            if (cardNo[i].length > 0) {
+                cards.push(cardNo[i]);
+            }
+        }
+        var obj = {
+            Student: stuObj,
+            Cards: cards
+        }
+
+        var otype = 1;
+        if ($(".modal-title").html().indexOf('修改') >= 0) {
+            otype = 2;
+            glbEntity.Student.StuName = stuName;
+            glbEntity.Student.Phone = phoneNo;
+            glbEntity.Student.Sex = sexSelect;
+            glbEntity.Student.ClassId = classSelect;
+            glbEntity.Student.StuNo = stuNo;
+            glbEntity.Student.Birthday = birthday;
+            glbEntity.Student.Address = address;
+            
+            glbEntity.Cards = cards;
+            obj = glbEntity
+        }
+        $.ajax({
+            url: "/SchoolRelated/Student/AddOrModifyStu",
+            type: "POST",
+            data: {
+                "type": otype,
+                "entity": JSON.stringify(obj),
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getStuInfo(glbNameQuery, glbClassQuery);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+        $(".modal-title").html("新增学生");
+    }
+    //删除个体
+    function delStu(id) {
+        swal({
+            title: "确定要删除吗？",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/SchoolRelated/Student/DelStuById",
+                type: "GET",
+                data: { "id": id },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        getStuInfo(glbNameQuery, glbClassQuery);
+                    }
+                    else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                        window.location.href = result.split(',')[1];
+                    }
+                    else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                        swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                    }
+                    else {
+                        swal({ title: "", text: result.errMsg });
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        });
+    }
+
+    //刷新
+    $("#refresh").click(function () {
+        getStuInfo("",0);
+    })
+
+    //使能搜索事件
+    $("#queryIpt").bind("input propertychange", function () {
+        glbNameQuery = $("#queryIpt").val();
+        getStuInfo(glbNameQuery, glbClassQuery);
+    })
+    $("#searchClassSelect").bind("change", function () {
+        glbClassQuery = $("#searchClassSelect").val();
+       
+        getStuInfo(glbNameQuery, glbClassQuery);
+    })
+
+    //获取所有学生数据
+    getStuInfo("",0);
+    function getStuInfo(nqy,cqy) {
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/SchoolRelated/Student/GetStuInfo",
+            type: "GET",
+            data: {
+                "nameQuery": nqy,
+                "classQuery": cqy,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    var jsonRes = JSON.parse(result.content);
+                    glbStuList = jsonRes.Stus;
+                    glbClassList = jsonRes.Classes;
+                    if (glbClassQuery == 0)
+                        renderClassSelect(glbClassList);
+                    renderStus(glbStuList);
+                    //$("#objListTable").html(result.content);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({
+                        title: "",
+                        text: "您还未建班级，是否前往班级管理页面？",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnConfirm: true
+                    }, function () {
+                        //window.location.href = '/SchoolRelated/Class';
+                        $("li").removeClass('active');
+                        GoToPage('',"/SchoolRelated/Class");
+                    })
+
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    var sexEnum = {
+        1: "男", 2: "女",
+    }
+    var classEnum = {
+        0: "",
+        null: ""
+    }
+    //渲染班级Select
+    function renderClassSelect(list) {
+        if (list.length > 0) {
+            $("#classSelect").empty();
+            $("#searchClassSelect").empty(); 
+            $("#importClassSelect").empty(); 
+            $("#classSelect").append('<option value="0" selected="selected">请选择</option>');
+            $("#searchClassSelect").append('<option value="0" selected="selected">全部班级</option>');
+            $("#importClassSelect").append('<option value="0" selected="selected">请选择</option>');
+            for (var i = 0; i < list.length; i++) {
+                var key = list[i].ID;
+                var val = list[i].ClassName;
+                classEnum[key] = val;
+                $("#classSelect").append('<option value="' + key + '">' + val + '</option>');
+                $("#searchClassSelect").append('<option value="' + key + '">' + val + '</option>');
+                $("#importClassSelect").append('<option value="' + key + '">' + val + '</option>');
+            }
+        }
+        else {
+            swal({ title: "", text: "您还没添加班级，请先添加", type: "warning", });
+            return;
+        }
+    }
+    //渲染学生列表
+    function renderStus(list) {
+        var sb = '';
+        $("#itemCount").html("学生数：" + list.length); searchClassSelect
+        if (list.length <= 0) {
+            sb = "<tr><td colspan='6'>未找到数据</td></tr>";
+            $("#objListTable").html(sb);
+            return;
+        }
+        //遍历
+        for (var i = 0; i < list.length; i++) {
+            sb += '<tr><td>' + list[i].StuName + '</td>';
+            sb += '<td>' + list[i].StuNo + '</td>';
+            sb += '<td>' + classEnum[list[i].ClassId] + '</td>';
+            sb += '<td>' + list[i].Phone + '</td>';
+            sb += '<td>' + sexEnum[list[i].Sex] + '</td>';
+            sb += '<td><span class="span-as-btn" onclick="modifyStu(' + list[i].ID + ')">修改</span>' +
+                '<span class="span-as-btn" onclick="delStu(' + list[i].ID + ')">删除</span>' +
+                '<span class="span-as-btn" onclick="openStuDetailPage(' + list[i].ID + ')">详情</span></td></tr>';
+            //sb += '<td><button class="btn btn-primary btn-xs" stuId=' + list[i].ID + '" onclick="modifyStu(' + list[i].ID + ')"><i class="fa fa-pencil"></i></button>' +
+            //    '<button class="btn btn-danger btn-xs" stuId=' + list[i].ID + '" onclick="delStu(' + list[i].ID + ')"><i class="fa fa-trash"></i></button>' +
+            //    '<button class="btn btn-info btn-xs" stuId=' + list[i].ID + '" onclick="openStuDetailPage(' + list[i].ID + ')">详情</button></td></tr>';
+
+        }
+        $("#objListTable").html(sb);
+    }
+
+    //打开学生详情页
+    function openStuDetailPage(stuId) {
+        //GoToPage("", "/SchoolRelated/Student/StuDetail?stuId=" + stuId);
+        window.location.href = "/SchoolRelated/Student/StuDetail?stuId=" + stuId;
+    }
+
+</script>

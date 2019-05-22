@@ -1,0 +1,360 @@
+﻿@{
+    ViewBag.Title = "Index_AlbumDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--viewer.js-->
+<link href="https://cdn.bootcss.com/viewerjs/1.3.3/viewer.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/viewerjs/1.3.3/viewer.min.js"></script>
+<style>
+    #photoDiv {
+        display: flex;
+        justify-content:center;
+    }
+    #photoDiv .box {
+        margin: 5px;
+        /*min-width: 360px;
+        max-width: 23%;*/
+        width:390px;
+        height:280px;
+    }
+    #photoDiv .box .box-body {
+        text-align:center;
+        vertical-align:middle;
+        padding:1px;
+        cursor:pointer;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    #photoDiv .box .box-body img {
+       
+        object-fit: cover;
+        /*min-width: 360px;
+        max-width: 23%;*/
+         width:390px;
+         height:245px;
+    }
+    #photoDiv .box .box-body:hover{
+        opacity:0.7;
+    }
+    #photoDiv .box .box-footer {
+        padding: 0.5rem 1.25rem;
+    }
+
+    #photoDiv .box .fa-trash {
+        font-size: 18px;
+        float: right;
+        cursor: pointer;
+    }
+</style>
+
+<section class="content-header">
+    <h1>
+        成长档案-相册详情&ensp;@*<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item"><a href="#">成长档案</a></li>
+        <li class="breadcrumb-item active"><a href="#">相册详情</a></li>
+    </ol>
+</section>
+<section class="content" id="mainDiv">
+    <div class="row">
+        <div class="box-body" style="padding:0 0 15px 0!important;">
+            <div style="display:flex;flex:1;">
+                <h5 id="albumTitle">相册名：xx &emsp;  照片数：xx&ensp;张 &emsp;  类型：xx  &emsp;  创建日期：xx</h5>
+            </div>
+            <div style="display:flex;">
+                <button class="btn btn-success btn-white btn-sm float-right" data-toggle="modal" data-target="#uploadPhotoModal" id="addAlbumBtn">上传照片</button>
+            </div>
+            <!--上传照片Modal-->
+            <div class="modal fade" id="uploadPhotoModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">上传照片</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 avatar-upload">
+                                    <input class="avatar-src" name="avatar_src" type="hidden">
+                                    <input class="avatar-data" name="avatar_data" type="hidden">
+                                    @*<label for="photoIpt" style="line-height: 35px;">图片上传</label>*@
+                                    <button class="btn btn-danger btn-sm" type="button" onclick="$('#photoIpt').click();">选择照片文件</button>
+                                    <span>(可多选，图片大小不超过2M)</span> &ensp;&emsp;
+                                    <span class="span-as-btn" id="clearFiles">清除</span>
+                                    <div style="margin:5px 1px;word-break: break-all;word-wrap: break-word;"><b class="text-bold" id="photoName">未选择文件</b></div>
+                                    <input class="avatar-input" style="display:none;" id="photoIpt" multiple="multiple" accept=".jpg,.png" name="photoIpt" type="file">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="">
+                                        @*<span>照片描述</span>*@
+                                        <input type="text" class="form-control" id="photoDescribeIpt" placeholder="照片描述，20个字符以内">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <span style="margin-left:30%;display:none;" id="waitingTxt">正在上传...</span>
+                            <button type="button" class="btn btn-primary float-right" onclick="doUploadPhoto();">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="photoDiv" style="width:100%;">
+        <div class="box">
+            <div class="box-body">
+                <img data-original="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg" src="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg">
+            </div>
+            <div class="box-footer">
+                <b>2019-05-10&ensp;欧洲之旅</b>
+                <i class="fa fa-trash"></i>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-body">
+                <img data-original="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg" src="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg">
+            </div>
+            <div class="box-footer">
+                <b>2019-05-10&ensp;欧洲之旅</b>
+                <i class="fa fa-trash"></i>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-body">
+                <img data-original="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg" src="http://212.64.49.60:8080/1//Photos//2//2_20190514150725013.jpg">
+            </div>
+            <div class="box-footer">
+                <b>2019-05-10&ensp;欧洲之旅</b>
+                <i class="fa fa-trash"></i>
+            </div>
+        </div>
+    </div>
+    <div class="row page-break-uty">
+        <div style="width:100%;text-align:center;">
+            第<span>{{pageIndex}}</span> 页，共<span>{{totalPage}}</span>页
+            &emsp;&emsp; &emsp;&emsp;
+            <span class="span-as-btn" id="previousBtn">上一页</span>
+            &emsp;&emsp;
+            <span class="bg-info">{{pageIndex}}</span>
+            &emsp;&emsp;
+            <span class="span-as-btn" id="nextBtn">下一页</span>
+        </div>
+    </div>
+</section>
+
+<script>
+    //变量
+    var glbPageIndex = 1;
+    var glbTotalPage = 1;
+    var glbAlbumId=@ViewBag.AlbumId;
+    //初始化
+    $("#photoAlbumLi").parent().parent().addClass("active");
+    $("#photoAlbumLi").addClass("active");
+    function changeDiv() {
+        var h = $(window).height();
+        $("#photoDiv").css("min-height", h - 300);
+        //$("#photoDiv .box").css("height", $("#photoDiv .box").width()*0.7);
+        //$("#photoDiv .box .box-body").css("height", $("#photoDiv .box").width()*0.7-35);
+        //$("#photoDiv .box .box-body img").css("height", $("#photoDiv .box").width()*0.7-35);
+    }
+    window.onload = function () {
+        changeDiv();
+    }
+    window.onresize = function () {
+        changeDiv();
+    }
+
+    //vue初始化
+    var mainVue = new Vue({
+        el: "#mainDiv",
+        data: function () {
+            return {
+                pageIndex: glbPageIndex,
+                totalPage: glbTotalPage
+            };
+        },
+        methods: {
+            chagePageData: function () {
+                this.pageIndex = glbPageIndex;
+                this.totalPage = glbTotalPage;
+                $("#previousBtn").css("cursor", "pointer");
+                $("#nextBtn").css("cursor", "pointer");
+                if (glbPageIndex == 1) {
+                    $("#previousBtn").css("cursor", "not-allowed");
+                }
+                if (glbPageIndex >= glbTotalPage) {
+                    $("#nextBtn").css("cursor", "not-allowed");
+                }
+            }
+        }
+    });
+    $("#previousBtn").click(function(){
+        glbPageIndex--;
+        getPhotosInfo();
+    })
+    $("#nextBtn").click(function(){
+        glbPageIndex++;
+        getPhotosInfo();
+    })
+    mainVue.chagePageData();
+
+    ////viewer.js
+    //new Viewer(document.getElementById('photoDiv'), {
+    //    url: 'data-original'
+    //});
+
+    //打开上传模态框
+    $("#addAlbumBtn").click(function(){
+        $("#waitingTxt").hide();
+        $("#photoIpt").val("");
+        $("#photoName").html("未选择文件");
+        $("#photoDescribeIpt").val("");
+    })
+    var files;
+    //照片上传相关，做个下简易的验证  大小
+    $('#photoIpt').on('change', function (e) {
+        var filemaxsize = 1024 * 2;//2M
+        var target = $(e.target);
+        var nameStr="";
+        files = target[0].files;
+        for (var i = 0; i < files.length; i++) {
+            if (files[i].size/1024 > filemaxsize) {
+                $("#photoIpt").val("");
+                swal({ title: "", text: "第"+(i+1)+"张图片过大，请重新选择!", type: "error", timer: 2000, showConfirmButton: false });
+                return false;
+            }
+            nameStr += files[i].name+",";
+        }
+        $("#photoName").html(nameStr);
+    });
+    function doUploadPhoto() {
+        if (files.length <= 0) {
+            swal({ title: "", text: "请选择图片文件", type: "warning" });
+            return;
+        }
+        
+        var describe = $("#photoDescribeIpt").val();
+        var fd = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fd.append("file"+i, files[i]);
+        }
+        fd.append("describe", describe);
+        fd.append("aId", glbAlbumId);
+
+        $("#waitingTxt").show();
+
+        $.ajax({
+            url: "/GrowthRelated/Album/UploadPhoto", //用于文件上传的服务器端请求地址
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            async: true,
+            success: function (result) {
+                if (result.code == 1) {
+                    $("#uploadPhotoModal").modal("hide");
+                    swal({ title: "", text: result.content, type: "success" });
+                    getPhotosInfo();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function (e) {//服务器响应失败处理函数
+                if(e.responseText!=undefined&&e.responseText.indexOf("超过了")){
+                    $("#photoIpt").val("");
+                    $("#photoName").html("未选择文件");
+                    swal({ title: "", text: "文件总大小超过单次上传限制(10M)", type: "warning"});
+                }
+                else
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        });
+    }
+    //清除选择的文件
+    $("#clearFiles").click(function(){
+        $("#photoIpt").val("");
+        $("#photoName").html("未选择文件");
+    })
+
+    //删除照片
+    function delPhoto(prId){
+        swal({
+            title: "确定要删除吗？",
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/GrowthRelated/Album/DelPhoto",
+                type: "POST",
+                data: {
+                    "prId": prId,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "删除成功", type: "success", timer: 700, showConfirmButton: false });
+                        getPhotosInfo();
+                       
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+    }
+
+    //获取页面信息
+    getPhotosInfo();
+    function getPhotosInfo() {
+        $("#photoDiv").empty();
+        $.ajax({
+            url: "/GrowthRelated/Album/getPhotosInfo",
+            type: "GET",
+            data: {
+                "aId": glbAlbumId,
+                "pageIndex": glbPageIndex
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    var json = result.content;
+                    $("#albumTitle").html(json.albumTitle);
+                    $("#photoDiv").html(json.photoStr);
+                    glbTotalPage = json.totalPage;
+                    mainVue.chagePageData();//修改页面数据
+                    changeDiv();
+
+                    //viewer.js
+                    new Viewer(document.getElementById('photoDiv'), {
+                        url: 'data-original'
+                    });
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>
+

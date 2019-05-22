@@ -1,0 +1,471 @@
+﻿
+@{
+    ViewBag.Title = "相册";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #albumsDiv {
+        display: flex;
+        padding-top: 10px;
+    }
+    .album-summary {
+        margin: 5px;
+        padding: 2px;
+        min-width: 180px;
+        max-width: 12%;
+        min-height: 180px;
+    }
+    .album-summary > .box-body {
+        padding:0;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .album-summary .box-body:hover {
+       opacity:0.7;
+    }
+    .album-summary .box-body div {
+        color:black;
+        position:absolute;
+        font-size:18px;
+        right:10px;
+        bottom:45px;
+        z-index:999;
+    }
+     .album-summary .box-body div b{
+         padding:0 5px;
+         background:rgba(255, 255, 255, 0.6);
+     }
+    .album-summary .box-footer {
+        padding: 0.5rem 1.25rem;
+    }
+    .album-summary .fa-trash{
+        font-size:18px;
+        float:right;
+        cursor:pointer;
+    }
+
+  
+</style>
+
+<section class="content-header">
+    <h1>
+        成长档案--相册&ensp;@*<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item"><a href="#">成长档案</a></li>
+        <li class="breadcrumb-item active"><a href="#">相册</a></li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div style="margin:5px;display:flex; width:100%;">
+            <div style="display:flex;flex:1;">
+                <div class="">
+                    <select class="select2 form-control" style="border-radius:5px;" id="searchClassSelect">
+                        <option value="0" selected="selected">全部</option>
+                        <option value="-1">校相册</option>
+                        <option value="-2">班相册</option>
+                    </select>
+                </div>
+                <div class="lookup lookup-sm lookup-right" style="margin-left:1px;">
+                    <input class="form-control" type="text" name="queryIpt" id="queryIpt" autocomplete="off" placeholder="输入名称查询">
+                </div>
+            </div>
+            <div style="display:flex;">
+                <button class="btn btn-success btn-white btn-sm float-right" data-toggle="modal" data-target="#addAlbumModal" id="addAlbumBtn">手动新建相册</button>
+                <button class="btn btn-success btn-white btn-sm float-right" data-toggle="modal" data-target="#AutoAddAlbumModal" id="autoAddAlbumBtn">自动生成相册</button>
+            </div>
+        </div>
+    </div>
+    <!--手动新建相册Modal-->
+    <div class="modal fade" id="addAlbumModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">手动新建相册</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="fileIpt">相册名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                <input type="text" class="form-control" id="albumNameIpt" placeholder="2~10个字符">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>相册类型</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                <select class="form-control select2" style="width: 100%;" id="typeSelect">
+                                    <option value="0" selected="selected">请选择</option>
+                                    <option value="1">学校相册</option>
+                                    <option value="2">班级相册</option>
+                                    <option value="3">个人相册</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>班级(<small class="text-danger">班级相册必须选定班级</small>)</label>
+                                <select class="form-control select2 classSelect" style="width: 100%;" id="classSelect">
+                                    <option value="0" selected="selected">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>学生(<small class="text-danger">个人相册必须选定学生</small>)</label>
+                                <select class="form-control select2" style="width: 100%;" id="stuSelect">
+                                    <option value="0" selected="selected">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary float-right" onclick="doAddAlbum();">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--自动生成学生相册Modal-->
+    <div class="modal fade" id="AutoAddAlbumModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">自动生成班级所有学生相册</h4><small>(已有相册除外)</small>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>班级</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                <select class="form-control select2 classSelect" style="width: 100%;" id="autoClassSelect">
+                                    <option value="0" selected="selected">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        @*<div class="col-md-6">
+                            <div class="form-group">
+                                <label>无相册的学生</label>
+                                <select class="form-control select2" style="width: 100%;" id="stuSelect">
+                                    <option value="0" selected="selected">请选择</option>
+                                </select>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary float-right"  onclick="doAutoAddAlbum();">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="albumsDiv">
+        <!--<div class="box album-summary">
+        <div class="box-body" style="background-image:url(/Images/null_Album.jpg)">
+            <div><b>0</b></div>
+        </div>
+        <div class="box-footer">
+            <b>张三</b>
+            <i class="fa fa-trash"></i>
+        </div>
+    </div>-->
+    </div>
+
+    <div class="row page-break-uty">
+        <div style="width:100%;text-align:center;">
+            第<span>{{pageIndex}}</span> 页，共<span>{{totalPage}}</span>页
+            &emsp;&emsp; &emsp;&emsp;
+            <span class="span-as-btn" id="previousBtn">上一页</span>
+            &emsp;&emsp;
+            <span class="bg-info">{{pageIndex}}</span>
+            &emsp;&emsp;
+            <span class="span-as-btn" id="nextBtn">下一页</span>
+        </div>
+    </div>
+</section>
+<script>
+    //变量
+    var glbNameQuery = '';
+    var glbClassQuery = 0;
+    var glbPageIndex = 1;
+    var glbTotalPage = 1;
+
+    //初始化
+    $("#photoAlbumLi").parent().parent().addClass("active");
+    $("#photoAlbumLi").addClass("active");
+    function changeDiv() {
+        var h = $(window).height();
+        $("#albumsDiv").css("min-height", h - 300);
+        $(".album-summary").css("height", $(".album-summary").width());
+    }
+    window.onload = function () {
+        changeDiv();
+    }
+    window.onresize = function () {
+        changeDiv();
+    }
+    //vue初始化
+     var pageVue= new Vue({
+         el: ".page-break-uty",
+        data: function () {
+            return {
+                pageIndex: glbPageIndex,
+                totalPage: glbTotalPage
+            };
+        },
+        methods: {
+            chagePageData: function () {
+                this.pageIndex = glbPageIndex;
+                this.totalPage = glbTotalPage;
+                $("#previousBtn").css("cursor", "pointer");
+                $("#nextBtn").css("cursor", "pointer");
+                if (glbPageIndex == 1) {
+                    $("#previousBtn").css("cursor", "not-allowed");
+                }
+                if (glbPageIndex >= glbTotalPage) {
+                    $("#nextBtn").css("cursor", "not-allowed");
+                }
+            }
+        }
+    });
+
+    //使能搜索事件
+    $("#queryIpt").bind("input propertychange", function () {
+        glbNameQuery = $("#queryIpt").val();
+        getAlbumsInfo();
+    })
+    $("#searchClassSelect").bind("change", function () {
+        glbClassQuery = $("#searchClassSelect").val();
+        getAlbumsInfo();
+    })
+    //跳转到相册详情页
+    function goToAlbum(aId) {
+        window.location.href = "/GrowthRelated/Album/AlbumDetail?aId=" + aId;
+    }
+
+    //自动生成相册相关
+    $("#autoAddAlbumBtn").click(function () {
+        $("#autoClassSelect").val(0); //清除
+    })
+    //执行自动生成
+    function doAutoAddAlbum() {
+        var classId = $("#autoClassSelect").val();
+        if (classId == 0) {
+            swal({ title: "", text: "请选择班级", type: "warning", });
+            return;
+        }
+        $("#AutoAddAlbumModal").modal("hide");
+        $.ajax({
+            url: "/GrowthRelated/Album/AutoAddStuAlbum",
+            type: "POST",
+            data: {
+                "classId": classId,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "生成成功", type: "success", timer: 700, showConfirmButton: false });
+                    getAlbumsInfo();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //删除相册
+    function delAlbum(aId) {
+        swal({
+            title: "确定要删除相册吗？",
+            text: "删除会清空内部所有照片",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/GrowthRelated/Album/DelAlbum",
+                type: "POST",
+                data: {
+                    "aId": aId,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "删除成功", type: "success", timer: 700, showConfirmButton: false });
+                        getAlbumsInfo();
+                        
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+    }
+
+    //手动新建相册
+    $("#addAlbumBtn").click(function () {
+         //获取未建相册的学生
+         $.ajax({
+             url: "/GrowthRelated/Album/GetNoAlbumStus",
+             type: "GET",
+             success: function (result) {
+                 if (result.code == 1) {
+                     var stus = result.content;
+                     renderStuSelect(stus);
+                 }
+                 else {
+                     //handleAjaxErr(result);
+                 }
+             },
+         })
+         //清除
+         $("#albumNameIpt").val("");
+         $("#typeSelect").val(0);
+         $("#classSelect").val(0);
+         $("#stuSelect").val(0);
+
+    })
+    //执行添加
+    function doAddAlbum() {
+        var name = $("#albumNameIpt").val();
+        var type = $("#typeSelect").val();
+        var classId = $("#classSelect").val();
+        var stuId = $("#stuSelect").val();
+
+        if (type == 1) {
+            $("#classSelect").val(0);
+            $("#stuSelect").val(0);
+        }
+        if (name.length < 2 || name.length > 10 || type <= 0) {
+            swal({ title: "", text: "名称或类型有误", type: "warning", });
+            return;
+        }
+        if (type == 2 && classId <= 0 || type == 3 && stuId<=0) {
+            swal({ title: "", text: "类型与所选内容不匹配", type: "warning", });
+            return;
+        }
+        $("#addAlbumModal").modal("hide");
+        $.ajax({
+            url: "/GrowthRelated/Album/AddSingleAlbum",
+            type: "POST",
+            data: {
+                "name": name,
+                "type": type,
+                "classId": classId,
+                "stuId": stuId
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "添加成功", type: "success", timer: 700, showConfirmButton: false });
+                    getAlbumsInfo();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+
+    }
+     //渲染学生Select
+     function renderStuSelect(list) {
+         if (list.length > 0) {
+             $("#stuSelect").empty();
+             $("#stuSelect").append('<option value="0" selected="selected">请选择</option>');
+             for (var i = 0; i < list.length; i++) {
+                 var key = list[i].ID;
+                 var val = list[i].StuName;
+                 $("#stuSelect").append('<option value="' + key + '">' + val + '</option>');
+             }
+         }
+     }
+
+    getAlbumsInfo();
+    //获取已有相册信息
+    function getAlbumsInfo() {
+        $("#albumsDiv").empty();
+        $.ajax({
+            url: "/GrowthRelated/Album/GetAlbumsInfo",
+            type: "GET",
+            data: {
+                "nQuery": glbNameQuery,
+                "cQuery": glbClassQuery,
+                "pageIndex": glbPageIndex
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    var json = result.content;
+                    if (glbClassQuery == 0)
+                        renderClassSelect(json.classes);
+                    $("#albumsDiv").html(json.albumStr);
+                    glbTotalPage = json.totalPage;
+                    pageVue.chagePageData();//修改页面数据
+                    changeDiv();
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+   
+    //渲染班级Select
+    function renderClassSelect(list) {
+        if (list.length > 0) {
+            $("#classSelect").empty();
+            $("#searchClassSelect").empty();
+            $("#autoClassSelect").empty();
+            $("#classSelect").append('<option value="0" selected="selected">请选择</option>');
+            $("#searchClassSelect").append('<option value="0" selected="selected">全部</option>');
+            $("#searchClassSelect").append('<option value="-1" >校相册</option>');
+            $("#searchClassSelect").append('<option value="-2" >班相册</option>');
+            $("#autoClassSelect").append('<option value="0" selected="selected">请选择</option>');
+            for (var i = 0; i < list.length; i++) {
+                var key = list[i].ID;
+                var val = list[i].ClassName;
+                //classEnum[key] = val;
+                $("#classSelect").append('<option value="' + key + '">' + val + '</option>');
+                $("#searchClassSelect").append('<option value="' + key + '">' + val + '</option>');
+                $("#autoClassSelect").append('<option value="' + key + '">' + val + '</option>');
+            }
+        }
+        else {
+            swal({ title: "", text: "您还没添加班级，请先添加", type: "warning", });
+            return;
+        }
+    }
+</script>
+

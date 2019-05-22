@@ -1,0 +1,19 @@
+﻿
+.span-as-btn {
+    cursor: pointer;
+    color: #007bff;
+    margin: 5px 8px 5px 0;
+    font-size: 13px;
+}
+.hidden-uty{
+    display:none;
+}
+/*分页*/
+.page-break-uty {
+    margin-top:15px;
+    text-align: center;
+    padding-bottom: 6px;
+}
+.page-break-uty span {
+    padding: 0 8px;
+}

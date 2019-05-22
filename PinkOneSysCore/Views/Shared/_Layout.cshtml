@@ -1,74 +1,443 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="zh-cn">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PinkOneSysCore</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    @*<link rel="icon" href="../../../images/favicon.ico">*@
 
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <title>Pink One 校园管理系统</title>
+
+    <!-- Fab Admin skins -->
+    <link href="~/template-bootstrap/css/skins/_all-skins.css" rel="stylesheet" />
+    
+    <!-- Bootstrap 4.0-->
+    @*<link href="~/template-bootstrap/css/bootstrap.min.css" rel="stylesheet" />*@
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  
+    <!-- Bootstrap extend-->
+    @*<link href="~/template-bootstrap/css/bootstrap-extend.css" rel="stylesheet" />*@
+    <link href="~/template-bootstrap/css/bootstrap-extend.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    @*<link href="~/template-bootstrap/css/master_style.css" rel="stylesheet" />*@
+    <link href="~/template-bootstrap/css/master_style.min.css" rel="stylesheet" />
+
+  
+    <!-- Sweet-Alert  -->
+    @*<link href="~/template-bootstrap/css/sweetalert.css" rel="stylesheet" />*@
+    <link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+    <!--datetimepicker-->
+    <link href="~/utility/datatimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <!--select2-->
+    @*<link href="~/template-bootstrap/css/select2.min.css" rel="stylesheet" />*@
+    <link href="https://cdn.bootcss.com/select2/4.0.7-rc.0/css/select2.css" rel="stylesheet">
+    <!--datatables-->
+    @*<link href="~/template-bootstrap/css/datatables.min.css" rel="stylesheet" />*@
+    <link href="https://cdn.bootcss.com/datatables/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- sunshyon style -->
+    <link href="~/utility/utility.css?v=@DateTime.Now" rel="stylesheet" />
+   
+   
+    <!-- jQuery 3 -->
+    @*<script src="~/template-bootstrap/js/jquery.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Fab Admin for demo purposes -->
+    <script src="~/template-bootstrap/js/demo.js" charset="utf-8"></script>
+    <!--popper.js-->
+    <script src="~/template-bootstrap/js/popper.min.js"></script>
+    <!-- Bootstrap 4.0-->
+    @*<script src="~/template-bootstrap/js/bootstrap.min.js" charset="utf-8"></script>*@
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- SlimScroll -->
+    <script src="~/template-bootstrap/js/jquery.slimscroll.min.js" charset="utf-8"></script>
+   
+    <!-- Sweet-Alert  -->
+    @*<script src="~/template-bootstrap/js/sweetalert.min.js"></script>*@
+    <script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <!--datetimepicker-->
+    <script src="~/utility/datatimepicker/js/bootstrap-datetimepicker.js"></script>
+    <!--select2-->
+    @*<script src="~/template-bootstrap/js/select2.min.js"></script>*@
+    <script src="https://cdn.bootcss.com/select2/4.0.7-rc.0/js/select2.min.js"></script>
+    <!--datatables-->
+    @*<script src="~/template-bootstrap/js/datatables.min.js"></script>*@
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <!-- Fab Admin App -->
+    <script src="~/template-bootstrap/js/template.js" charset="utf-8"></script>
+   
+    <!--Vue-->
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <!--MyJs-->
+    <script src="~/utility/utility.js?v=@DateTime.Now"></script>
+    <style>
+        .table thead tr th {
+            font-weight: bold;
+            padding: 6px !important;
+        }
+
+        .table tr td {
+            vertical-align: middle !important;
+            font-size: 10px !important;
+            padding: 5px !important;
+        }
+
+        button {
+            margin-left: 2px;
+        }
+
+        .modal-dialog {
+            top: 15%;
+        }
+
+        input::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+            color: rgba(156, 156, 156, 0.6) !important;
+        }
+        #refresh{
+            display:none;
+        }
+    </style>
+   
 </head>
-<body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">PinkOneSysCore</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+
+<body  class="hold-transition skin-pink sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <!-- mini logo -->
+                <b class="logo-mini">
+                    <img style="margin-top:-4px;" src="~/Images/pinkone_logo.png" />
+                    <span>Pink One</span>
+                </b>
+                <!-- logo-->
+                @*<span class="logo-lg">
+                    <img src="../../../images/logo-light-text.png" alt="logo" class="light-logo">
+                    <img src="../../../images/logo-dark-text.png" alt="logo" class="dark-logo">
+                </span>*@
+            </a>
+            <!-- 头部导航栏 -->
+            <nav class="navbar navbar-static-top">
+                <!--翻转按钮-->
+                <div>
+                    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                        <span class="sr-only">Toggle navigation</span>
+                    </a>
+                </div>
+                <!--刷新动画-->
+                <div class="text-center" id="refreshDiv" style="z-index:10;float:right;display:none;">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw "></i>
+                </div>
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        @*<li class="search-box">
+                            <a class="nav-link hidden-sm-down" href="javascript:void(0)"><i class="mdi mdi-magnify"></i></a>
+                            <form class="app-search" style="display: none;">
+                                <input type="text" class="form-control" placeholder="Search &amp; enter"> <a class="srh-btn"><i class="ti-close"></i></a>
+                            </form>
+                        </li>*@
+                        
+                        <!-- Notifications -->
+                        <li class="dropdown notifications-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="mdi mdi-bell"></i>
+                            </a>
+                            <ul class="dropdown-menu scale-up">
+                                <li class="header">暂无通知</li>
+                                @*<li>
+                                    <ul class="menu inner-content-div">
+                                        <li>
+                                            <a href="#">
+                                                <i class="fa fa-users text-aqua"></i> Curabitur id eros quis nunc suscipit blandit.
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                <i class="fa fa-warning text-yellow"></i> Duis malesuada justo eu sapien elementum, in semper diam posuere.
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="footer"><a href="#">View all</a></li>*@
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar-->
+            <section class="sidebar">
+                <!-- sidebar menu-->
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li class="@*user-profile*@ treeview">
+                        <a href="index.html">
+                            <img id="userAvatar" style="max-height:52px;margin-right:10px;"/>
+                            <span id="usernameSpan">?</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @*<li><a href="javascript:void()"><i class="fa fa-user mr-5"></i>头像 </a></li>*@
+                            <li><a href="#" data-toggle="control-sidebar"><i class="icon ion-tshirt-outline mr-5"></i>皮肤</a></li>
+                            <li><a href="/Login/Logout"><i class="icon ion-power mr-5"></i>退出</a></li>
+                        </ul>
+                    </li>
+                    <li class="header nav-small-cap">常用功能</li>
+                    <li>
+                        <a href="~/Home">
+                            <i class="fa fa-dashboard"></i> <span>校园概览</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="treeview ">
+                        <a href="#">
+                            <i class="fa fa-book"></i>
+                            <span>成长档案</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="photoAlbumLi"><a href="/GrowthRelated/Album"><i class="fa fa-circle-thin"></i>相册</a></li>
+                            <li id="growthRecordLi"><a href="#"><i class="fa fa-circle-thin"></i>成长记录册</a></li>
+                            @*<li id="classManageLi"><a href="#"><i class="fa fa-circle-thin"></i>班级管理</a></li>*@
+                        </ul>
+                    </li>
+                    <li class="treeview ">
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span>人员管理</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="stuManageLi"><a href="/SchoolRelated/Student"><i class="fa fa-circle-thin"></i>学生管理</a></li>
+                            <li id="staffManageLi"><a href="/SchoolRelated/Staff"><i class="fa fa-circle-thin"></i>职员管理</a></li>
+                            <li id="classManageLi"><a href="/SchoolRelated/Class"><i class="fa fa-circle-thin"></i>班级管理</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-id-card-o"></i> <span>考勤相关</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="treeview menu-open">
+                                <a href="#">
+                                    <i class="fa fa-circle-thin"></i>学生考勤
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-right pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display:block;">
+                                    <li id="stuAttNowLi"><a href="/AttendanceRelated/StudentAtt/StuAttNow"><i class="fa fa-circle"></i>实时签到</a></li>
+                                    <li id="stuAttDetailLi"><a href="/AttendanceRelated/StudentAtt/StuAttDetail"><i class="fa fa-circle"></i>考勤明细</a></li>
+                                    <li id="stuAttMouthLi"><a href="/AttendanceRelated/StudentAtt/StuAttMouth"><i class="fa fa-circle"></i>按月统计</a></li>
+                                </ul>
+                            </li>
+                            <li class="treeview menu-open">
+                                <a href="#">
+                                    <i class="fa fa-circle-thin"></i>职员考勤
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-right pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu" style="display:block;">
+                                    <li id="staffAttNowLi"><a href="/AttendanceRelated/StaffAtt/StaffAttNow"><i class="fa fa-circle"></i>实时签到</a></li>
+                                    <li id="staffAttDetailLi"><a href="/AttendanceRelated/StaffAtt/StaffAttDetail"><i class="fa fa-circle"></i>考勤明细</a></li>
+                                    <li id="staffAttMouthLi"><a href="/AttendanceRelated/StaffAtt/StaffAttMouth"><i class="fa fa-circle"></i>按月统计</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#"><i class="fa fa-id-card"></i>卡管理</a></li>
+                            <li>
+                                <a href="#"><i class="fa fa-wrench"></i>考勤设备</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li id="schoolMngLi">
+                        <a href="/SchoolRelated/SchoolManage">
+                            <i class="fa fa-gears"></i> <span>校园设置</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                    </li>
+                    @*<li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-pie-chart"></i>
+                            <span>报表</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu"></ul>
+                    </li>*@
+                    @*<li class="header nav-small-cap">其他</li>*@
+
+                    @*<li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file-text-o"></i>
+                            <span>使用说明</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                           
+                        </ul>
+                    </li>*@
+
+                </ul>
+            </section>
+        </aside>
+        <div id="contentWrapper" class="content-wrapper">
+            
+            <!--各页面主体-->
+            @RenderBody()
+        </div>
+        <footer class="main-footer">
+            <div class="pull-right d-none d-sm-inline-block">
+                <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+                    <li class="nav-item">
+                        @*<a class="nav-link" href="javascript:void(0)">FAQ</a>*@
+                    </li>
+                    <li class="nav-item">
+                        @*<a class="nav-link" href="#">Purchase Now</a>*@
+                    </li>
                 </ul>
             </div>
-        </div>
-    </nav>
-
-    <partial name="_CookieConsentPartial" />
-
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2019 - PinkOneSysCore</p>
+            &copy; 2019 <a>Pink One 陪绮幼教</a> . All Rights Reserved.
         </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-light">
+            <!-- Create the tabs -->
+            <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+                @*<li class="nav-item"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+                <li class="nav-item"><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-cog fa-spin"></i></a></li>*@
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- Home tab content -->
+                <div class="tab-pane" id="control-sidebar-home-tab">
+                    
+
+                </div>
+               
+            </div>
+        </aside>
+        <!-- /.control-sidebar -->
+        <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+        <div class="control-sidebar-bg"></div>
     </div>
+    <!-- ./wrapper -->
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+    
 
-    @RenderSection("Scripts", required: false)
+    <script>
+        var glbSchool;
+        var glbNoticeArr;
+        //获取用户信息
+        $(function () {
+            $.ajax({
+                url: "/Home/GetUserInfo",
+                type: "GET",
+                success: function (result) {
+                    if (result.code == 1) {
+                        var json=JSON.parse(result.content)
+                        glbSchool = json.school;
+                        glbNoticeArr = json.notices;
+                        $("#usernameSpan").html(glbSchool.SchoolName);
+                        if (glbSchool.AvatarPic != null && glbSchool.AvatarPic.length > 10) {
+                            $("#userAvatar").attr("src", glbSchool.AvatarPic);
+                        }
+                        if (glbNoticeArr != undefined && glbNoticeArr.length > 0) {
+                            $("#noticeDiv").show();
+                            $("#noticeDiv").children().children().eq(1).empty();
+                            for (var i = 1; i <= glbNoticeArr.length; i++) {
+                                var str = "<p>" + i + "、" + glbNoticeArr.Message+"</p>"
+                                $("#noticeDiv").children().children().eq(1).append(str);
+                            }
+                        }
+                        
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+
+        //管理皮肤
+        document.onclick = function (e) {
+            if (e.srcElement!=undefined&&e.srcElement.tagName!=undefined&& e.srcElement.tagName != "A") {
+                $(".control-sidebar").removeClass("control-sidebar-open");
+            }
+        };
+
+        /*
+        function GoToPage(li, urlStr) {
+            $("#refreshDiv").fadeIn(100);
+            $("li").removeClass('active');
+            $(li).addClass('active');
+
+            $("#contentWrapper").load(urlStr, function () {
+                $("#refreshDiv").hide();
+            });
+        }
+        //学生管理
+        $("#stuManageLi").click(function () {
+            GoToPage(this,"/SchoolRelated/Student");
+        })
+        //职员管理
+        $("#staffManageLi").click(function () {
+            GoToPage(this,"/SchoolRelated/Staff");
+        })
+        //班级管理
+        $("#classManageLi").click(function () {
+            GoToPage(this,"/SchoolRelated/Class");
+        })
+        //学生考勤实时统计
+        $("#stuAttNowLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttNow");
+        })
+         //学生考勤详情
+        $("#stuAttDetailLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttDetail");
+        })
+         //学生考勤按月统计
+        $("#stuAttMouthLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttMouth");
+        })
+        //职员考勤实时统计
+        $("#staffAttNowLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttNow");
+        })
+        //职员考勤详情
+        $("#staffAttDetailLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttDetail");
+        })
+        //职员考勤按月统计
+        $("#staffAttMouthLi").click(function () {
+            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttMouth");
+        })
+        //学校管理页面
+        $("#schoolMngLi").click(function () {
+            GoToPage(this, "/SchoolRelated/SchoolManage");
+        })
+        */
+    </script>
+
+
 </body>
 </html>

@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "考勤详情";
+    Layout = "~/Areas/WxRelated/Views/Shared/Wx_Layout.cshtml";
+}
+@model ModelAttDetail
+<div class="container">
+    <div class="content">
+        <div class="row font-size-18">
+            <div class="">
+                <h5>学校：@Model.SchoolName</h5>
+                <h5 class="text-success">姓名：@Model.StuName</h5>
+                <h5>班级：@Model.ClassName</h5>
+                <h5>时间：@Model.Time.ToString("yyyy-MM-dd HH:mm")</h5>
+                <h5>类型：@Model.AttType</h5>
+                <h5>方式：@Model.AttWay</h5>
+            </div>
+        </div>
+        <div class="row margin text-center">
+            @if (Model.AttImgPath != null && Model.AttImgPath.Length > 10)
+            {
+                @*<img class="img-code" id="attImg" style="width:100%;" src="/WxRelated/Center/GetStuAttImg?attId=@Model.AttId" />*@
+                <img class="img-code" id="attImg" style="width:100%; max-height:400px;" src="@Model.AttImgPath" />
+            }
+        </div>
+    </div>
+</div>
+    <script>
+
+    </script>

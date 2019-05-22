@@ -1,0 +1,221 @@
+﻿@{ Layout = "~/Views/Shared/_Layout.cshtml";}
+
+    <section class="content-header">
+        <h1>
+            职员考勤<small>(<b>实时</b>)</small>&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+            <li class="breadcrumb-item"><a href="#">考勤相关</a></li>
+            <li class="breadcrumb-item active"><a href="#">职员考勤</a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h4 class="box-title">实时签到</h4>
+                        <div class="box-header-actions pull-right">
+                            <div class="pull-right">
+                                <div class="lookup lookup-sm lookup-right">
+                                    <input class="form-control" type="text" name="queryIpt" id="queryIpt" autocomplete="off" placeholder="输入姓名查询">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body no-padding">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>姓名</th>
+                                        <th>类型</th>
+                                        <th>在校</th>
+                                        <th>离校</th>
+                                        <th>未签到</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="objListTable">
+                                    <tr><td colspan='5'>未找到数据</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </section>
+<div class="modal fade bs-e " id="staffAttModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">新增职员考勤记录</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>进出类型</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <select class="form-control select2" style="width: 100%;" id="attTypeSelect">
+                                <option value="0" selected="selected">请选择</option>
+                                <option value="1">签入</option>
+                                <option value="2">签出</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="attTime">时间</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <input type="text" class="form-control" id="attTime">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="attRemark">备注</label>
+                            <input type="text" class="form-control" id="attRemark">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary float-right" onclick="confirmAddStaffAtt();">保存</button>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<script>
+    var glbNameQuery = "";
+    var glbStaffId = 0;
+
+    //初始化
+    $("#staffAttNowLi").addClass('active');
+    $("#staffAttNowLi").parent().parent().addClass("menu-open");
+    $("#staffAttNowLi").parent().parent().parent().show();
+    $("#staffAttNowLi").parent().parent().parent().parent().addClass("menu-open");
+    //考勤时间
+    var date = new Date();
+    var initDate = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() +" "+date.getHours()+":"+date.getMinutes();
+    $('#attTime').datetimepicker({
+        language: 'cn',
+        format: 'yyyy-mm-dd hh:ii',
+        initialDate: initDate,
+        weekStart: 1,
+        todayBtn: 0,
+        monthsShort: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 1,
+        minView: 1,
+        maxView: 3,
+        forceParse: 1
+    });
+
+    //查看签到详情
+    function staffAttDetail(staffName) {
+        GoToPage("", "/AttendanceRelated/StaffAtt/StaffAttDetailByName?staffName=" + staffName);
+    }
+    
+    //手动添加考勤记录
+    function addStaffAtt(staffId) {
+        glbStaffId = staffId;
+        $("#attTime").val(initDate);
+        $("#staffAttModal").modal("show");
+    }
+    function confirmAddStaffAtt() {
+        var attType = $("#attTypeSelect").val();
+        var attTime = $("#attTime").val();
+        var attRemark = $("#attRemark").val();
+        if (attType <= 0 || attTime.length <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        $("#staffAttModal").modal("hide");
+
+        $.ajax({
+            url: "/AttendanceRelated/StaffAtt/AddStaffAttManually",
+            type: "POST",
+            data: {
+                'staffId':glbStaffId,
+                'attType': attType,
+                'attTime': attTime,
+                'attRemark': attRemark
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    getStaffAttNow();
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //刷新
+    $("#refresh").click(function () {
+        getStaffAttNow();
+    })
+
+    //使能搜索事件
+    $("#queryIpt").bind("input propertychange", function () {
+        glbNameQuery = $("#queryIpt").val();
+        getStaffAttNow();
+    })
+
+
+    getStaffAttNow();
+    //获取所有统计数据
+    function getStaffAttNow() {
+        $("#objListTable").empty();
+        $.ajax({
+            url: "/AttendanceRelated/StaffAtt/GetStaffAttNow",
+            type: "GET",
+            data:{
+                'nameQuery': glbNameQuery,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    //var jsonRes = JSON.parse(result.content);
+                    
+                    $("#objListTable").html(result.content);
+                }
+                else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+                    window.location.href = result.split(',')[1];
+                }
+                else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+                    swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+                }
+                else {
+                    swal({ title: "", text: result.errMsg, type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>

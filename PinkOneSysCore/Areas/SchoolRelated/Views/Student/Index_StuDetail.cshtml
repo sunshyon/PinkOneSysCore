@@ -1,0 +1,162 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ModelStuDetail
+
+<section class="content-header">
+    <h1>
+        学生详情@*&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@
+        <button class="btn btn-default btn-sm" id="backBtn"><i class="fa fa-reply fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item"><a href="#">人员管理</a></li>
+        <li class="breadcrumb-item active"><a href="#">学生详情</a></li>
+    </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="box box-body">
+            <h2 class="text-pink">@Model.Stu.StuName</h2>
+            <div class="box box-body">
+                <div class="row">
+                    <div class="col-9">
+                        <p>班级：@{var clsName = Model.Class == null ? "未分班" : Model.Class.ClassName;}@clsName</p>
+                        <p>性别：@{var sex = @Model.Stu.Sex == (byte)1 ? "男生" : "女生"; } @sex</p>
+                        <p>联系电话：@Model.Stu.Phone</p>
+                        <p>家庭住址：@Model.Stu.Address</p>
+                        <p>生日：@{var birthday = Model.Stu.Birthday == null ?"": Model.Stu.Birthday.ToString().Substring(0, 10);}@birthday</p>
+                    </div>
+                    <div class="col-3 text-center">
+                        @{
+                            var avatarSrc = "/Images/default_boy.png";
+                            if (Model.Stu.Sex == 2)
+                            {
+                                avatarSrc = "/Images/default_girl.png";
+                            }
+                            if (Model.Stu.AvatarPic != null && Model.Stu.AvatarPic.Length > 6)
+                            {
+                                avatarSrc = Model.Stu.AvatarPic;
+                            }
+
+                        }
+                        <img id="stuAvaImg" src="@avatarSrc" />
+                    </div>
+                </div>
+            </div>
+            <h4>家长</h4>
+            <div class="margin">
+                @{
+                    var ps = Model.Parents;
+                    for (var i = 0; i < ps.Count; i += 2)
+                    {
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="box box-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <img src="@ps[i].AvatarPic" />
+                                        </div>
+                                        <div class="col-8">
+                                            <h6>姓名：@ps[i].Name</h6>
+                                            <h6>关系：@{var rela1 = (RelationType)@ps[i].RelationType;}@rela1.ToString()</h6>
+                                            <h6>手机：@ps[i].Phone</h6>
+                                            <h6>备注：@ps[i].Remark</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (ps.Count % 2 == 0)
+                            {
+                            <div class="col-sm-6">
+                                <div class="box box-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <img width="95" style="width:95px;" src="@ps[i+1].AvatarPic" />
+                                        </div>
+                                        <div class="col-8">
+                                            <h6>姓名：@ps[i + 1].Name</h6>
+                                            <h6>关系：@{var rela2 = (RelationType)@ps[i + 1].RelationType;}@rela2.ToString()</h6>
+                                            <h6>手机：@ps[i + 1].Phone</h6>
+                                            <h6>备注：@ps[i + 1].Remark</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            }
+                            </div>
+                    }
+                }
+            </div>
+            <h4>门禁卡</h4>
+            <div class="margin">
+                @{
+                    var cs = Model.Cards;
+                    for (var i = 0; i < cs.Count; i += 3)
+                    {
+                        <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-4">
+                                                <i class="fa fa-id-card fa-4x"></i>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-8">
+                                                <div>卡号：@cs[i].CardNo</div>
+                                                <div>状态：@{var status1 = (CardStatus)@cs[i].Status;}@status1</div>
+                                                <div>操作：<span class="span-as-btn">挂失</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @if (cs.Count >= 2 && cs.Count % 3 == 2)
+                            {
+                                <div class="col-sm-4">
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-4">
+                                                <i class="fa fa-id-card fa-4x"></i>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-8">
+                                                <div>卡号：@cs[i + 1].CardNo</div>
+                                                <div>状态：@{var status2 = (CardStatus)@cs[i + 1].Status;}@status1</div>
+                                                <div>操作：<span class="span-as-btn">挂失</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                                @if (cs.Count >= 3 && cs.Count % 3 == 0)
+                                {
+                                <div class="col-sm-4">
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-xs-4">
+                                                <i class="fa fa-id-card fa-4x"></i>
+                                            </div>
+                                            <div class="col-sm-8 col-xs-8">
+                                                <div>卡号：@cs[i + 2].CardNo</div>
+                                                <div>状态：@{var status3 = (CardStatus)@cs[i + 2].Status;}@status1</div>
+                                                <div>操作：<span class="span-as-btn">挂失</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                }
+                                </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+   
+</section>
+
+<script>
+    //返回
+    $("#backBtn").click(function () {
+        //GoToPage("", "/SchoolRelated/Student");
+        window.location.href = "/SchoolRelated/Student";
+    })
+</script>

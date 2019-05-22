@@ -1,0 +1,530 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model  ModelSchoolManage
+
+@*<style>
+        .avatar-wrapper {
+            height: 364px;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,.25);
+            background-color: #fcfcfc;
+            overflow: hidden;
+        }
+
+        .avatar-preview {
+            float: left;
+            margin-top: 15px;
+
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fff;
+            overflow: hidden;
+            height: 184px;
+            width: 184px;
+            margin-top: 15px;
+        }
+
+        .avatar-preview:hover {
+            border-color: #ccf;
+            box-shadow: 0 0 5px rgba(0,0,0,.15);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+        }
+    </style>*@
+
+<link href="~/wwwroot/utility/jq_cropper/cropper.min.css" rel="stylesheet" />
+<link href="~/wwwroot/utility/jq_cropper/cut_main.css" rel="stylesheet" />
+
+
+<section class="content-header">
+    <h1>
+        校园设置&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item active"><a href="#">校园设置</a></li>
+    </ol>
+</section>
+
+<section class="content font-size-20">
+    <div class="box pad">
+        <div class="box-title">
+            <div class="row">
+                <div class="col-12">
+                    <label>校园相关</label>
+                </div>
+            </div>
+        </div>
+        <!--修改校园modal-->
+        <div class="modal fade" id="schoolModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <label>修改校园信息</label>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="schoolName">校园名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                    <input type="text" class="form-control" id="schoolName" placeholder="名称至少3个字符" value="@Model.School.SchoolName">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="schoolName">联系方式</label>
+                                    <input type="text" class="form-control" id="schoolContact" value="@Model.School.ContactInfo">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="schoolAddress">地址</label>
+                                    <input type="text" class="form-control" id="schoolAddress" value='@Model.School.Address' autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="schoolpwd1">登陆账号</label>
+                                        <input type="text" class="form-control" id="schoolpwd" readonly autocomplete="off" value="@Model.School.Username">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="schoolpwd1">旧密码</label>
+                                        <input type="password" class="form-control" id="schoolpwd" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="schoolpwd1">新密码</label>
+                                    <input type="password" class="form-control" id="schoolpwd1" placeholder="至少6个字符" autocomplete="new-password">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="schoolpwd2">再次输入</label>
+                                    <input type="text" class="form-control" id="schoolpwd2" placeholder="至少6个字符" autocomplete="new-password" onfocus="this.type='password'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary float-right" onclick="modifySchoolInfo();">保存</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+
+        <div class="row font-size-16">
+            <div class="col-9">
+                <div class="row margin">
+                    学校名：@Model.School.SchoolName
+                </div>
+                <div class="row margin">
+                    账号：@Model.School.Username
+                </div>
+                <div class="row margin">
+                    联系方式：@Model.School.ContactInfo
+                </div>
+                <div class="row margin">
+                    地址：@Model.School.Address
+                </div>
+                <div class="row margin">
+                    <button class="btn btn-primary btn-sm no-border pull-right" onclick="verifyPwd();">修改</button>
+                </div>
+            </div>
+            <div class="col-3" style="padding-left:30px;">
+                <div style="height:100px;width:100px;border:1px solid #dddddd; margin-bottom:10px;">
+                    <img src="@Model.School.AvatarPic" id="user-avatarPic" />
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#avatar-modal">
+                        修改头像
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--裁剪上传头像-->
+        <div class="container" id="crop-avatar">
+            @*<div class="avatar-view" title="Change the avatar">
+                <img src="img/picture.jpg" alt="Avatar">
+            </div>*@
+            <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <form class="avatar-form">
+                            <div class="modal-header">
+                                <button class="close" data-dismiss="modal" type="button">&times;</button>
+                                <h4 class="modal-title" id="avatar-modal-label">上传图片</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="avatar-body">
+                                    <!-- Upload image and data -->
+                                    <div class="avatar-upload">
+                                        <input class="avatar-src" name="avatar_src" type="hidden">
+                                        <input class="avatar-data" name="avatar_data" type="hidden">
+                                        <label for="avatarIpt" style="line-height: 35px;">图片上传</label>
+                                        <button class="btn btn-danger btn-sm" type="button" onclick="$('#avatarIpt').click();">请选择图片</button>
+                                        <span id="avatar-name"></span>
+                                        <input class="avatar-input" style="display:none;" id="avatarIpt" name="avatar_file" type="file">
+                                    </div>
+
+                                    <!-- Crop and preview -->
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="avatar-wrapper"></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @*<div class="avatar-preview preview-lg"></div>*@
+                                            <div class="avatar-preview preview-md" id="imageHead"></div>
+                                            <div class="avatar-preview preview-sm"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row avatar-btns">
+                                            <div class="col-md-4">
+                                                    <button class="btn btn-danger fa fa-undo btn-sm" data-method="rotate" data-option="-90" type="button" title=""> 向左旋转</button>
+                                                    <button class="btn btn-danger fa fa-repeat btn-sm" data-method="rotate" data-option="90" type="button" title=""> 向右旋转</button>
+                                            </div>
+                                            <div class="col-md-5" style="text-align: right;">
+                                                @*<button class="btn btn-danger btn-sm fa fa-arrows" data-method="setDragMode" data-option="move" type="button" title="移动">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="$().cropper(&quot;setDragMode&quot;, &quot;move&quot;)">
+                                                    </span>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm fa fa-search-plus" data-method="zoom" data-option="0.1" title="放大图片">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="$().cropper(&quot;zoom&quot;, 0.1)">
+                                                        <!--<span class="fa fa-search-plus"></span>-->
+                                                    </span>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm fa fa-search-minus" data-method="zoom" data-option="-0.1" title="缩小图片">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="$().cropper(&quot;zoom&quot;, -0.1)">
+                                                        <!--<span class="fa fa-search-minus"></span>-->
+                                                    </span>
+                                                </button>*@
+                                                <button type="button" class="btn btn-danger btn-sm fa fa-refresh" data-method="reset" title="重置图片">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="$().cropper(&quot;reset&quot;)" aria-describedby="tooltip866214"></span>
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-danger btn-sm avatar-save fa fa-save" style="margin-left:20px;" type="button" data-dismiss="modal"> &emsp;保&emsp;存</button>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+
+    <div class="box pad">
+        <div class="box-title">
+            <div class="row">
+                <div class="col-12">
+                    <label>角色管理</label>
+                    <button class="btn btn-info btn-sm no-border pull-right" data-toggle="modal" data-target="#roleModal">新增角色</button>
+                </div>
+            </div>
+            <div class="modal fade" id="roleModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label>新增角色</label>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="roleName">角色名</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                        <input type="text" class="form-control" id="roleName">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="roleLevel">权限等级</label>
+                                        <select class="form-control select2" style="width: 100%;" id="roleLevel">
+                                            <option value="0">请选择</option>
+                                            <option value="1">园长级</option>
+                                            <option value="2">管理员级</option>
+                                            <option value="3">教师级</option>
+                                            <option value="4">后勤级</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary float-right" data-dismiss="modal" onclick="addStaffRole();">保存</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+        </div>
+        <div class="font-size-16">
+            <div class="row margin">
+                已有角色：
+                @{
+                    foreach (var item in @Model.StaffRoles)
+                    {
+                        if (item.SchoolId == 0)
+                        {
+                            <span>&ensp;@item.RoleName &ensp;</span>
+                        }
+                        else
+                        {
+                            <span title="点击删除" style="cursor:pointer;" onclick="delStaffRole(@item.ID)" class="text-light-blue">&ensp;@item.RoleName &ensp;</span>
+                        }
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script src="~/wwwroot/utility/jq_cropper/html2canvas.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="~/wwwroot/utility/jq_cropper/cropper.js"></script>
+<script src="~/wwwroot/utility/jq_cropper/cut_main.js"></script>
+<script>
+    var oldPwd='@Model.School.Password';
+    $("#schoolMngLi").addClass("active");
+
+    //刷新
+    $("#refresh").click(function () {
+        GoToPage("", "/SchoolRelated/SchoolManage");
+    })
+
+    //头像处理
+    //做个下简易的验证  大小 格式
+    $('#avatarIpt').on('change', function (e) {
+        var filemaxsize = 1024 * 1;//1M
+        var target = $(e.target);
+        var Size = target[0].files[0].size / 1024;
+        if (Size > filemaxsize) {
+            swal({ title: "", text: "图片过大，请重新选择!", type: "error", timer: 2000, showConfirmButton: false });
+            $(".avatar-wrapper").childre().remove;
+            return false;
+        }
+        if (!this.files[0].type.match(/image.*/)) {
+            swal({ title: "", text: "请选择正确的图片!", type: "error", timer: 2000, showConfirmButton: false });
+        } else {
+            var filename = document.querySelector("#avatar-name");
+            var texts = document.querySelector("#avatarIpt").value;
+            var teststr = texts; //你这里的路径写错了
+            testend = teststr.match(/[^\\]+\.[^\(]+/i); //直接完整文件名的
+            filename.innerHTML = testend;
+        }
+
+    });
+    $(".avatar-save").on("click", function () {
+        var img_lg = document.getElementById('imageHead');
+        // 截图小的显示框内的内容
+        html2canvas(img_lg, {
+            allowTaint: true,
+            taintTest: false,
+            onrendered: function (canvas) {
+                canvas.id = "mycanvas";
+                //生成base64图片数据
+                var dataUrl = canvas.toDataURL("image/jpeg");
+                var newImg = document.createElement("img");
+                newImg.src = dataUrl;
+               
+                uploadImgData(dataUrl)
+            }
+        });
+    })
+    //上传图形数据
+    function uploadImgData(data) {
+        $.ajax({
+            url: "/SchoolRelated/SchoolManage/UploadImgData",
+            type: "POST",
+            data: {
+                "avatarPic": data,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    $("#user-avatarPic").attr("src", data)
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+
+    //验证密码
+    function verifyPwd() {
+        swal({
+            title: "输入密码",
+            text: '',
+            type: "input",
+            showCancelButton: true,
+            confirmButtonText: "是",
+            cancelButtonText: "否",
+            closeOnConfirm: false,
+            //closeOnCancel:false
+        }, function (inputVal) {
+            if (inputVal === false) {
+                return false;
+            }
+            if (inputVal === "") {
+                swal.showInputError("内容不能为空！");
+                return false;
+            }
+            if (inputVal != oldPwd) {
+                swal.showInputError("密码错误！");
+                return false;
+            }
+            swal.close();
+            //打开模态框
+            $("#schoolModal").modal("show");
+        })
+    }
+    //修改校园信息
+    function modifySchoolInfo() {
+        var schoolName = $.trim($("#schoolName").val());
+        var contact = $.trim($("#schoolContact").val());
+        var address = $.trim($("#schoolAddress").val());
+        var newPwd1 = $.trim($("#schoolpwd1").val());
+        var newPwd2 = $.trim($("#schoolpwd2").val());
+        var newPwd = "";
+        if (schoolName.length < 3 || newPwd1.length > 0 && newPwd1.length < 6 || newPwd2.length > 0 &&newPwd2.length<6) {
+            swal({ title: "", text: "学校名或密码有误", type: "error", timer: 2000, showConfirmButton: false });
+            return;
+        }
+        if ((newPwd1.length > 5 || newPwd2.length > 5) && newPwd1 != newPwd2) {
+            swal({ title: "", text: "两次输入不同", type: "error", timer: 2000, showConfirmButton: false });
+            return;
+        }
+        if ((newPwd1.length > 5 || newPwd2.length > 5) && newPwd1 == newPwd2) {
+            newPwd = newPwd1;
+        }
+
+        $("#schoolModal").modal('hide');
+        //提交
+        $.ajax({
+            url: "/SchoolRelated/SchoolManage/ModifySchoolInfo",
+            type: "POST",
+            data: {
+                "schoolName": schoolName,
+                "contact": contact,
+                "address": address,
+                "newPwd": newPwd,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    setTimeout(function () {
+                        GoToPage("", "/SchoolRelated/SchoolManage");
+                    }, 1000);
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+
+    //添加角色
+    function addStaffRole() {
+        var roleName = $.trim($("#roleName").val());
+        var roleLevel = $("#roleLevel").val();
+        if (roleName.length <= 0 || roleLevel <= 0) {
+            swal({ title: "", text: "您的输入或选择有误，请重试", type: "warning", timer: 2200, showConfirmButton: false });
+            return;
+        }
+        $.ajax({
+            url: "/SchoolRelated/SchoolManage/AddStaffRole",
+            type: "POST",
+            data: {
+                "roleName": roleName,
+                "roleLevel": roleLevel,
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                    setTimeout(function () {
+                        GoToPage("", "/SchoolRelated/SchoolManage");
+                    }, 1000);
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //删除角色
+    function delStaffRole(id) {
+        swal({
+            title: "",
+            text: '确定删除吗？',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "是",
+            cancelButtonText: "否",
+            closeOnConfirm: false,
+            //closeOnCancel:false
+        },function(){
+            $.ajax({
+                url: "/SchoolRelated/SchoolManage/DelStaffRole",
+                type: "POST",
+                data: {
+                    "id": id,
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
+                        setTimeout(function () {
+                            GoToPage("", "/SchoolRelated/SchoolManage");
+                        }, 1000);
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        })
+       
+    }
+</script>
+
+
