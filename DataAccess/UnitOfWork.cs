@@ -11,28 +11,27 @@ namespace DataAccess
     public class UnitOfWork:IUnitOfWork,IDisposable
     {
         private PinkOneMngSysContext _dbContext;
-        private IDictionary<Type, object> repositories;
+        //private IDictionary<Type, object> repositories;
 
-        //public UnitOfWork(string dbName)
-        //{
-        //    _dbContext = new YinTaiDBContext(dbName);
-        //}
         public UnitOfWork()
         {
-            //这里传入连接配置，解决了：由于EF（OnConfiguring）未配置结束，而调用dbContext产生的bug
-            var dco = new DbContextOptionsBuilder<PinkOneMngSysContext>().UseSqlServer("Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;").Options;
+            //这里传入连接配置，解决了：由于EF（OnConfiguring）未配置结束，而调用dbContext产生的bug （必须再配合ajax同步执行）
+            var dco = new DbContextOptionsBuilder<PinkOneMngSysContext>().UseSqlServer("Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;MultipleActiveResultSets=true;").Options;
+#if RELEASE
+            dco = new DbContextOptionsBuilder<PinkOneMngSysContext>().UseSqlServer("Server=.;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;MultipleActiveResultSets=true;").Options;
+#endif
             _dbContext = new PinkOneMngSysContext(dco);
-            repositories = new Dictionary<Type, object>();
+            //repositories = new Dictionary<Type, object>();
         }
         public IRepository<T> Repository<T>() where T : class, new()
         {
-            if (repositories.Keys.Contains(typeof(T)) == true)
-            {
-                var rpo = repositories[typeof(T)] as IRepository<T>;
-                return repositories[typeof(T)] as IRepository<T>;
-            }
+            //if (repositories.Keys.Contains(typeof(T)) == true)
+            //{
+            //    var rpo = repositories[typeof(T)] as IRepository<T>;
+            //    return repositories[typeof(T)] as IRepository<T>;
+            //}
             IRepository<T> objRepo = new Repository<T>(_dbContext);
-            repositories.Add(typeof(T), objRepo);
+            //repositories.Add(typeof(T), objRepo);
             return objRepo;
         }
         public int Commit()

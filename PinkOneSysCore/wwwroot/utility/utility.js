@@ -1,9 +1,13 @@
-﻿//处理Ajax返回错误
+﻿
+var glbSchoolName = "";
+var glbImgStr = "";
+
+//处理Ajax返回错误
 function handleAjaxErr(result) {
-    if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
+    if (typeof(result) === 'string' && result.indexOf("redirectUrl") >= 0) {
         window.location.href = result.split(',')[1];
     }
-    else if (typeof (result) == 'string' && result.indexOf("错误") >= 0) {
+    else if (typeof(result) === 'string' && result.indexOf("错误") >= 0) {
         swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
     }
     else {

@@ -91,7 +91,7 @@ namespace DataService
         public string GetUserInfo(int id)
         {
 
-            var school = mlUser.School;//UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == id && x.Status == (byte)SchoolStatus.正常).Result.FirstOrDefault();
+            var school = UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == id && x.Status == (byte)SchoolStatus.正常).Result.FirstOrDefault();
             var notices = UnitOfWork.Repository<SYS_Notice>().GetEntitiesAsync(x => x.SchoolId == id && (x.Type == (byte)NoticeType.陪绮发给学校 || x.Type == (byte)NoticeType.学校内部)
              && x.StartDate <= DateTime.Now && x.EndDate >= DateTime.Now).Result.OrderBy(x => x.NoticeLevel).ToList();
 

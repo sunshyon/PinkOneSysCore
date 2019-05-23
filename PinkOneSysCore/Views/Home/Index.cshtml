@@ -14,7 +14,7 @@
 <section class="content-header">
     <h1>
         校园概览&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>
-        &ensp;<button class="btn btn-default btn-sm" id="testBtn">Test</button>
+        @*&ensp;<button class="btn btn-default btn-sm" id="testBtn">Test</button>*@
     </h1>
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
@@ -177,10 +177,10 @@
         })
     })
 
-    setTimeout(function () {
-        getSchoolInfo();
-        getClassesAttNow();
-    }, 500);
+    
+    getSchoolInfo();
+    getClassesAttNow();
+
 
 
     //获取学校概览数据
@@ -212,6 +212,7 @@
         $.ajax({
             url: "/AttendanceRelated/StudentAtt/GetClassesAttNow",
             type: "GET",
+            //async: false,
             success: function (result) {
                 if (result.code == 1) {
                     // var jsonRes = JSON.parse(result.content);

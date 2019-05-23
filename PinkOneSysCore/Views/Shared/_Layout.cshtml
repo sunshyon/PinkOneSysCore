@@ -175,7 +175,7 @@
                     <li class="@*user-profile*@ treeview">
                         <a href="index.html">
                             <img id="userAvatar" style="max-height:52px;margin-right:10px;"/>
-                            <span id="usernameSpan">?</span>
+                            <span id="usernameSpan"></span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-right pull-right"></i>
                             </span>
@@ -348,36 +348,38 @@
         var glbSchool;
         var glbNoticeArr;
         //获取用户信息
-        $(function () {
-            $.ajax({
-                url: "/Home/GetUserInfo",
-                type: "GET",
-                success: function (result) {
-                    if (result.code == 1) {
-                        var json=JSON.parse(result.content)
-                        glbSchool = json.school;
-                        glbNoticeArr = json.notices;
-                        $("#usernameSpan").html(glbSchool.SchoolName);
-                        if (glbSchool.AvatarPic != null && glbSchool.AvatarPic.length > 10) {
-                            $("#userAvatar").attr("src", glbSchool.AvatarPic);
-                        }
-                        if (glbNoticeArr != undefined && glbNoticeArr.length > 0) {
-                            $("#noticeDiv").show();
-                            $("#noticeDiv").children().children().eq(1).empty();
-                            for (var i = 1; i <= glbNoticeArr.length; i++) {
-                                var str = "<p>" + i + "、" + glbNoticeArr.Message+"</p>"
-                                $("#noticeDiv").children().children().eq(1).append(str);
+        if ($("#usernameSpan").html() == "") {
+            $(function () {
+                $.ajax({
+                    url: "/Home/GetUserInfo",
+                    type: "GET",
+                    success: function (result) {
+                        if (result.code == 1) {
+                            var json = JSON.parse(result.content)
+                            glbSchool = json.school;
+                            glbNoticeArr = json.notices;
+                            $("#usernameSpan").html(glbSchool.SchoolName);
+                            if (glbSchool.AvatarPic != null && glbSchool.AvatarPic.length > 10) {
+                                $("#userAvatar").attr("src", glbSchool.AvatarPic);
+                                glbImgStr = glbSchool.AvatarPic;
                             }
-                        }
-                        
-                    }
-                },
-                error: function () {
-                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
-                }
-            })
-        })
+                            if (glbNoticeArr != undefined && glbNoticeArr.length > 0) {
+                                $("#noticeDiv").show();
+                                $("#noticeDiv").children().children().eq(1).empty();
+                                for (var i = 1; i <= glbNoticeArr.length; i++) {
+                                    var str = "<p>" + i + "、" + glbNoticeArr.Message + "</p>"
+                                    $("#noticeDiv").children().children().eq(1).append(str);
+                                }
+                            }
 
+                        }
+                    },
+                    error: function () {
+                        swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                    }
+                })
+            })
+        }
         //管理皮肤
         document.onclick = function (e) {
             if (e.srcElement!=undefined&&e.srcElement.tagName!=undefined&& e.srcElement.tagName != "A") {

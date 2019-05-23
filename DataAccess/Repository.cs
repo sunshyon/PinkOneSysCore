@@ -50,7 +50,7 @@ namespace DataAccess
         /// <param name="whereLambda"></param>
         public async Task<List<T>> GetEntitiesAsync(Expression<Func<T, bool>> whereLambda)
         {
-            var res= await _dbContext.Set<T>().Where(whereLambda).ToListAsync();
+            var res= await _dbContext.Set<T>().AsNoTracking().Where(whereLambda).ToListAsync();
             return res;
         }
         /// <summary>

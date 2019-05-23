@@ -29,5 +29,14 @@ namespace Utility
         {
             return Current.Session.GetString(SesionStr);
         }
+        public static void AddItem(string key,object value)
+        {
+            Current.Items.Add(key, value);
+        }
+        public static object GetItem(string key)
+        {
+            Current.Items.TryGetValue(key, out object value);
+            return value;
+        }
     }
 }

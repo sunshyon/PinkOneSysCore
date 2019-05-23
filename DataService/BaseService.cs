@@ -11,7 +11,6 @@ namespace DataService
 {
     public class BaseService:IBaseService
     {
-        private static IUnitOfWork _unitOfWork;
         public ModelLoginUser mlUser { get; set; }
         public ModelWxSetting mWxSetting = JsonFileProvider.Instance.GetSettings<ModelWxSetting>();
         public ModelJsonRet mjRet { get; set; }
@@ -23,9 +22,14 @@ namespace DataService
         {
             get
             {
+                GC.Collect();
+                //实现一个HttpContext请求管道对应唯一UnitOfWork对象，继而对应唯一DbContext对象,以避免各种DbContext线程安全Bug
+                //由于Http用完即销毁，UnitOfWork、DbContext对象也随之销毁。避免DbContext占用内存
+                IUnitOfWork _unitOfWork = (UnitOfWork)HttpContextCore.GetItem("UnitOfWork");
                 if (_unitOfWork == null)
                 {
                     _unitOfWork = new UnitOfWork();
+                    HttpContextCore.AddItem("UnitOfWork", _unitOfWork);
                 }
                 return _unitOfWork;
             }
@@ -38,12 +42,6 @@ namespace DataService
                 mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.LoginUser));
                 if (mlUser != null)
                     HttpContextCore.SetSession(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
-                else
-                {
-                    GC.Collect();
-                    //最新登录的用户新建UnitOfWork，避免dbContext为单例模式
-                    _unitOfWork = new UnitOfWork();
-                }
             }
             mjRet = new ModelJsonRet
             {
@@ -61,57 +59,49 @@ namespace DataService
                 return null;
             int schoolId = mlUser.School.ID;
 
-            var t= Task.Run(() =>
+
+            switch (entityName)
             {
-                switch (entityName)
-                {
-                    case "school":
+                case "school":
+                    {
+                        res = mlUser.School;
+                        break;
+                    }
+                case "class":
+                    {
+                        List<SYS_Class> list = JsonHelper.JsonToT<List<SYS_Class>>(HttpContextCore.GetSession(ComConst.Session_ClassList));
+                        if (null == list)
                         {
-                            res = mlUser.School;
-                            break;
+                            list = UnitOfWork.Repository<SYS_Class>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == 1).Result.OrderBy(x => x.Grade).ToList();
                         }
-                    case "class":
+                        HttpContextCore.SetSession(ComConst.Session_ClassList, JsonHelper.ToJson(list));
+                        res = (list == null ? new List<SYS_Class>() : list);
+                        break;
+                    }
+                case "stu":
+                    {
+                        List<SYS_Student> list = null;//JsonHelper.JsonToT<List<SYS_Student>>(HttpContextCore.GetSession(ComConst.Session_StuList));
+                        if (null == list)
                         {
-                            List<SYS_Class> list = JsonHelper.JsonToT<List<SYS_Class>>(HttpContextCore.GetSession(ComConst.Session_ClassList));
-                            if (null == list)
-                            {
-                                list = UnitOfWork.Repository<SYS_Class>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == 1).Result.OrderBy(x => x.Grade).ToList();
-                            }
-                            HttpContextCore.SetSession(ComConst.Session_ClassList, JsonHelper.ToJson(list));
-                            res = (list == null ? new List<SYS_Class>() : list);
-                            break;
+                            list = UnitOfWork.Repository<SYS_Student>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StuStatus.正常).Result.OrderBy(x => x.Grade).ThenBy(x => x.ClassId).ToList();
                         }
-                    case "stu":
+                        //CookieSessionHelper.AddSession(ComConst.Session_StuList, JsonHelper.ToJson(list),1);//学生数据量大，不存在session中
+                        res = (list == null ? new List<SYS_Student>() : list);
+                        break;
+                    }
+                case "staff":
+                    {
+                        List<SYS_Staff> list = JsonHelper.JsonToT<List<SYS_Staff>>(HttpContextCore.GetSession(ComConst.Session_StaffList));
+                        if (null == list)
                         {
-                            List<SYS_Student> list = null;//JsonHelper.JsonToT<List<SYS_Student>>(HttpContextCore.GetSession(ComConst.Session_StuList));
-                            if (null == list)
-                            {
-                                list = UnitOfWork.Repository<SYS_Student>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StuStatus.正常).Result.OrderBy(x => x.Grade).ThenBy(x => x.ClassId).ToList();
-                            }
-                            //CookieSessionHelper.AddSession(ComConst.Session_StuList, JsonHelper.ToJson(list),1);//学生数据量大，不存在session中
-                            res = (list == null ? new List<SYS_Student>() : list);
-                            break;
+                            list = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StaffStatus.在职).Result.OrderBy(x => x.RoleLevel).ToList();
                         }
-                    case "staff":
-                        {
-                            List<SYS_Staff> list = JsonHelper.JsonToT<List<SYS_Staff>>(HttpContextCore.GetSession(ComConst.Session_StaffList));
-                            if (null == list)
-                            {
-                                list = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StaffStatus.在职).Result.OrderBy(x => x.RoleLevel).ToList();
-                            }
-                            HttpContextCore.SetSession(ComConst.Session_StaffList, JsonHelper.ToJson(list));
-                            res = (list == null ? new List<SYS_Staff>() : list);
-                            break;
-                        }
-                }
-            });
-            t.Wait();
-            if (t.IsCompleted)
-            {
-                return res;
+                        HttpContextCore.SetSession(ComConst.Session_StaffList, JsonHelper.ToJson(list));
+                        res = (list == null ? new List<SYS_Staff>() : list);
+                        break;
+                    }
             }
-            else
-                return null;
+            return res;
         }
 
         /// <summary>

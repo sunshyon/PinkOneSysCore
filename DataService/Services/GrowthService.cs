@@ -79,7 +79,7 @@ namespace DataService
         
         public ModelJsonRet GetPhotosInfo(long aId,int pageIndex)
         {
-            var pageItemCount = 12;
+            var pageItemCount = 20;
             var album = UnitOfWork.Repository<SYS_Album>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.ID == aId).Result.FirstOrDefault();
             if (album != null)
             {
@@ -103,15 +103,15 @@ namespace DataService
 
 
                 var tipStr = "无照片，请添加";
-                var sb = new StringBuilder("<div style='margin-left:50%;'><h4 class='text-danger'>" + tipStr + "</h4></div>");
+                var sb = new StringBuilder("<div><h4 class='text-danger'>" + tipStr + "</h4></div>");
                 if (photos.Count > 0)
                 {
                     sb = new StringBuilder();
                     foreach (var item in photos)
                     {
-                        var time= ((DateTime)item.CreateTime).ToString("yyyy/MM/dd");
-                        sb.Append("<div class='box'><div class='box-body' style='background-image:url("+item.ImgUrl+")'></div>");
-                        sb.Append("<div class='box-footer'><b>"+ time + "&ensp;"+item.Describe+ "</b><i class='fa fa-trash' onclick='delPhoto(" + item.ID + ")'></i></div></div>");
+                        var time = ((DateTime)item.CreateTime).ToString("yyyy/MM/dd");
+                        sb.Append("<div class='box'><div class='box-body'><img data-original='" + item.ImgUrl + "' src='" + item.ImgUrl + "'></div>");
+                        sb.Append("<div class='box-footer'><b>" + time + "&ensp;" + item.Describe + "</b><i class='fa fa-trash' onclick='delPhoto(" + item.ID + ")'></i></div></div>");
                     }
                 }
                 var json = new

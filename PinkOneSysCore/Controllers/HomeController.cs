@@ -24,7 +24,7 @@ namespace PinkOneSysCore.Controllers
             return View();
         }
         [HttpGet]
-        public ActionResult GetSchoolData()
+        public JsonResult GetSchoolData()
         {
             var res = Service.GetSchoolData();
             if (res.Length > 6)
@@ -47,7 +47,12 @@ namespace PinkOneSysCore.Controllers
         [HttpGet]
         public JsonResult GetUserInfo()
         {
-            var res = Service.GetUserInfo(mlUser.School.ID);
+            var key = "schoolInfo" + mlUser.School.ID;
+            var res = Utility.MemoryCacheHelper.GetCache<string>(key);
+            if (res == null || res == "")
+                res = Service.GetUserInfo(mlUser.School.ID);
+           
+            Utility.MemoryCacheHelper.SetCache(key, res, 5);
             mjResult.code = 1;
             mjResult.content = res;
 
