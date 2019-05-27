@@ -6,11 +6,8 @@ namespace Domain
 {
     public partial class PinkOneMngSysContext : DbContext
     {
-        DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder();
-        
         public PinkOneMngSysContext()
         {
-            
         }
 
         public PinkOneMngSysContext(DbContextOptions<PinkOneMngSysContext> options)
@@ -32,18 +29,21 @@ namespace Domain
         public virtual DbSet<SYS_StaffRole> SYS_StaffRole { get; set; }
         public virtual DbSet<SYS_Student> SYS_Student { get; set; }
         public virtual DbSet<SYS_StudentAttRecord> SYS_StudentAttRecord { get; set; }
-        public virtual DbSet<Wx_Setting> Wx_Setting { get; set; }
+        public virtual DbSet<Wx_PublicInfo> Wx_PublicInfo { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseSqlServer("Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;");
-        //    }
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+
             modelBuilder.Entity<FK_Stu_Parent>(entity =>
             {
                 entity.HasIndex(e => e.SchoolId)
@@ -213,7 +213,9 @@ namespace Domain
 
                 entity.Property(e => e.Phone).HasMaxLength(20);
 
-                entity.Property(e => e.Remark).HasMaxLength(50);
+                entity.Property(e => e.PinkoneAccount).HasMaxLength(20);
+
+                entity.Property(e => e.PinkonePassword).HasMaxLength(20);
 
                 entity.Property(e => e.StaffName).HasMaxLength(10);
 
@@ -292,25 +294,21 @@ namespace Domain
                 entity.Property(e => e.Temperature).HasMaxLength(5);
             });
 
-            modelBuilder.Entity<Wx_Setting>(entity =>
+            modelBuilder.Entity<Wx_PublicInfo>(entity =>
             {
-                entity.Property(e => e.ID)
-                    .HasMaxLength(50)
-                    .ValueGeneratedNever();
-
                 entity.Property(e => e.AppId)
                     .IsRequired()
                     .HasMaxLength(50);
 
                 entity.Property(e => e.AppName)
                     .IsRequired()
-                    .HasMaxLength(50);
+                    .HasMaxLength(20);
 
                 entity.Property(e => e.AppSecret)
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.UpdateTime).HasColumnType("smalldatetime");
+                entity.Property(e => e.UpdateTime).HasColumnType("datetime");
             });
         }
     }

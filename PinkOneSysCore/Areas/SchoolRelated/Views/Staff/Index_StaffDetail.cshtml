@@ -1,0 +1,169 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ModelStaffDetail
+
+<section class="content-header">
+    <h1>
+        职员详情@*&ensp;<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@
+        <button class="btn btn-default btn-sm" id="backBtn"><i class="fa fa-reply fa-lg"></i></button>
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="breadcrumb-item"><a href="#">人员管理</a></li>
+        <li class="breadcrumb-item active"><a href="#">职员详情</a></li>
+    </ol>
+</section>
+<div class="modal fade" id="pinkOneAccountModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">创建陪绮老师个人账号</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="fileIpt">账号(建议使用手机号)</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <input type="text" class="form-control" id="acutIpt" value="@Model.Staff.Phone" placeholder="至少6个字符">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="fileIpt">密码(初始密码为123456)</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <input type="text" class="form-control" id="pwdIpt1" value="123456" placeholder="至少6个字符">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="fileIpt">确认密码</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                            <input type="text" class="form-control" id="pwdIpt2" value="123456" placeholder="至少6个字符">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary float-right" id="doImportBtn" onclick="doSaveAcut();">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="box box-body">
+            <h2 class="text-primary">@Model.Staff.StaffName</h2>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-9">
+                        <p>角色：@Model.Role.RoleName</p>
+                        <p>工号：@Model.Staff.WorkNo</p>
+                        <p>身份证：@Model.Staff.IdNumber</p>
+                        <p>联系电话：@Model.Staff.Phone</p>
+                        <p>
+                            陪绮个人账号： @{ var pinkoneAccount = @Model.Staff.PinkoneAccount == null ? "未创建" : @Model.Staff.PinkoneAccount;}@pinkoneAccount
+                            &ensp;
+                            @{
+                                if (@pinkoneAccount.Contains("未"))
+                                {
+                                    <span class="span-as-btn" data-toggle="modal" data-target="#pinkOneAccountModal">点击创建</span>
+                                }
+                                <i class="fa fa-exclamation-circle text-warning" style="cursor:pointer;" title="陪绮老师个人账号可以登录：管理系统、老师端APP"></i>
+                            }
+                        </p>
+                        <p>状态：@{var status = (StaffStatus)@Model.Staff.Status;}@status</p>
+                        <p>创建时间：@Model.Staff.CreateTime</p>
+                    </div>
+                    <div class="col-3 text-center">
+                        @{
+                            if (Model.Staff.AvatarPic != null && Model.Staff.AvatarPic.Length > 0)
+                            {
+                                <img id="stuAvaImg" src="@Model.Staff.AvatarPic" />
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            <h4>门禁卡</h4>
+            <div class="margin">
+                @{
+                    if (Model.Card == null)
+                    {
+                        <span class="text-warning">名下无实体卡，请到'职员管理-职员-修改'处添加 </span>
+                    }
+                    if (Model.Card != null)
+                    {
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="box box-body">
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-4">
+                                            <i class="fa fa-id-card fa-4x"></i>
+                                        </div>
+                                        <div class="col-sm-8 col-xs-8">
+                                            <div>卡号：@Model.Card.CardNo</div>
+                                            <div>状态：@{var status1 = (CardStatus)@Model.Card.Status;}@status1</div>
+                                            <div>操作：<span class="span-as-btn">挂失</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    //初始化
+    $("#staffManageLi").parent().parent().addClass("active");
+    $("#staffManageLi").addClass("active");
+
+    //返回
+    $("#backBtn").click(function () {
+        //GoToPage("", "/SchoolRelated/Student");
+        window.location.href = "/SchoolRelated/Staff";
+    })
+    function doSaveAcut() {
+        var staffId=@Model.Staff.ID;
+        var account = $("#acutIpt").val();
+        var pwd1 = $("#pwdIpt1").val();
+        var pwd2 = $("#pwdIpt2").val();
+        if (account.length < 6 || pwd1 != pwd2 || pwd1.length < 6) {
+            swal({ title: "输入有误", text: "", type: "error", timer: 2000, showConfirmButton: false });
+        }
+        $.ajax({
+            url: "/SchoolRelated/Staff/AddStaffPinkoneAccount",
+            type: "POST",
+            data: {
+                staffId:staffId,
+                account: account,
+                password:pwd1
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    $("#pinkOneAccountModal").modal("hide");
+                    swal({ title: "", text: "创建成功", type: "success", timer: 700, showConfirmButton: false });
+                    window.location.reload();
+                }
+                else {
+                    swal({ title: "", text: result.errMsg });
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了",type:"warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+</script>

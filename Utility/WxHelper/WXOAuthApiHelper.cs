@@ -25,11 +25,11 @@ namespace Utility
         /// <param name="responseType">返回类型，请填写code（或保留默认）</param>
         /// <param name="addConnectRedirect">加上后可以解决40029-invalid code的问题（测试中）</param>
         /// <returns></returns>
-        public static string GetAuthorizeUrl(string redirectUrl, string state, EnumOAuthScope scope, string responseType = "code", bool addConnectRedirect = true)
+        public static string GetAuthorizeUrl(string appId, string redirectUrl, string state, EnumOAuthScope scope, string responseType = "code", bool addConnectRedirect = true)
         {
-
+            
             var url =string.Format("https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type={2}&scope={3}&state={4}{5}#wechat_redirect",
-                                Uri.EscapeDataString(mWxSetting.Base_AppID), Uri.EscapeDataString(redirectUrl), Uri.EscapeDataString(responseType), Uri.EscapeDataString(scope.ToString("g")), Uri.EscapeDataString(state),
+                                Uri.EscapeDataString(appId), Uri.EscapeDataString(redirectUrl), Uri.EscapeDataString(responseType), Uri.EscapeDataString(scope.ToString("g")), Uri.EscapeDataString(state),
                                 addConnectRedirect ? "&connect_redirect=1" : "");
 
             /* 这一步发送之后，客户会得到授权页面，无论同意或拒绝，都会返回redirectUrl页面。
@@ -51,9 +51,9 @@ namespace Utility
         /// <param name="code">code作为换取access_token的票据，每次用户授权带上的code将不一样，code只能使用一次，5分钟未被使用自动过期。</param>
         /// <param name="grantType">填写为authorization_code（请保持默认参数）</param>
         /// <returns></returns>
-        public static ModelWxOAuthToken GetAccessToken(string code, string grantType = "authorization_code")
+        public static ModelWxOAuthToken GetAccessToken(string appId,string appSecret, string code, string grantType = "authorization_code")
         {
-            String apiUri = string.Format(mWxSetting.Api_GetAuthToken, "&", Uri.EscapeDataString(mWxSetting.Base_AppID), Uri.EscapeDataString(mWxSetting.Base_AppSecret), Uri.EscapeDataString(code), Uri.EscapeDataString(grantType));
+            String apiUri = string.Format(mWxSetting.Api_GetAuthToken, "&", Uri.EscapeDataString(appId), Uri.EscapeDataString(appSecret), Uri.EscapeDataString(code), Uri.EscapeDataString(grantType));
             // 获取微信网页认证Token
             return WebApiHelper.GetWxResponse<ModelWxOAuthToken>(mWxSetting.Api_BaseUrl, apiUri);
 
@@ -70,10 +70,10 @@ namespace Utility
         /// <param name="openId">普通用户的标识，对当前公众号唯一</param>
         /// <param name="lang">返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语</param>
         /// <returns></returns>
-        public static ModelWxUserInfo GetUserInfo(string code, EnumWxLang lang = EnumWxLang.zh_CN)
+        public static ModelWxUserInfo GetUserInfo(string appId, string appSecret, string code, EnumWxLang lang = EnumWxLang.zh_CN)
         {
             // 获取微信网页认证Token
-            ModelWxOAuthToken accessToken= GetAccessToken(code);
+            ModelWxOAuthToken accessToken= GetAccessToken(appId, appSecret, code);
 
             String apiUri = string.Format(mWxSetting.Api_GetUserInfo, "&", Uri.EscapeDataString(accessToken.access_token), Uri.EscapeDataString(accessToken.openid), Uri.EscapeDataString(lang.ToString("g")));
             // 获取微信网页认证Token
@@ -105,10 +105,10 @@ namespace Utility
         /// <summary>
         /// 获取微信Token
         /// </summary>
-        public static ModelWxToken GetWxToken()
+        public static ModelWxToken GetWxToken(string appId, string appSecret)
         {
             // 设置API路径及参数
-            String wxApiUrl = String.Format(mWxSetting.Api_GetToken, "&", mWxSetting.Base_AppID, mWxSetting.Base_AppSecret);
+            String wxApiUrl = String.Format(mWxSetting.Api_GetToken, "&", appId, appSecret);
             ModelWxToken token = WebApiHelper.GetWxResponse<ModelWxToken>(mWxSetting.Api_BaseUrl, wxApiUrl);
             return token;
         }

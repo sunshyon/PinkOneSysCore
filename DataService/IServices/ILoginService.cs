@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace DataService
 {
     public interface ILoginService:IBaseService
     {
-        ModelLoginUser GetLoginInfo(string name, string pwd);
+        ModelLoginUser GetUserLoginInfo(byte accountType, string name, string pwd);
+        SYS_Admin GetAdminLoginInfo(string name, string pwd);
     }
 }

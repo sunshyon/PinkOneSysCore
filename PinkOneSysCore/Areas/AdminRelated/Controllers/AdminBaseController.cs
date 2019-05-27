@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Utility;
 using Microsoft.AspNetCore.Mvc;
+using Domain;
 
 namespace PinkOneSysCore.Areas.AdminRelated.Controllers
 {
@@ -12,16 +13,15 @@ namespace PinkOneSysCore.Areas.AdminRelated.Controllers
     public class AdminBaseController<TService> : Controller
        where TService : IBaseService
     {
-        public ModelLoginUser mlUser;
+        public SYS_Admin glbAdmin;
         public ModelJsonRet mjResult;
-        //public ModelSysWxUser mSysWxUser;
         public TService Service { get; set; }
         public AdminBaseController()
         {
-            mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.LoginUser));
-            if (mlUser != null)
+            glbAdmin = JsonHelper.JsonToT<SYS_Admin>(HttpContextCore.GetSession(ComConst.AdminLogin));
+            if (glbAdmin != null)
             {
-                HttpContextCore.SetSession(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
+                HttpContextCore.SetSession(ComConst.AdminLogin, JsonHelper.ToJson(glbAdmin));
             }
             mjResult = new ModelJsonRet()
             {

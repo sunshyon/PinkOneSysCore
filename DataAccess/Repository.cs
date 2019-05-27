@@ -18,7 +18,7 @@ namespace DataAccess
         }
         public async void AddEntity(T entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+             await _dbContext.Set<T>().AddAsync(entity);
         }
         public void UpdateEntity(T entity)
         {

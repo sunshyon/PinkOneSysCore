@@ -8,13 +8,9 @@ namespace Utility
 {
     public class ModelWxSetting
     {
-
-        public string Base_ID { get; set; }
-        public string Base_AppID { get; set; }
-        public string Base_AppName { get; set; }
-        public string Base_AppSecret { get; set; }
-
-
+        /// <summary>
+        /// 微信接口
+        /// </summary>
         public string Api_BaseUrl { get; set; }
         public string Api_GetToken { get; set; }
         public string Api_GetAuthToken { get; set; }

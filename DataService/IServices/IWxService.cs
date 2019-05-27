@@ -10,7 +10,7 @@ namespace DataService
 {
     public interface IWxService:IBaseService
     {
-        Wx_Setting GetWxSettingFromDb();
+        Wx_PublicInfo GetWx_PublicInfo(byte type, int schoolId = 0);
         ModelSysWxUser GetSysWxUserModelTest();
         void UpdateWxUserInfo(ModelWxUserInfo wxUserInfo);
         ModelSysWxUser GetSysWxUserModel(int sId, string openId);

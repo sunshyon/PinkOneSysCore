@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Utility;
 
-namespace PinkOneSysCore
+namespace PinkOneSysCore.Areas.AdminRelated
 {
     public class AdminLoginFilter: ActionFilterAttribute
     {
@@ -18,11 +18,11 @@ namespace PinkOneSysCore
         /// <param name="filterContext"></param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            ModelLoginUser mlUser=null;
-            filterContext.HttpContext.Request.Cookies.TryGetValue(ComConst.LoginUser, out string value);
+            Domain.SYS_Admin admin=null;
+            filterContext.HttpContext.Request.Cookies.TryGetValue(ComConst.AdminLogin, out string value);
             if(value!=null)
-                mlUser = JsonHelper.JsonToT<ModelLoginUser>(value);
-            if (null == mlUser || mlUser.Admin == null)
+                admin = JsonHelper.JsonToT<Domain.SYS_Admin>(value);
+            if (null == admin )
             {
                 var a = filterContext.HttpContext.Request.Headers;
                 var XRWStrs = filterContext.HttpContext.Request.Headers["X-Requested-With"].ToString();
@@ -37,8 +37,8 @@ namespace PinkOneSysCore
             }
             else
             {
-                filterContext.HttpContext.Response.Cookies.Append(ComConst.LoginUser, JsonHelper.ToJson(mlUser), ComHelper.GetCookieOpetion());
-                filterContext.HttpContext.Session.SetString(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
+                filterContext.HttpContext.Response.Cookies.Append(ComConst.AdminLogin, JsonHelper.ToJson(admin), ComHelper.GetCookieOpetion());
+                filterContext.HttpContext.Session.SetString(ComConst.AdminLogin, JsonHelper.ToJson(admin));
             }
         }
 

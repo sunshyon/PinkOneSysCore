@@ -5,37 +5,25 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Utility;
+using Domain;
 
 namespace PinkOneSysCore.Areas.WxRelated.Controllers
 {
     public class OAuthController : WxBaseController<IWxService>
     {
-        public enum OauthType
-        {
-            主页 = 1,
-            个人中心 = 2,
-            校园卡关联 = 3
-        }
         /// <summary>
         /// 陪绮在线自有公众号入口
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public ActionResult Index(byte type)
+        public ActionResult Index()
         {
             ModelWxSetting mWxSetting = JsonFileProvider.Instance.GetSettings<ModelWxSetting>();
 
+            var wxPubInfo = Service.GetWx_PublicInfo(1);
+
             // 生成重定向URL
             String redirectUrl = mWxSetting.PubUrl_Host + mWxSetting.PubUrl_WxHome;
-            if(type==(byte)OauthType.个人中心)
-                redirectUrl=mWxSetting.PubUrl_Host+ mWxSetting.PubUrl_Center;
-            else if (type == (byte)OauthType.校园卡关联)
-                redirectUrl = mWxSetting.PubUrl_Host + mWxSetting.PubUrl_WxBind;
-            else if (type == (byte)OauthType.主页)
-                redirectUrl = mWxSetting.PubUrl_Host + mWxSetting.PubUrl_WxHome;
-
-            String authUrl = WXOAuthApiHelper.GetAuthorizeUrl(redirectUrl, "State", EnumOAuthScope.snsapi_userinfo);
-
+            String authUrl = WXOAuthApiHelper.GetAuthorizeUrl(wxPubInfo.AppId, redirectUrl, "State", EnumOAuthScope.snsapi_userinfo);
+            MemoryCacheHelper.SetCache("WxPubInfo", wxPubInfo);
             // 验证跳转
             Response.Redirect(authUrl);
             
@@ -46,20 +34,16 @@ namespace PinkOneSysCore.Areas.WxRelated.Controllers
         /// 学校公众号入口
         /// </summary>
         /// <param name="sId"></param>
-        /// <returns></returns>
         public ActionResult SchoolPortal(int sId)
         {
             glbSchoolId = sId;
 
             ModelWxSetting mWxSetting = JsonFileProvider.Instance.GetSettings<ModelWxSetting>();
-
+            var wxPubInfo = Service.GetWx_PublicInfo(2,sId);
             // 生成重定向URL
             String redirectUrl = mWxSetting.PubUrl_Host + mWxSetting.PubUrl_WxHome;
-           
-            redirectUrl = mWxSetting.PubUrl_Host + mWxSetting.PubUrl_WxHome;
-
-            String authUrl = WXOAuthApiHelper.GetAuthorizeUrl(redirectUrl, "State", EnumOAuthScope.snsapi_userinfo);
-
+            String authUrl = WXOAuthApiHelper.GetAuthorizeUrl(wxPubInfo.AppId,redirectUrl, "State", EnumOAuthScope.snsapi_userinfo);
+            MemoryCacheHelper.SetCache("WxPubInfo", wxPubInfo);
             // 验证跳转
             Response.Redirect(authUrl);
 

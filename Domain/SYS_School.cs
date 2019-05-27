@@ -22,5 +22,6 @@ namespace Domain
         public string AssociatedStaffOpenId5 { get; set; }
         public DateTime? CreateTime { get; set; }
         public string Token { get; set; }
+        public int? WxPublicInfoId { get; set; }
     }
 }

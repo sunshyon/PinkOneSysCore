@@ -43,7 +43,7 @@ namespace PinkOneSysCore.Areas.AdminRelated.Controllers
         public JsonResult GetAdminInfo()
         {
             mjResult.code = 1;
-            mjResult.content =  mlUser.Admin.Username;
+            mjResult.content =  glbAdmin;
 
             return Json(mjResult);
         }
@@ -108,13 +108,21 @@ namespace PinkOneSysCore.Areas.AdminRelated.Controllers
             }
             return Json(mjResult);
         }
-
+        /// <summary>
+        /// 关联绑定公众号->type:1 使用陪琦通用，2 使用学校自己公众号
+        /// </summary>
+        [HttpPost]
+        public JsonResult BindWxPub(byte type ,int schoolId,string json)
+        {
+            mjResult= Service.BindWxPub(type, schoolId, json);
+            return Json(mjResult);
+        }
         [HttpGet]
         public JsonResult GetAdminSettingInfo()
         {
             byte type = 2;
-            if (mlUser.Admin != null)
-                type = (byte)mlUser.Admin.Type;
+            if (glbAdmin != null)
+                type = (byte)glbAdmin.Type;
             var res = Service.GetAdminSettingInfo(type);
             if (res.Length > 6)
             {

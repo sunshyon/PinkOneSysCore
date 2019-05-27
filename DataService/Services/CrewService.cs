@@ -523,6 +523,51 @@ namespace DataService
             System.IO.File.Delete(fileName);
             return res;
         }
+        public ModelJsonRet AddStaffPinkoneAccount(int staffId, string account,string password)
+        {
+            mjRet.errMsg = "创建失败";
+            var staff = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.ID == staffId).Result.FirstOrDefault();
+            if (staff != null)
+            {
+                var hasAcut = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.PinkoneAccount == account&&x.Status==(byte)StaffStatus.在职).Result.FirstOrDefault();
+                if (hasAcut == null)
+                {
+                    staff.PinkoneAccount = account;
+                    staff.PinkonePassword = password;
+                    UnitOfWork.Repository<SYS_Staff>().UpdateEntity(staff);
+                    var isOK = UnitOfWork.CommitAsync().Result;
+                    if (isOK > 0)
+                    {
+                        mjRet.code = 1;
+                        mjRet.content = "OK";
+                    }
+                }
+                else
+                    mjRet.errMsg = "该账户已经存在，无法创建";
+            }
+            return mjRet;
+        }
+        public ModelStaffDetail GetStaffDetailModel(int staffId)
+        {
+            var msd = new ModelStaffDetail();
+            var staff = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.ID == staffId).Result.FirstOrDefault();
+            if (staff != null)
+            {
+                var role = UnitOfWork.Repository<SYS_StaffRole>().GetEntitiesAsync(x => x.ID == staff.RoleId).Result.FirstOrDefault();
+                var card = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.CardType == (byte)CardType.职员卡 && x.CardMasterId == staff.ID).Result.FirstOrDefault();
+                if(card==null && staff.CardNo !=null&& staff.CardNo.Length > 0)
+                {
+                    staff.CardNo = null;
+                    UnitOfWork.Repository<SYS_Staff>().UpdateEntity(staff);
+                    UnitOfWork.CommitAsync();
+                }
+                msd.Staff = staff;
+                msd.Role = role;
+                msd.Card = card;
+            }
+            return msd;
+        }
+
         /// <summary>
         /// 获取职员信息
         /// </summary>
@@ -551,7 +596,8 @@ namespace DataService
                     sb.Append("<td>" + (role == null ? "未填" : role.RoleName) + "</td>");
                     sb.Append("<td>" + (card==null?"无":card.CardNo) + "</td>");
                     string operateStr = "<span class='span-as-btn' onclick='modifyStaff(" + item.ID + ")'>修改</span>" +
-                     "<span class='span-as-btn' onclick='delStaff(" + item.ID + ")'>删除</span>";
+                     "<span class='span-as-btn' onclick='delStaff(" + item.ID + ")'>删除</span>"+
+                     "<span class='span-as-btn' onclick='openStaffDetailPage(" + item.ID + ")'>详情</span>";
                     sb.Append("<td>" + operateStr + "</td>");
                     sb.Append("</tr>");
                 }

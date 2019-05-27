@@ -8,8 +8,11 @@ namespace Utility
 {
     public class ComConst
     {
+        //Admin
+        public const string AdminLogin = "AdminLogin";
+
         //Sys
-        public const string LoginUser = "LoginUser";
+        public const string UserLogin = "UserLogin";
 
         //Wx
         public const string Wx_ModelWxUserInfo = "ModelWxUserInfo";

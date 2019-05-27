@@ -99,7 +99,6 @@ namespace DataService
             SYS_Student sObj = allStus.Where(x => x.ID == stuId).FirstOrDefault();
             if (sObj != null)
             {
-                if (attTemp.Length <= 0) attTemp = null;
                 DateTime aTime = DateTime.Parse(attTime);
                 SYS_StudentAttRecord sar = new SYS_StudentAttRecord()
                 {
@@ -130,11 +129,15 @@ namespace DataService
                         List<FK_Stu_Parent> fks = UnitOfWork.Repository<FK_Stu_Parent>().GetEntitiesAsync(x => x.SchoolId == sObj.SchoolId && x.StuId == sObj.ID).Result;
                         if (null != fks && fks.Count > 0)
                         {
-                            Wx_Setting wxSetting = UnitOfWork.Repository<Wx_Setting>().GetEntitiesAsync(x => true).Result.FirstOrDefault();
+                            var pWxPInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type == 1).Result.FirstOrDefault();
+                            var wxpInfoId = pWxPInfo == null ? 0 : pWxPInfo.ID;
+                            if (mlUser.School.WxPublicInfoId != null && mlUser.School.WxPublicInfoId > 0)
+                                wxpInfoId = (int)mlUser.School.WxPublicInfoId;
+                            var wxPubInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.ID == wxpInfoId).Result.FirstOrDefault();
                             foreach (var fk in fks)
                             {
                                 //推送消息
-                                if (null != wxSetting)
+                                if (null != wxPubInfo)
                                 {
                                     // 需要从Cookie中获取
                                     ModelWxMsg<ModelWmAttendance> wxMsg = new ModelWxMsg<ModelWmAttendance>();
@@ -145,7 +148,7 @@ namespace DataService
                                     wxMsg.data.keyword1.value = sObj.StuName;
                                     wxMsg.data.keyword2.value = DateTime.Now.ToString();
                                     wxMsg.data.keyword3.value = mlUser.School.SchoolName;
-                                    ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxSetting.AccessToken, wxMsg);
+                                    ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxPubInfo.AccessToken, wxMsg);
                                     if (null == wmResult || wmResult.msgid <= 0)
                                     {
                                         LogHelper.Error("推送错误:" + wmResult.errmsg);

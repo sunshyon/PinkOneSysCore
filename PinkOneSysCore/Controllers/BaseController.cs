@@ -19,9 +19,9 @@ namespace PinkOneSysCore
         public BaseController()
         {
 
-            mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.LoginUser));
+            mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.UserLogin));
             if (mlUser != null)
-                HttpContextCore.SetSession(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
+                HttpContextCore.SetSession(ComConst.UserLogin, JsonHelper.ToJson(mlUser));
             mjResult = new ModelJsonRet()
             {
                 code = 0,

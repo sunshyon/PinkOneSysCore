@@ -24,6 +24,8 @@ namespace DataService
         string GetStaffById(int id);
         int DelStaffById(long id);
 
+        ModelJsonRet AddStaffPinkoneAccount(int staffId, string account, string password);
+        ModelStaffDetail GetStaffDetailModel(int staffId);
         string ImportStaffs(string fileName);
 
 

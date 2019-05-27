@@ -15,6 +15,7 @@ namespace DataService
         string AddOrModifySchool(byte type, string entity);
         string GetSchoolById(int id);
         int DelSchoolById(long id);
+        ModelJsonRet BindWxPub(byte type, int schoolId, string json);
 
         string GetAdminSettingInfo(byte type);
         int AddStaffBaseRole(string roleName, byte roleLevel);

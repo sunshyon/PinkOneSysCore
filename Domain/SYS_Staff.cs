@@ -22,6 +22,7 @@ namespace Domain
         public byte? Status { get; set; }
         public DateTime? CreateTime { get; set; }
         public byte? AttStatus { get; set; }
-        public string Remark { get; set; }
+        public string PinkoneAccount { get; set; }
+        public string PinkonePassword { get; set; }
     }
 }

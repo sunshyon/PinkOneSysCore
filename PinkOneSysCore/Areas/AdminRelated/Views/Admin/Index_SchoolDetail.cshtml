@@ -22,7 +22,7 @@
 
 <section>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-9">
             <div class="row margin">
                 <div class="box box-body">
                     <h2 class="text-pink">@Model.School.SchoolName</h2>
@@ -53,31 +53,103 @@
             </div>
             <div class="row margin">
                 <div class="box box-body publicAppDiv">
-                    <label class="font-weight-bold">学校自有公众号关联</label>
+                    <label class="font-weight-bold">关联公众号</label>
                     <div class="box-body">
-                        <div class="margin">
-                            AppId：<input/>
-                        </div>
-                        <div class="margin">
-                            AppName：<input />
-                        </div>
-                        <div class="margin">
-                            AppSecret：<input />
-                        </div>
-                        <div class="margin">
-                            AccessToken：<input />
-                        </div>
-                        <div class="margin">
-                            JsApiTicket：<input />
-                        </div>
-                        <div class="margin">
-                            上次更新时间：
+                        <div class="row">
+                            <div class="col-md-10">
+                                @{
+                                    if (Model.WxPubInfo == null)
+                                    {
+                                        <div class="margin">
+                                            <span class="text-warning">未关联公众号</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="margin">
+                                            AppId：@Model.WxPubInfo.AppId
+                                        </div>
+                                        <div class="margin">
+                                            AppName：@Model.WxPubInfo.AppName
+                                        </div>
+                                        <div class="margin">
+                                            AppSecret：@Model.WxPubInfo.AppSecret
+                                        </div>
+                                        <div class="margin">
+                                            AccessToken：@Model.WxPubInfo.AccessToken
+                                        </div>
+                                        <div class="margin">
+                                            JsApiTicket：@Model.WxPubInfo.JsApiTicket
+                                        </div>
+                                        <div class="margin">
+                                            上次更新时间：@Model.WxPubInfo.UpdateTime
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <div class="col-md-2">
+                                <div style="margin-top:-30px;margin-bottom:5px;">
+                                    <span class="span-as-btn" onclick="bindWxPub(1);">关联陪绮公众号</span>
+                                </div>
+                                <div class="">
+                                    <span class="span-as-btn" data-toggle="modal" data-target="#wxPubModal">使用学校公众号</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="wxPubModal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <label>关联学校自有公众号</label>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="appIdIpt">AppId</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                            <input type="text" class="form-control" id="appIdIpt">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label for="appNameIpt">AppName</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                            <input type="text" class="form-control" id="appNameIpt">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="appSecretIpt">AppSecret</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                            <input type="text" class="form-control" id="appSecretIpt">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="attRetTempIdIpt">考勤结果通知模板ID</label><span class="text-danger glyphicon glyphicon-asterisk"></span>
+                                            <input type="text" class="form-control" id="attRetTempIdIpt">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary float-right" onclick="bindWxPub(2);">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="row margin">
                 <div class="box box-body">
                     <label class="font-weight-bold">数据统计</label>
@@ -97,5 +169,52 @@
     $("#backBtn").click(function () {
         window.location.href = "/AdminRelated/Admin/AdminMng";
     })
+    //初始化
+        $("#adminMngLi").addClass('active');
+
+    function bindWxPub(type) {
+        jsonStr = "";
+        if (type == 2) {//绑定学校自己公众号
+            var appId = $("#appIdIpt").val().trim();
+            var appName = $("#appNameIpt").val().trim();
+            var appSecret = $("#appSecretIpt").val().trim();
+            var attRetTempId = $("#attRetTempIdIpt").val().trim();
+            if (appId.length < 6 || appName.length < 1 || appSecret.length < 6 || attRetTempId.length < 6) {
+                swal({ title: "", text: "输入有误", type: "warning", timer: 2000, showConfirmButton: false });
+                return;
+            }
+
+            var json = {
+                Type: 2,
+                SchoolId: @Model.School.ID,
+                AppId: appId,
+                AppName: appName,
+                AppSecret: appSecret,
+                AttRetTempId: attRetTempId,
+            }
+            jsonStr = JSON.stringify(json);
+        }
+        $.ajax({
+            url: "/AdminRelated/Admin/BindWxPub",
+            type: "POST",
+            data: {
+                type: type,
+                schoolId:@Model.School.ID,
+                json:jsonStr
+            },
+            success: function (result) {
+                if (result.code == 1) {
+                    swal({ title: "", text: "设置成功", type: "success", timer: 700, showConfirmButton: false });
+                    $("wxPubModal").modal("hide");
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
 </script>
 

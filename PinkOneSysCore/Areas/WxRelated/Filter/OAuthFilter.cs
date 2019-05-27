@@ -20,9 +20,11 @@ namespace PinkOneSysCore.Areas.WxRelated
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             string code = filterContext.HttpContext.Request.Form["code"].ToString();
+            var wxPubInfo = MemoryCacheHelper.GetCache<Wx_PublicInfo>("WxPubInfo");
+    
             if (null != code && code.Length > 0)
             {
-                ModelWxUserInfo mWxUserInfo = WXOAuthApiHelper.GetUserInfo(code);
+                ModelWxUserInfo mWxUserInfo = WXOAuthApiHelper.GetUserInfo(wxPubInfo.AppId, wxPubInfo.AppSecret, code);
                 if (mWxUserInfo != null)
                 {
                     filterContext.HttpContext.Response.Cookies.Append(ComConst.Wx_ModelWxUserInfo, JsonHelper.ToJson(mWxUserInfo), ComHelper.GetCookieOpetion());

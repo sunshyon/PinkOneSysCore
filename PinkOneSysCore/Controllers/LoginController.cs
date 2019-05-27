@@ -16,29 +16,50 @@ namespace PinkOneSysCore.Controllers
         {
             return View("Index_Login");
         }
-
-        public ActionResult Verify(string name, string pwd)
+        public ActionResult Admin()
         {
-            var user = Service.GetLoginInfo(name, pwd);
-            if (user.School!=null|| user.Admin!=null)
+            return View("Index_AdminLogin");
+        }
+
+        public ActionResult Verify(byte acutType, string name, string pwd)
+        {
+            var user = Service.GetUserLoginInfo(acutType,name, pwd);
+            if (user.School!=null)
             {
                 mlUser = user;
 
-                SetSession(Utility.ComConst.LoginUser, Utility.JsonHelper.ToJson(user));
-                SetCookie(Utility.ComConst.LoginUser, Utility.JsonHelper.ToJson(user));
-                var res = 1;
-                if (user.Admin == null)
-                    res = 2;
+                SetSession(Utility.ComConst.UserLogin, Utility.JsonHelper.ToJson(user));
+                SetCookie(Utility.ComConst.UserLogin, Utility.JsonHelper.ToJson(user));
+                var res = 1;//学校账号
+                if (user.Staff != null)
+                    res = 2;//老师账号
                 mjResult.code = 1;
                 mjResult.content = res;
             }
             return Json(mjResult);
         }
+        public ActionResult AdminVerify(string name, string pwd)
+        {
+            var admin = Service.GetAdminLoginInfo(name, pwd);
+            if (admin != null)
+            {
+                SetSession(Utility.ComConst.AdminLogin, Utility.JsonHelper.ToJson(admin));
+                SetCookie(Utility.ComConst.AdminLogin, Utility.JsonHelper.ToJson(admin));
+               
+                mjResult.code = 1;
+                mjResult.content = "OK";
+            }
+            return Json(mjResult);
+        }
         public ActionResult Logout()
         {
-            DeleteCookie(Utility.ComConst.LoginUser);
+            DeleteCookie(Utility.ComConst.UserLogin);
             return Redirect("/Login");
         }
-
+        public ActionResult AdminLogout()
+        {
+            DeleteCookie(Utility.ComConst.AdminLogin);
+            return Redirect("/Login/Admin");
+        }
     }
 }

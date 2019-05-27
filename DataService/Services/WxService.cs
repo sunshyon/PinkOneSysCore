@@ -10,11 +10,20 @@ namespace DataService
 {
     public class WxService:BaseService, IWxService
     {
-        public Wx_Setting GetWxSettingFromDb()
+        /// <summary>
+        /// type->1：陪绮在线公众号，2：学校公众号
+        /// </summary>
+        public Wx_PublicInfo GetWx_PublicInfo(byte type,int schoolId=0)
         {
-            return UnitOfWork.Repository<Wx_Setting>().GetEntitiesAsync(x => true).Result.FirstOrDefault();
+            Wx_PublicInfo wxpi;
+            if (schoolId == 0)
+                wxpi= UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type==1).Result.FirstOrDefault();
+            else 
+            {
+                wxpi = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type == type&&x.SchoolId==schoolId).Result.FirstOrDefault();
+            }
+            return wxpi;
         }
-
 
         #region 微信个人信息
 

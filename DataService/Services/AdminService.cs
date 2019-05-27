@@ -145,6 +145,56 @@ namespace DataService
             }
             return res;
         }
+        /// <summary>
+        /// 关联绑定公众号->type:1 使用陪琦通用，2 使用学校自己公众号
+        /// </summary>
+        public ModelJsonRet BindWxPub(byte type,int schoolId,string json)
+        {
+            mjRet.errMsg = "绑定失败";
+            var school=UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == schoolId&&x.Status==(byte)SchoolStatus.正常).Result.FirstOrDefault();
+            if (school != null)
+            {
+                if (type == 1)
+                {
+                    //先查看是否有陪绮公众号，如果没有立即创建
+                    var pWxPubInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type == 1).Result.FirstOrDefault();
+                    if (pWxPubInfo == null)
+                    {
+                        var newPWxPubInfo = new Wx_PublicInfo()
+                        {
+                            Type = 1,
+                            AppId = "wx699c568db6a2b968",
+                            AppName = "陪绮在线",
+                            AppSecret = "f44f27e2ebad96f1694bdbcc44ccaf50",
+                            AttRetTempId = "9YEKbiLeNyzKOioJ5ETB62aIDE8LKNOXSRSRs_BjTh8",
+                        };
+                        UnitOfWork.Repository<Wx_PublicInfo>().AddEntity(newPWxPubInfo);
+                        var isOk = UnitOfWork.CommitAsync().Result;
+                        if (isOk > 0)
+                            school.WxPublicInfoId = newPWxPubInfo.ID;
+                    }
+                    else
+                        school.WxPublicInfoId = pWxPubInfo.ID;
+                }
+                else
+                {
+                    //新建WxPublicInfo
+                    var wxPubInfo = JsonHelper.JsonToT<Wx_PublicInfo>(json);
+                    UnitOfWork.Repository<Wx_PublicInfo>().AddEntity(wxPubInfo);
+                    var isOK = UnitOfWork.CommitAsync().Result;
+                    if (isOK > 0)
+                    {
+                        school.WxPublicInfoId = wxPubInfo.ID;
+                    }
+                }
+                if (UnitOfWork.CommitAsync().Result >0)
+                {
+                    mjRet.code = 1;
+                }
+            }
+            return mjRet;
+        }
+
         public ModelSchoolDetail GetSchoolDetailModel(int id)
         {
             var msd = new ModelSchoolDetail()
@@ -161,6 +211,12 @@ namespace DataService
                 var totalSaff= (int)UnitOfWork.Repository<SYS_Staff>().CountEntityAsync(x => x.SchoolId == id).Result; 
                 var totalClass = (int)UnitOfWork.Repository<SYS_Class>().CountEntityAsync(x => x.SchoolId == id).Result; 
                 var totalCard = UnitOfWork.Repository<SYS_Card>().CountEntityAsync(x => x.SchoolId == id).Result;
+
+                if(school.WxPublicInfoId!=null&&school.WxPublicInfoId>0)
+                {
+                    var wxpubInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.ID == school.WxPublicInfoId).Result.FirstOrDefault();
+                    msd.WxPubInfo = wxpubInfo;
+                }
 
                 msd.School = school;
                 msd.TotalStudent = totalStu;

@@ -10,3 +10,6 @@ Add the following code to the Configure method in your Application's Startup cla
             template : "{area:exists}/{controller=Home}/{action=Index}/{id?}"
           );
         });
+
+
+DbFirst更新数据库：Scaffold-DbContext "Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;" Microsoft.EntityFrameworkCore.SqlServer  -UseDatabaseNames -force

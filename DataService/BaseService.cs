@@ -39,9 +39,9 @@ namespace DataService
         {
             if (null == mlUser)
             {
-                mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.LoginUser));
+                mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.UserLogin));
                 if (mlUser != null)
-                    HttpContextCore.SetSession(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
+                    HttpContextCore.SetSession(ComConst.UserLogin, JsonHelper.ToJson(mlUser));
             }
             mjRet = new ModelJsonRet
             {

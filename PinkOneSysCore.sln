@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UIL", "UIL", "{37A47A7C-25F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PinkOneSysCore", "PinkOneSysCore\PinkOneSysCore.csproj", "{82B4288D-7378-4423-AD26-A5EF65865BE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinkOne.RunningServer", "PinkOne.RunningServer\PinkOne.RunningServer.csproj", "{D064F010-4857-4EEA-AF9D-181C98A292A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{82B4288D-7378-4423-AD26-A5EF65865BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82B4288D-7378-4423-AD26-A5EF65865BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82B4288D-7378-4423-AD26-A5EF65865BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D064F010-4857-4EEA-AF9D-181C98A292A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D064F010-4857-4EEA-AF9D-181C98A292A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D064F010-4857-4EEA-AF9D-181C98A292A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D064F010-4857-4EEA-AF9D-181C98A292A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{F86FD18A-C461-4B91-8BF6-C58F8E33A984} = {F7138265-98E1-4A71-8300-85685D06BCA2}
 		{C41E18D1-6D88-4049-9303-0EFF88F32BDF} = {F7138265-98E1-4A71-8300-85685D06BCA2}
 		{82B4288D-7378-4423-AD26-A5EF65865BE4} = {37A47A7C-25F4-442B-B2D1-F7DE39BB3426}
+		{D064F010-4857-4EEA-AF9D-181C98A292A9} = {37A47A7C-25F4-442B-B2D1-F7DE39BB3426}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD862AC4-9973-4D1D-96AB-A264672EB27E}

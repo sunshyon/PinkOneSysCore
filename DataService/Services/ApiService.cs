@@ -159,11 +159,15 @@ namespace DataService
                     List<FK_Stu_Parent> fks = UnitOfWork.Repository<FK_Stu_Parent>().GetEntitiesAsync(x => x.SchoolId == stuObj.SchoolId && x.StuId == stuObj.ID).Result;//查找学生家长
                     if (null != fks && fks.Count > 0)
                     {
-                        Wx_Setting wxSetting = UnitOfWork.Repository<Wx_Setting>().GetEntitiesAsync(x => true).Result.FirstOrDefault();
+                        var pWxPInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type == 1).Result.FirstOrDefault();
+                        var wxpInfoId = pWxPInfo==null?0: pWxPInfo.ID;
+                        if (school.WxPublicInfoId != null && school.WxPublicInfoId > 0)
+                            wxpInfoId = (int)school.WxPublicInfoId;
+                        var wxPubInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.ID== wxpInfoId).Result.FirstOrDefault();
                         foreach (var fk in fks)
                         {
                             //推送消息
-                            if (null != wxSetting)
+                            if (null != wxPubInfo)
                             {
                                 // 需要从Cookie中获取
                                 ModelWxMsg<ModelWmAttendance> wxMsg = new ModelWxMsg<ModelWmAttendance>();
@@ -174,7 +178,7 @@ namespace DataService
                                 wxMsg.data.keyword1.value = stuObj.StuName;
                                 wxMsg.data.keyword2.value = attTime.ToString();
                                 wxMsg.data.keyword3.value = school.SchoolName;
-                                ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxSetting.AccessToken, wxMsg);
+                                ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxPubInfo.AccessToken, wxMsg);
                                 if (null == wmResult || wmResult.msgid <= 0)
                                 {
                                     LogHelper.Error("推送错误:" + wmResult.errmsg);
@@ -222,8 +226,12 @@ namespace DataService
                     UnitOfWork.Repository<SYS_Staff>().UpdateEntity(staffObj);
 
                     //推送考勤消息
-                    Wx_Setting wxSetting = UnitOfWork.Repository<Wx_Setting>().GetEntitiesAsync(x => true).Result.FirstOrDefault();
-                    if (null != wxSetting && staffObj.OpenId != null && staffObj.OpenId.Length > 6)
+                    var pWxPInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.Type == 1).Result.FirstOrDefault();
+                    var wxpInfoId = pWxPInfo == null ? 0 : pWxPInfo.ID;
+                    if (school.WxPublicInfoId != null && school.WxPublicInfoId > 0)
+                        wxpInfoId = (int)school.WxPublicInfoId;
+                    var wxPubInfo = UnitOfWork.Repository<Wx_PublicInfo>().GetEntitiesAsync(x => x.ID == wxpInfoId).Result.FirstOrDefault();
+                    if (null != wxPubInfo && staffObj.OpenId != null && staffObj.OpenId.Length > 6)
                     {
                         // 需要从Cookie中获取
                         ModelWxMsg<ModelWmAttendance> wxMsg = new ModelWxMsg<ModelWmAttendance>();
@@ -234,7 +242,7 @@ namespace DataService
                         wxMsg.data.keyword1.value = staffObj.StaffName;
                         wxMsg.data.keyword2.value = attTime.ToString();
                         wxMsg.data.keyword3.value = school.SchoolName;
-                        ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxSetting.AccessToken, wxMsg);
+                        ModelWmResult wmResult = WXOAuthApiHelper.SendTmplMessage(wxPubInfo.AccessToken, wxMsg);
                         if (null == wmResult || wmResult.msgid <= 0)
                         {
                             LogHelper.Error("推送错误:" + wmResult.errmsg);

@@ -18,6 +18,18 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
         {
             return View("Index_Staff");
         }
+        public ActionResult StaffDetail(int staffId)
+        {
+            return View("Index_StaffDetail", Service.GetStaffDetailModel(staffId));
+        }
+
+        [HttpPost]
+        public JsonResult AddStaffPinkoneAccount(int staffId, string account,string password)
+        {
+            mjResult = Service.AddStaffPinkoneAccount(staffId, account, password);
+            return Json(mjResult);
+        }
+
         [HttpGet]
         public JsonResult GetStaffInfo(string query)
         {

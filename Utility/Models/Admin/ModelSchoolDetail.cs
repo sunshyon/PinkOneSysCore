@@ -14,5 +14,7 @@ namespace Utility
         public int TotalStaff { get; set; }
         public int TotalClass { get; set; }
         public long TotalCard { get; set; }
+
+        public Wx_PublicInfo WxPubInfo { get; set; }
     }
 }

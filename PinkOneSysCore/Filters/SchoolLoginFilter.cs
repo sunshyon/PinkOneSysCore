@@ -19,7 +19,7 @@ namespace PinkOneSysCore
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             ModelLoginUser mlUser = null;
-            filterContext.HttpContext.Request.Cookies.TryGetValue(ComConst.LoginUser, out string value);
+            filterContext.HttpContext.Request.Cookies.TryGetValue(ComConst.UserLogin, out string value);
             if (value != null)
                 mlUser = JsonHelper.JsonToT<ModelLoginUser>(value);
             if (null == mlUser || mlUser.School == null)
@@ -36,8 +36,8 @@ namespace PinkOneSysCore
             }
             else
             {
-                filterContext.HttpContext.Response.Cookies.Append(ComConst.LoginUser, JsonHelper.ToJson(mlUser), ComHelper.GetCookieOpetion());
-                filterContext.HttpContext.Session.SetString(ComConst.LoginUser, JsonHelper.ToJson(mlUser));
+                filterContext.HttpContext.Response.Cookies.Append(ComConst.UserLogin, JsonHelper.ToJson(mlUser), ComHelper.GetCookieOpetion());
+                filterContext.HttpContext.Session.SetString(ComConst.UserLogin, JsonHelper.ToJson(mlUser));
             }
         }
         #endregion
