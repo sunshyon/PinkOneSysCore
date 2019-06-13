@@ -10,8 +10,19 @@ using Utility;
 
 namespace PinkOneSysCore.Controllers.API
 {
-    public class FileApiController : BaseApiController
+    public class FileApiController : ControllerBase
     {
+        public ModelJsonRet mjResult;
+        public FileApiController()
+        {
+            mjResult = new ModelJsonRet()
+            {
+                code = 0,
+                errMsg = string.Empty,
+                content = string.Empty
+            };
+        }
+
         [HttpPost, Route("api/FileApi/UploadFile")]
         public async Task<ModelJsonRet> UploadFile()
         {

@@ -143,20 +143,19 @@
                         renderClassSelect(jsonRes.classes);
                     $("#objListTable").html(jsonRes.stuStr);
                     //渲染表格
-                    $("#objListTable").DataTable({
-                        pageLength: 50,
+                    var table= $("#objListTable").DataTable({
+                        pageLength: 20,
                         dom: 'Bfrtip',
                         buttons: [{
-                            className:"btn btn-sm",
+                            className:"btn btn-sm btn-default",
                             extend: 'excelHtml5',
                             text: '导出为Excel',
                             title: glbAttMouth + $("#searchClassSelect").find("option:selected").text()+"考勤记录",
-                            exportOptions: {
-                                // 将打印 id 和 title 列
-                                //columns: ['id:name', 'title:name']
-                            }
-                        },
-                        ],
+                            //exportOptions: {
+                            //    // 将打印 id 和 title 列
+                            //    //columns: ['id:name', 'title:name']
+                            //}
+                        }],
                         searching: false,
                         ordering: false,
                         destroy: true,
@@ -164,6 +163,7 @@
                             "url": "/template-bootstrap/datatables_zh_CN.json"
                         }
                     });
+                    
                 }
                 else {
                     handleAjaxErr(result);

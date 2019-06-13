@@ -9,7 +9,7 @@ namespace DataService
 {
     public interface ICrewService:IBaseService
     {
-        string GetStuInfo(string nqy, int cqy);
+        string GetStuInfo(string nqy, int cqy,int pageIndex);
         string AddOrModifyStu( byte type, string entity);
         string GetStuById(int id);
         int DelStuById(long id);
@@ -19,8 +19,8 @@ namespace DataService
 
 
 
-        string GetStaffInfo(string query);
-        string AddOrModifyStaff( byte type, string entity);
+        string GetStaffInfo(string query, int pageIndex);
+        string AddOrModifyStaff( byte type, string entity, string cardNo);
         string GetStaffById(int id);
         int DelStaffById(long id);
 
@@ -35,7 +35,7 @@ namespace DataService
         string GetClassById(int id);
         int DelClassById(long id);
 
-       
 
+        ModelJsonRet OperateCard(byte type, long cardId);
     }
 }

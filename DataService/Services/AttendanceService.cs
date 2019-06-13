@@ -107,7 +107,7 @@ namespace DataService
                     AttType = attType,
                     AttTime = aTime,
                     AttTimeStr= aTime.ToString("yyyyMMddHHmmssfff"),
-                    AttWay = (byte)AttWay.手工添加,
+                    AttWay = (byte)AttWay.手动添加,
                     Temperature = attTemp,
                     Remark = attRemark
                 };
@@ -269,7 +269,7 @@ namespace DataService
                                 {
                                     str = "√";
                                     attCount++;
-                                    if(dayAtt.AttWay==(byte)AttWay.手工添加)
+                                    if(dayAtt.AttWay==(byte)AttWay.手动添加)
                                         str = "△";
                                 }
                                 if(startDay.DayOfWeek==DayOfWeek.Saturday)
@@ -348,7 +348,7 @@ namespace DataService
                     AttType = attType,
                     AttTime = aTime,
                     AttTimeStr = aTime.ToString("yyyyMMddHHmmssfff"),
-                    AttWay = (byte)AttWay.手工添加,
+                    AttWay = (byte)AttWay.手动添加,
                     Remark = attRemark
                 };
                 UnitOfWork.Repository<SYS_StaffAttRecord>().AddEntity(sar);
@@ -450,7 +450,7 @@ namespace DataService
                         {
                             str = "√";
                             attCount++;
-                            if (dayAtt.AttWay == (byte)AttWay.手工添加)
+                            if (dayAtt.AttWay == (byte)AttWay.手动添加)
                                 str = "△";
                         }
                         if (startDay.DayOfWeek == DayOfWeek.Saturday)

@@ -199,8 +199,6 @@ namespace Domain
             {
                 entity.Property(e => e.AvatarPic).HasMaxLength(100);
 
-                entity.Property(e => e.CardNo).HasMaxLength(50);
-
                 entity.Property(e => e.CreateTime).HasColumnType("smalldatetime");
 
                 entity.Property(e => e.IdNumber).HasMaxLength(50);

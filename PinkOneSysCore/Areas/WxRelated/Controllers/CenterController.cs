@@ -16,8 +16,7 @@ namespace PinkOneSysCore.Areas.WxRelated.Controllers
         [WxSysUserFilter]
         public ActionResult Index()
         {
-            //测试用
-            mSysWxUser = Service.GetSysWxUserModelTest();
+            mSysWxUser = JsonHelper.JsonToT<ModelSysWxUser>(HttpContextCore.GetSession(ComConst.Wx_ModelSysWxUser));
             return View("Index_Center", mSysWxUser);
         }
         /// <summary>
@@ -25,8 +24,7 @@ namespace PinkOneSysCore.Areas.WxRelated.Controllers
         /// </summary>
         public ActionResult WxBind()
         {
-            //测试用
-            mSysWxUser = Service.GetSysWxUserModelTest();
+            mSysWxUser = JsonHelper.JsonToT<ModelSysWxUser>(HttpContextCore.GetSession(ComConst.Wx_ModelSysWxUser));
             if (mSysWxUser != null && mSysWxUser.OpenId.Length > 6)
                 ViewBag.WxBindedJson = Service.GetWxBindedJson(mSysWxUser.OpenId);
             return View("Index_WxBind");
@@ -68,11 +66,10 @@ namespace PinkOneSysCore.Areas.WxRelated.Controllers
         /// </summary>
         public JsonResult DoWxBind(string name, string cardNo, string imgCode)
         {
-            var res = "";
+            var res = "绑定失败";
             ModelWxUserInfo modelWxUser = JsonHelper.JsonToT<ModelWxUserInfo>(GetCookie(ComConst.Wx_ModelWxUserInfo));
-            modelWxUser = new ModelWxUserInfo();
             var imgCodeSession = GetSession(ComConst.Session_ImgCode);
-            if (null != modelWxUser && null != imgCodeSession && imgCodeSession.ToUpper().Equals(imgCode.ToUpper()))
+            if (null != modelWxUser) //&& null != imgCodeSession && imgCodeSession.ToUpper().Equals(imgCode.ToUpper()))
                 res = Service.DoWxBind(name, cardNo, modelWxUser);
             if (res.Contains("OK"))
             {

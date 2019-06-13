@@ -33,6 +33,7 @@ namespace Utility
         姥爷 = 5,
         姥姥 = 6,
         其他 = 7,
+        未填 = 8
     }
     public enum StaffStatus
     {
@@ -69,7 +70,7 @@ namespace Utility
     {
         刷卡 = 1,
         扫码 = 2,
-        手工添加 = 3,
+        手动添加 = 3,
         其他=4
     }
     #endregion
@@ -85,7 +86,6 @@ namespace Utility
     {
         正常 = 1,
         挂失 = 2,
-        注销 = 3,
     }
     #endregion
 

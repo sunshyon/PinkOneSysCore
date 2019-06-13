@@ -20,7 +20,7 @@
             <div class="box box-body">
                 @*<h6 class="text-uppercase text-white">班级概况</h6>*@
                 <div class="flexbox mt-2">
-                    <span class="font-size-20" id="itemCount">学生数：0</span>
+                    <span class="font-size-20" id="itemCount">学生总数：0</span>
                     <div>
                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#stuModal" id="addNewBtn">新增学生</button>
                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal" >批量导入</button>
@@ -183,7 +183,7 @@
                         </div>
                         <div class="row" id="emampleDiv">
                             <div class="col-12">
-                                <h5>导入格式示例：</h5>
+                                <h5>导入格式示例（<a href="~/files/student-import.xlsx" download="学生导入模板" class="span-as-btn">下载模板</a>）</h5>
                                 <img src="~/Images/Stu_Ipt_Example.jpg" />
                             </div>
                         </div>
@@ -240,6 +240,17 @@
                                     </tr>*@
                             </tbody>
                         </table>
+                        <div class="page-break-uty">
+                            <div style="width:100%;text-align:center;">
+                                第<span>{{pageIndex}}</span> 页，共<span>{{totalPage}}</span>页
+                                &emsp;&emsp; &emsp;&emsp;
+                                <span class="span-as-btn" id="previousBtn">上一页</span>
+                                &emsp;&emsp;
+                                <span class="bg-info">{{pageIndex}}</span>
+                                &emsp;&emsp;
+                                <span class="span-as-btn" id="nextBtn">下一页</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- /.box-body -->
@@ -257,10 +268,50 @@
     var glbNameQuery = "";
     var glbClassQuery = 0;
     var glbCardDivCount = 1;
+    var glbPageIndex = 1;
+    var glbTotalPage = 1;
 
-
+    //初始化
     $("#stuManageLi").parent().parent().addClass("active");
     $("#stuManageLi").addClass("active");
+
+    //pageVue初始化
+     var pageVue= new Vue({
+         el: ".page-break-uty",
+        data: function () {
+            return {
+                pageIndex: glbPageIndex,
+                totalPage: glbTotalPage
+            };
+        },
+        methods: {
+            chagePageData: function () {
+                this.pageIndex = glbPageIndex;
+                this.totalPage = glbTotalPage;
+                $("#previousBtn").css("cursor", "pointer");
+                $("#nextBtn").css("cursor", "pointer");
+                if (glbPageIndex == 1) {
+                    $("#previousBtn").css("cursor", "not-allowed");
+                }
+                if (glbPageIndex >= glbTotalPage) {
+                    $("#nextBtn").css("cursor", "not-allowed");
+                }
+            }
+        }
+    });
+    $("#previousBtn").click(function () {
+         if ($("#previousBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex--;
+        getStuInfo();
+    })
+    $("#nextBtn").click(function () {
+        if ($("#nextBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex++;
+        getStuInfo();
+    })
+    pageVue.chagePageData();
 
     //生日
     var date = new Date();
@@ -358,7 +409,7 @@
                 if (result.code == 1) {
                     //swal({ title: "", text: "导入成功", type: "success", timer: 700, showConfirmButton: false });
                     $("#importResDiv").html(result.content);
-                    getStuInfo(glbNameQuery, glbClassQuery);
+                    getStuInfo();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];
@@ -531,7 +582,7 @@
             success: function (result) {
                 if (result.code == 1) {
                     swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
-                    getStuInfo(glbNameQuery, glbClassQuery);
+                    getStuInfo();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];
@@ -567,7 +618,7 @@
                 success: function (result) {
                     if (result.code == 1) {
                         swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
-                        getStuInfo(glbNameQuery, glbClassQuery);
+                        getStuInfo();
                     }
                     else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                         window.location.href = result.split(',')[1];
@@ -588,40 +639,42 @@
 
     //刷新
     $("#refresh").click(function () {
-        getStuInfo("",0);
+        getStuInfo();
     })
 
     //使能搜索事件
     $("#queryIpt").bind("input propertychange", function () {
         glbNameQuery = $("#queryIpt").val();
-        getStuInfo(glbNameQuery, glbClassQuery);
+        getStuInfo();
     })
     $("#searchClassSelect").bind("change", function () {
         glbClassQuery = $("#searchClassSelect").val();
-       
-        getStuInfo(glbNameQuery, glbClassQuery);
+        getStuInfo();
     })
 
     //获取所有学生数据
-    getStuInfo("",0);
-    function getStuInfo(nqy,cqy) {
+    getStuInfo();
+    function getStuInfo() {
         $("#objListTable").empty();
         $.ajax({
             url: "/SchoolRelated/Student/GetStuInfo",
             type: "GET",
             data: {
-                "nameQuery": nqy,
-                "classQuery": cqy,
+                "nameQuery": glbNameQuery,
+                "classQuery": glbClassQuery,
+                "pageIndex": glbPageIndex
             },
             success: function (result) {
                 if (result.code == 1) {
                     var jsonRes = JSON.parse(result.content);
                     glbStuList = jsonRes.Stus;
                     glbClassList = jsonRes.Classes;
+                    glbTotalPage = jsonRes.TotalPage;
+                    $("#itemCount").html("学生总数：" + jsonRes.TotalCount); 
                     if (glbClassQuery == 0)
                         renderClassSelect(glbClassList);
                     renderStus(glbStuList);
-                    //$("#objListTable").html(result.content);
+                    pageVue.chagePageData();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];
@@ -641,7 +694,8 @@
                     }, function () {
                         //window.location.href = '/SchoolRelated/Class';
                         $("li").removeClass('active');
-                        GoToPage('',"/SchoolRelated/Class");
+                        //GoToPage('',"/SchoolRelated/Class");
+                        window.location.href = "/SchoolRelated/Class";
                     })
 
                 }
@@ -685,7 +739,7 @@
     //渲染学生列表
     function renderStus(list) {
         var sb = '';
-        $("#itemCount").html("学生数：" + list.length); searchClassSelect
+       
         if (list.length <= 0) {
             sb = "<tr><td colspan='6'>未找到数据</td></tr>";
             $("#objListTable").html(sb);

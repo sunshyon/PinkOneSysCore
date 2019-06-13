@@ -92,10 +92,14 @@ namespace DataService
                 }
                 var albumTitle = "相册名：" + album.AlbumName + "&emsp; 照片数：" + album.PhotoCount + "&ensp;张 &emsp; 类型：" + (AlbumType)album.Type +
                     "&emsp;创建日期：" + ((DateTime)album.CreateTime).ToString("yyyy-MM-dd");
+            
                 var totalPage = 1;
                 if (totalCount > pageItemCount)
                 {
-                    totalPage = totalCount / pageItemCount + 1;
+                    var tail = 1;
+                    if (totalCount % pageItemCount == 0)
+                        tail = 0;
+                    totalPage = totalCount / pageItemCount + tail;
                 }
                 var photos = UnitOfWork.Repository<SYS_PhotoRecord>().GetEntitiesForPageOrderByDescAsync(x => x.SchoolId == mlUser.School.ID && x.AlbumId == aId,
                     x=>x.CreateTime, (pageIndex - 1) * pageItemCount, pageItemCount).Result;
@@ -241,7 +245,10 @@ namespace DataService
             var totalPage = 1;
             if (totalCount > pageItemCount)
             {
-                totalPage = totalCount / pageItemCount + 1;
+                var tail = 1;
+                if (totalCount % pageItemCount == 0)
+                    tail = 0;
+                totalPage = totalCount / pageItemCount + tail;
             }
             var tipStr = "无相册，请添加";
             if (nQuery != null&&nQuery.Length > 0)

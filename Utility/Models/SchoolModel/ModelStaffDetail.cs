@@ -9,6 +9,6 @@ namespace Utility
     {
         public SYS_Staff Staff { get; set; }
         public SYS_StaffRole Role { get; set; }
-        public SYS_Card Card { get; set; }
+        public List<SYS_Card> Cards { get; set; }
     }
 }

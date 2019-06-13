@@ -20,7 +20,7 @@
             <div class="box box-body">
                 @*<h6 class="text-uppercase text-white">班级概况</h6>*@
                 <div class="flexbox mt-2">
-                    <span class="font-size-20" id="itemCount">班级数：0</span>
+                    <span class="font-size-20" id="itemCount">班级总数：0</span>
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#classModal" id="addNewBtn">新增班级</button>
                 </div>
             </div>
@@ -320,7 +320,7 @@
                         sb = "<tr><td colspan='5' style='color:red;'>请添加班级</td></tr>";
                     }
                     $("#objListTable").html(sb);
-                    $("#itemCount").html("班级数：" + ($("#objListTable").children().length - offsetCount));
+                    $("#itemCount").html("班级总数：" + ($("#objListTable").children().length - offsetCount));
                     renderTeacherSelect(classJson.techers);
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {

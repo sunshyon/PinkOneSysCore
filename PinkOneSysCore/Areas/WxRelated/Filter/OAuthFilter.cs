@@ -7,6 +7,7 @@ using System.Web;
 using Utility;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PinkOneSysCore.Areas.WxRelated
 {
@@ -19,7 +20,7 @@ namespace PinkOneSysCore.Areas.WxRelated
         /// <param name="filterContext"></param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            string code = filterContext.HttpContext.Request.Form["code"].ToString();
+            string code = filterContext.HttpContext.Request.Query["code"].ToString();
             var wxPubInfo = MemoryCacheHelper.GetCache<Wx_PublicInfo>("WxPubInfo");
     
             if (null != code && code.Length > 0)
@@ -29,6 +30,20 @@ namespace PinkOneSysCore.Areas.WxRelated
                 {
                     filterContext.HttpContext.Response.Cookies.Append(ComConst.Wx_ModelWxUserInfo, JsonHelper.ToJson(mWxUserInfo), ComHelper.GetCookieOpetion());
                     filterContext.HttpContext.Session.SetString(ComConst.Wx_ModelWxUserInfo, JsonHelper.ToJson(mWxUserInfo));
+                }
+            }
+            else
+            {
+                if (filterContext.HttpContext.Request.Cookies.TryGetValue(ComConst.Wx_ModelWxUserInfo, out string value))
+                {
+                    filterContext.HttpContext.Response.Cookies.Append(ComConst.Wx_ModelWxUserInfo, value, ComHelper.GetCookieOpetion());
+                    filterContext.HttpContext.Session.SetString(ComConst.Wx_ModelWxUserInfo, value);
+                }
+                else
+                {
+                    var rst = new ContentResult();
+                    rst.Content = "登录过期，请退出重新进入";
+                    filterContext.Result = rst;
                 }
             }
         }

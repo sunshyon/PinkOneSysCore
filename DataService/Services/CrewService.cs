@@ -11,10 +11,46 @@ namespace DataService
 {
     public class CrewService:BaseService,ICrewService
     {
+
+        #region 卡相关
+        /// <summary>
+        /// 卡操作，type->1：挂失，2：启用，3：删除
+        /// </summary>
+        public ModelJsonRet OperateCard(byte type,long cardId)
+        {
+            mjRet.content = "操作失败";
+            var card = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.ID == cardId).Result.FirstOrDefault();
+            if (card != null)
+            {
+                if (type == 1&&card.Status==(byte)CardStatus.正常)
+                {
+                    card.Status = (byte)CardStatus.挂失;
+                    UnitOfWork.Repository<SYS_Card>().UpdateEntity(card);
+                }
+                else if (type == 2&& card.Status == (byte)CardStatus.挂失)
+                {
+                    card.Status = (byte)CardStatus.正常;
+                    UnitOfWork.Repository<SYS_Card>().UpdateEntity(card);
+                }
+                else if (type == 3)
+                {
+                    UnitOfWork.Repository<SYS_Card>().DeleteEntity(card);
+                }
+                if (UnitOfWork.CommitAsync().Result > 0)
+                {
+                    mjRet.code = 1;
+                    mjRet.content = "OK";
+                }
+            }
+            return mjRet;
+        }
+        #endregion
+
+        #region 学生相关
         /// <summary>
         /// 批量导入学生
         /// </summary>
-        public  string ImportStus(int classId, string fileName)
+        public string ImportStus(int classId, string fileName)
         {
             var res = "数据格式有误";
             var totalRowCount = 0;
@@ -100,7 +136,7 @@ namespace DataService
                                             //开始建卡
                                             foreach (var cNo in cardNoList)
                                             {
-                                                var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cNo && x.SchoolId == mlUser.School.ID && x.Status == (byte)CardStatus.正常).Result
+                                                var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cNo && x.SchoolId == mlUser.School.ID).Result
                                                     .FirstOrDefault();
                                                 if (oldCard == null)
                                                 {
@@ -197,20 +233,38 @@ namespace DataService
         /// <summary>
         /// 获取学生信息
         /// </summary>
-        public string GetStuInfo(string nqy, int cqy)
+        public string GetStuInfo(string nqy, int cqy, int pageIndex)
         {
             var res = "";
-            List<SYS_Student> allStus= (List<SYS_Student>)GetSchoolEntities("stu");
+            var pageItemCount = 30;
+            
+            var allStu= UnitOfWork.Repository<SYS_Student>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.Status == (byte)StuStatus.正常).Result.OrderBy(x => x.Grade).ThenBy(x => x.ClassId);
+            var totalCount = allStu.Count();
+            var totalPage = 1;
+            if (totalCount > pageItemCount)
+            {
+                var tail = 1;
+                if (totalCount % pageItemCount == 0)
+                    tail = 0;
+                totalPage = totalCount / pageItemCount + tail;
+            }
+            var stus=new List<SYS_Student>();
             if (null != nqy && nqy.Length > 0)
-                allStus = allStus.Where(x => x.StuName.Contains(nqy)).ToList();
-            if (cqy > 0)
-                allStus = allStus.Where(x => x.ClassId == cqy).ToList();
-            List<SYS_Class> classes = (List<SYS_Class>)GetSchoolEntities("class");
+                stus = allStu.Where(x => x.StuName.Contains(nqy)).ToList();
+            else if (cqy > 0)
+                stus = allStu.Where(x => x.ClassId == cqy).ToList();
+            else//分页
+            {
+                stus = allStu.Skip((pageIndex - 1) * pageItemCount).Take(pageItemCount).ToList();//UnitOfWork.Repository<SYS_Student>().GetEntitiesForPageOrderByAsync()
+            }
+            var classes = (List<SYS_Class>)GetSchoolEntities("class");
 
-            if (allStus.Count > 0|| classes.Count>0)
+            if (stus.Count > 0|| classes.Count>0)
             {
                 var json = new {
-                    Stus=allStus,
+                    TotalCount=totalCount,
+                    TotalPage=totalPage,
+                    Stus = stus,
                     Classes= classes
                 };
 
@@ -265,7 +319,7 @@ namespace DataService
                             {
                                 if (stuOldCards.FindIndex(delegate (SYS_Card card) { return card.CardNo == cNo; }) < 0)
                                 {
-                                    var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cNo && x.SchoolId == mlUser.School.ID && x.Status == (byte)CardStatus.正常)
+                                    var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cNo && x.SchoolId == mlUser.School.ID)
                                         .Result.FirstOrDefault();
                                     if (oldCard == null)
                                     {
@@ -385,6 +439,7 @@ namespace DataService
             }
             return res;
         }
+        #endregion
 
         #region 职员相关
         /// <summary>
@@ -465,7 +520,7 @@ namespace DataService
                                         if (isOk > 0)
                                         {
                                             //开始建卡
-                                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cardNoStr && x.SchoolId == mlUser.School.ID && x.Status == (byte)CardStatus.正常)
+                                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cardNoStr && x.SchoolId == mlUser.School.ID)
                                                 .Result.FirstOrDefault();
                                             if (oldCard == null)
                                             {
@@ -554,16 +609,11 @@ namespace DataService
             if (staff != null)
             {
                 var role = UnitOfWork.Repository<SYS_StaffRole>().GetEntitiesAsync(x => x.ID == staff.RoleId).Result.FirstOrDefault();
-                var card = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.CardType == (byte)CardType.职员卡 && x.CardMasterId == staff.ID).Result.FirstOrDefault();
-                if(card==null && staff.CardNo !=null&& staff.CardNo.Length > 0)
-                {
-                    staff.CardNo = null;
-                    UnitOfWork.Repository<SYS_Staff>().UpdateEntity(staff);
-                    UnitOfWork.CommitAsync();
-                }
+                var cards = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.CardType == (byte)CardType.职员卡 && x.CardMasterId == staff.ID).Result.ToList();
+              
                 msd.Staff = staff;
                 msd.Role = role;
-                msd.Card = card;
+                msd.Cards = cards;
             }
             return msd;
         }
@@ -571,13 +621,28 @@ namespace DataService
         /// <summary>
         /// 获取职员信息
         /// </summary>
-        public string GetStaffInfo(string query)
+        public string GetStaffInfo(string query,int pageIndex)
         {
             var res = "";
-            List<SYS_Staff> staffs = (List<SYS_Staff>)GetSchoolEntities("staff");
-            if (null != query && query.Length > 0)
-                staffs = staffs.Where(x => x.StaffName.Contains(query) || x.Phone.Contains(query)).ToList();
+            var pageItemCount = 20;
 
+            var allStaff = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == mlUser.School.ID && x.Status == (byte)StaffStatus.在职).Result.OrderBy(x => x.RoleLevel);
+            var totalCount = allStaff.Count();
+            var totalPage = 1;
+            if (totalCount > pageItemCount)
+            {
+                var tail = 1;
+                if (totalCount % pageItemCount == 0)
+                    tail = 0;
+                totalPage = totalCount / pageItemCount + tail;
+            }
+            var staffs = new List<SYS_Staff>();
+            if (null != query && query.Length > 0)
+                staffs = allStaff.Where(x => x.StaffName.Contains(query) || x.Phone.Contains(query)).ToList();
+            else
+            {
+                staffs = allStaff.Skip((pageIndex - 1) * pageItemCount).Take(pageItemCount).ToList();
+            }
             if (null != staffs && staffs.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -603,6 +668,8 @@ namespace DataService
                 }
                 var json = new
                 {
+                    TotalCount = totalCount,
+                    TotalPage = totalPage,
                     Staffs = sb.ToString(),
                     StaffRoles = staffRoles
                 };
@@ -613,7 +680,7 @@ namespace DataService
         /// <summary>
         /// 新增或修改职员(type->1:新增,2:修改)
         /// </summary>
-        public string AddOrModifyStaff(byte type, string entity)
+        public string AddOrModifyStaff(byte type, string entity,string cardNo)
         {
             var res = "";
             var repeatCardStr = "";
@@ -648,15 +715,15 @@ namespace DataService
                         }
 
                         //添加卡
-                        if(isOk > 0&& obj.CardNo != null && obj.CardNo.Length > 0)
+                        if(isOk > 0)
                         {
                             //检测卡是否已存在
-                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo== obj.CardNo&& x.SchoolId==mlUser.School.ID&&x.Status==(byte)CardStatus.正常).Result.FirstOrDefault();
+                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo== cardNo && x.SchoolId==mlUser.School.ID).Result.FirstOrDefault();
                             if (oldCard == null)
                             {
                                 var card = new SYS_Card
                                 {
-                                    CardNo = obj.CardNo,
+                                    CardNo = cardNo,
                                     CardMasterId = obj.ID,
                                     SchoolId = mlUser.School.ID,
                                     CardType = (byte)CardType.职员卡,
@@ -670,7 +737,7 @@ namespace DataService
                             }
                             else
                             {
-                                repeatCardStr = obj.CardNo;
+                                repeatCardStr = cardNo;
                             }
                             if (repeatCardStr.Length > 0)
                                 res = "警告：职员添加成功，但是卡" + repeatCardStr + "已存在，无法添加";
@@ -682,10 +749,10 @@ namespace DataService
                         UnitOfWork.Repository<SYS_Staff>().UpdateEntity(obj);
                         res = "OK,修改成功";
                         //添加卡
-                        if (obj.CardNo != null && obj.CardNo.Length > 0)
+                        if (cardNo != null && cardNo.Length > 0)
                         {
                             //检测该卡号是否已存在
-                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == obj.CardNo && x.SchoolId == mlUser.School.ID && x.Status == (byte)CardStatus.正常).Result.FirstOrDefault();
+                            var oldCard = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == cardNo && x.SchoolId == mlUser.School.ID).Result.FirstOrDefault();
                             if (oldCard == null)
                             {
                                 //该用户是否有老卡,有则先注销
@@ -697,7 +764,7 @@ namespace DataService
                                 //}
                                 var card = new SYS_Card
                                 {
-                                    CardNo = obj.CardNo,
+                                    CardNo = cardNo,
                                     CardMasterId = obj.ID,
                                     SchoolId = mlUser.School.ID,
                                     CardType = (byte)CardType.职员卡,
@@ -708,8 +775,7 @@ namespace DataService
                             }
                             else
                             {
-                                repeatCardStr = obj.CardNo;
-                                obj.CardNo = "";
+                                repeatCardStr = cardNo;
                             }
                             if (repeatCardStr.Length > 0)
                                 res = "警告：卡" + repeatCardStr + "已存在，无法添加";
@@ -718,10 +784,8 @@ namespace DataService
                         if (isOk > 0)
                             res = "OK";
                     }
-                   
                 }
                 UnitOfWork.Commit();
-               
             }
             return res;
         }
@@ -734,20 +798,15 @@ namespace DataService
             var entity = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.ID == id).Result.FirstOrDefault();
             if (null != entity)
             {
-                if (entity.CardNo!=null&&entity.CardNo.Length > 0)
-                { 
-                    //检索名下是否有正常的卡
-                    var card = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardNo == entity.CardNo && x.CardMasterId == entity.ID && x.Status == (byte)CardStatus.正常 && x.SchoolId == mlUser.School.ID).Result.FirstOrDefault();
-                    if (card == null)
-                    {
-                        entity.CardNo = "";
-                        UnitOfWork.Repository<SYS_Staff>().UpdateEntity(entity);
-                        UnitOfWork.Commit();
-                    }
-                }
-                res = JsonHelper.ToJson(entity);
+                //检索名下是否有正常的卡
+                var card = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.CardMasterId == entity.ID && x.Status == (byte)CardStatus.正常 && x.SchoolId == mlUser.School.ID).Result.FirstOrDefault();
+                var json = new
+                {
+                    entity,
+                    cardNo= card==null?"":card.CardNo
+                };
+                res = JsonHelper.ToJson(json);
             }
-                
             return res;
         }
         /// <summary>
@@ -768,6 +827,7 @@ namespace DataService
 
         #endregion
 
+        #region 班级相关
         /// <summary>
         /// 获取班级信息
         /// </summary>
@@ -881,7 +941,7 @@ namespace DataService
             }
             return res;
         }
+        #endregion
 
-        
     }
 }

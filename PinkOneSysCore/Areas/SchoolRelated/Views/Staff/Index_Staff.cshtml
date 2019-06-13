@@ -20,7 +20,7 @@
                 <div class="box box-body">
                     @*<h6 class="text-uppercase text-white">班级概况</h6>*@
                     <div class="flexbox mt-2">
-                        <span class="font-size-20" id="itemCount">职员数：0</span>
+                        <span class="font-size-20" id="itemCount">职员总数：0</span>
                         <div>
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#staffModal" id="addNewBtn">新增职员</button>
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#importModal" >批量导入</button>
@@ -127,7 +127,7 @@
                         </div>
                         <div class="row" id="emampleDiv">
                             <div class="col-12">
-                                <h5>导入格式示例：</h5>
+                                <h5>导入格式示例（<a href="~/files/staff-import.xlsx" download="职员导入模板" class="span-as-btn">下载模板</a>）</h5>
                                 <img src="~/Images/Staff_Ipt_Example.jpg" />
                             </div>
                         </div>
@@ -174,6 +174,17 @@
                                 </thead>
                                 <tbody id="objListTable"></tbody>
                             </table>
+                            <div class="page-break-uty">
+                                <div style="width:100%;text-align:center;">
+                                    第<span>{{pageIndex}}</span> 页，共<span>{{totalPage}}</span>页
+                                    &emsp;&emsp; &emsp;&emsp;
+                                    <span class="span-as-btn" id="previousBtn">上一页</span>
+                                    &emsp;&emsp;
+                                    <span class="bg-info">{{pageIndex}}</span>
+                                    &emsp;&emsp;
+                                    <span class="span-as-btn" id="nextBtn">下一页</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.box-body -->
@@ -187,9 +198,50 @@
     //全局变量
     var glbEntity;
     var glbQuery = '';
+    var glbPageIndex = 1;
+    var glbTotalPage = 1;
 
+    //初始化
     $("#staffManageLi").parent().parent().addClass("active");
     $("#staffManageLi").addClass("active");
+
+    //pageVue初始化
+     var pageVue= new Vue({
+         el: ".page-break-uty",
+        data: function () {
+            return {
+                pageIndex: glbPageIndex,
+                totalPage: glbTotalPage
+            };
+        },
+        methods: {
+            chagePageData: function () {
+                this.pageIndex = glbPageIndex;
+                this.totalPage = glbTotalPage;
+                $("#previousBtn").css("cursor", "pointer");
+                $("#nextBtn").css("cursor", "pointer");
+                if (glbPageIndex == 1) {
+                    $("#previousBtn").css("cursor", "not-allowed");
+                }
+                if (glbPageIndex >= glbTotalPage) {
+                    $("#nextBtn").css("cursor", "not-allowed");
+                }
+            }
+        }
+    });
+    $("#previousBtn").click(function () {
+         if ($("#previousBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex--;
+        getStaffInfo();
+    })
+    $("#nextBtn").click(function () {
+        if ($("#nextBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex++;
+        getStaffInfo();
+    })
+    pageVue.chagePageData();
 
     //打开批量模态框
     $('#importModal').on('show.bs.modal', function (e) {
@@ -226,7 +278,7 @@
                 if (result.code == 1) {
                     //swal({ title: "", text: "导入成功", type: "success", timer: 700, showConfirmButton: false });
                     $("#importResDiv").html(result.content);
-                    getStaffInfo(glbQuery);
+                    getStaffInfo();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];
@@ -266,14 +318,15 @@
             },
             success: function (result) {
                 if (result.code == 1) {
-                    glbEntity = JSON.parse(result.content);
+                    var json = JSON.parse(result.content);
+                    glbEntity = json.entity;
                     $("#staffName").val(glbEntity.StaffName);
                     $("#phoneNo").val(glbEntity.Phone);
                     $("#workNo").val(glbEntity.WorkNo);
                     $("#idNumber").val(glbEntity.IdNumber);
                     $("#roleSelect").val(glbEntity.RoleId);
-                    $("#cardNo").val(glbEntity.CardNo);
-                    if (glbEntity.CardNo!=null&&glbEntity.CardNo.length > 0) {
+                    $("#cardNo").val(json.cardNo);
+                    if (json.cardNo!=null&&json.cardNo.length > 0) {
                         $("#cardNo").attr("readonly", true);
                     }
                     else {
@@ -322,7 +375,6 @@
             WorkNo: workNo,
             IdNumber: idNumber,
             RoleId: roleId,
-            CardNo: cardNo
         }
 
         //修改
@@ -334,7 +386,6 @@
             glbEntity.workNo = workNo;
             glbEntity.IdNumber = idNumber;
             glbEntity.RoleId = roleId;
-            glbEntity.CardNo = cardNo;
             obj = glbEntity
         }
       
@@ -357,12 +408,13 @@
             type: "POST",
             data: {
                 "type":otype,
-                "entity":JSON.stringify(obj),
+                "entity": JSON.stringify(obj),
+                "cardNo":cardNo
             },
             success: function (result) {
                 if (result.code == 1) {
                     swal({ title: "", text: "成功", type:"success", timer: 700, showConfirmButton: false });
-                    getStaffInfo(glbQuery);
+                    getStaffInfo();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];
@@ -399,7 +451,7 @@
                 success: function (result) {
                     if (result.code == 1) {
                         swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
-                        getStaffInfo(glbQuery);
+                        getStaffInfo();
                     }
                     else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                         window.location.href = result.split(',')[1];
@@ -420,29 +472,33 @@
 
     //刷新
     $("#refresh").click(function () {
-        getStaffInfo("");
+        getStaffInfo();
     })
 
     //使能搜索
     $("#queryIpt").bind("input propertychange", function () {
         glbQuery = $("#queryIpt").val();
-        getStaffInfo(glbQuery);
+        getStaffInfo();
     })
     //获取所有职员数据
-    getStaffInfo(glbQuery);
-    function getStaffInfo(qy) {
+    getStaffInfo();
+    function getStaffInfo() {
         $("#objListTable").empty();
         $.ajax({
             url: "/SchoolRelated/Staff/GetStaffInfo",
             type: "GET",
-            data: { "query": qy },
+            data: {
+                "query": glbQuery ,
+                "pageIndex": glbPageIndex
+            },
             success: function (result) {
                 if (result.code == 1) {
                     var obj = JSON.parse(result.content);
                     $("#objListTable").html(obj.Staffs);
-                    $("#itemCount").html("职员数：" + $("#objListTable").children().length);
-
+                    $("#itemCount").html("职员总数：" + obj.TotalCount);
+                    glbTotalPage = obj.TotalPage;
                     renderRoleSelect(obj.StaffRoles);
+                    pageVue.chagePageData();
                 }
                 else if (typeof (result) == 'string' && result.indexOf("redirectUrl") >= 0) {
                     window.location.href = result.split(',')[1];

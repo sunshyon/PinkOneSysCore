@@ -26,7 +26,7 @@
                         <p>性别：@{var sex = @Model.Stu.Sex == (byte)1 ? "男生" : "女生"; } @sex</p>
                         <p>联系电话：@Model.Stu.Phone</p>
                         <p>家庭住址：@Model.Stu.Address</p>
-                        <p>生日：@{var birthday = Model.Stu.Birthday == null ?"": Model.Stu.Birthday.ToString().Substring(0, 10);}@birthday</p>
+                        <p>生日：@{var birthday = Model.Stu.Birthday == null ? "" : Model.Stu.Birthday.ToString().Substring(0, 10);}@birthday</p>
                     </div>
                     <div class="col-3 text-center">
                         @{
@@ -51,7 +51,7 @@
                     var ps = Model.Parents;
                     if (ps == null || ps.Count == 0)
                     {
-                                <span class="text-warning">未添加绑定，请让家长到公众号绑定，以便能接受考勤通知</span> 
+                        <span class="text-warning">未添加绑定，请让家长到公众号绑定，以便能接受考勤通知</span>
                     }
                     for (var i = 0; i < ps.Count; i += 2)
                     {
@@ -73,33 +73,39 @@
                             </div>
                             @if (ps.Count % 2 == 0)
                             {
-                            <div class="col-sm-6">
-                                <div class="box box-body">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <img width="95" style="width:95px;" src="@ps[i+1].AvatarPic" />
-                                        </div>
-                                        <div class="col-8">
-                                            <h6>姓名：@ps[i + 1].Name</h6>
-                                            <h6>关系：@{var rela2 = (RelationType)@ps[i + 1].RelationType;}@rela2.ToString()</h6>
-                                            <h6>手机：@ps[i + 1].Phone</h6>
-                                            <h6>备注：@ps[i + 1].Remark</h6>
+                                <div class="col-sm-6">
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <img width="95" style="width:95px;" src="@ps[i+1].AvatarPic" />
+                                            </div>
+                                            <div class="col-8">
+                                                <h6>姓名：@ps[i + 1].Name</h6>
+                                                <h6>关系：@{var rela2 = (RelationType)@ps[i + 1].RelationType;}@rela2.ToString()</h6>
+                                                <h6>手机：@ps[i + 1].Phone</h6>
+                                                <h6>备注：@ps[i + 1].Remark</h6>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                </div>
                             }
-                            </div>
+                        </div>
                     }
                 }
             </div>
             <h4>门禁卡</h4>
+            @{
+                var cs = Model.Cards;
+                if (cs == null || cs.Count < 6)
+                {
+                    @*<div class=""><button class="btn btn-success btn-xs pull-right" style="margin-right:10%;">添加卡</button></div>*@
+                }
+            }
             <div class="margin">
                 @{
-                    var cs = Model.Cards;
                     if (cs == null || cs.Count == 0)
                     {
-                        <span class="text-warning">名下无实体卡，请到'学生管理-学生-修改'处添加 </span>
+                        <span class="text-warning">名下无实体卡，请添加 </span>
                     }
                     for (var i = 0; i < cs.Count; i += 3)
                     {
@@ -112,8 +118,21 @@
                                         </div>
                                         <div class="col-sm-8 col-xs-8">
                                             <div>卡号：@cs[i].CardNo</div>
-                                            <div>状态：@{var status1 = (CardStatus)@cs[i].Status;}@status1</div>
-                                            <div>操作：<span class="span-as-btn">挂失</span></div>
+                                            <div>状态：<span class="font-weight-bold">@{var status1 = (CardStatus)@cs[i].Status;}@status1</span></div>
+                                            <div>
+                                                操作：
+                                                @{
+                                                    if (status1 == CardStatus.正常)
+                                                    {
+                                                        <span class="span-as-btn" onclick="operateCard(1,@cs[i].ID)">挂失</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="span-as-btn" onclick="operateCard(2,@cs[i].ID)">启用</span>
+                                                    }
+                                                }
+                                                <span class="span-as-btn" onclick="operateCard(3,@cs[i].ID)">删除</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -128,8 +147,21 @@
                                             </div>
                                             <div class="col-sm-8 col-xs-8">
                                                 <div>卡号：@cs[i + 1].CardNo</div>
-                                                <div>状态：@{var status2 = (CardStatus)@cs[i + 1].Status;}@status1</div>
-                                                <div>操作：<span class="span-as-btn">挂失</span></div>
+                                                <div>状态：<span class="font-weight-bold">@{var status2 = (CardStatus)@cs[i + 1].Status;}@status2</span> </div>
+                                                <div>
+                                                    操作：
+                                                    @{
+                                                        if (status2 == CardStatus.正常)
+                                                        {
+                                                            <span class="span-as-btn" onclick="operateCard(1,@cs[i+1].ID)">挂失</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="span-as-btn" onclick="operateCard(2,@cs[i+1].ID)">启用</span>
+                                                        }
+                                                    }
+                                                    <span class="span-as-btn" onclick="operateCard(3,@cs[i+1].ID)">删除</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -145,8 +177,21 @@
                                             </div>
                                             <div class="col-sm-8 col-xs-8">
                                                 <div>卡号：@cs[i + 2].CardNo</div>
-                                                <div>状态：@{var status3 = (CardStatus)@cs[i + 2].Status;}@status1</div>
-                                                <div>操作：<span class="span-as-btn">挂失</span></div>
+                                                <div>状态：<span class="font-weight-bold">@{var status3 = (CardStatus)@cs[i + 2].Status;}@status3</span></div>
+                                                <div>
+                                                    操作：
+                                                    @{
+                                                        if (status3 == CardStatus.正常)
+                                                        {
+                                                            <span class="span-as-btn" onclick="operateCard(1,@cs[i+2].ID)">挂失</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="span-as-btn" onclick="operateCard(2,@cs[i+2].ID)">启用</span>
+                                                        }
+                                                    }
+                                                    <span class="span-as-btn" onclick="operateCard(3,@cs[i+2].ID)">删除</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -162,9 +207,51 @@
 </section>
 
 <script>
+    //初始化
+    $("#stuManageLi").parent().parent().addClass("active");
+    $("#stuManageLi").addClass("active");
     //返回
     $("#backBtn").click(function () {
         //GoToPage("", "/SchoolRelated/Student");
         window.location.href = "/SchoolRelated/Student";
     })
+
+    //操作卡type->1:挂失，2：启用，3：删除，
+    function operateCard(type, id) {
+        var tipStr = "确定要挂失吗？";
+        if (type == 2)
+             tipStr = "确定要重新启用吗？";
+        if (type == 3)
+            tipStr = "确定要删除吗？";
+        swal({
+            title: tipStr,
+            text: "",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            closeOnConfirm: false
+        }, function () {
+            $.ajax({
+                url: "/SchoolRelated/Student/OperateCard",
+                type: "GET",
+                data: {
+                    "type": type,
+                    "cardId": id
+                },
+                success: function (result) {
+                    if (result.code == 1) {
+                        swal({ title: "", text: "操作成功", type: "success", timer: 700, showConfirmButton: false });
+                        window.location.reload();
+                    }
+                    else {
+                        handleAjaxErr(result);
+                    }
+                },
+                error: function () {
+                    swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+                }
+            })
+        });
+    }
 </script>

@@ -77,15 +77,17 @@ namespace PinkOneSysCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //    app.UseHsts();
+            //}
+
+            app.UseMiddleware<Utility.ErrorHandleMiddleware>();
 
             //app.UseHttpsRedirection();//https
             app.UseStaticFiles();
@@ -94,7 +96,6 @@ namespace PinkOneSysCore
 
             //配置HttpContext
             Utility.HttpContextCore.Configure(app.ApplicationServices.GetRequiredService<Microsoft.AspNetCore.Http.IHttpContextAccessor>());
-            //new PinkOneMngSysContext();
 
             app.UseMvc(routes =>
             {

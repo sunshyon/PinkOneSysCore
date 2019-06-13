@@ -7,7 +7,7 @@ using Utility;
 
 namespace DataService
 {
-    public interface IApiService:IBaseService
+    public interface ILocalAppApiService:IBaseService
     {
 
         bool UploadFile(string name, string path);

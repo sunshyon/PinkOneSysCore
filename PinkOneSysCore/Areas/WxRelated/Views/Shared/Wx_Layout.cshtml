@@ -63,7 +63,7 @@
     </style>
 </head>
 <body>
-    <div class="bg-pale-primary text-center " style="padding:4px;">
+    <div class="bg-pale-primary text-center" style="padding:4px;">
         <div class="font-size-24 text-warning" id="headTextDiv"></div>
     </div>
     <div class="">
@@ -71,14 +71,14 @@
     </div>
     <footer class="main-footer navbar-fixed-bottom font-size-26">
             <div class="row">
-                <div class="col-4">
-                    <div class="footNav text-dark" onclick="window.location.href = '/WxRelated/WxHome'"><i class="glyphicon glyphicon-home"></i>主页</div>
+                <div class="col-6">
+                    <div class="footNav" id="navHomeDiv" onclick="window.location.href = '/WxRelated/WxHome'"><i class="glyphicon glyphicon-home"></i>主页</div>
                 </div>
-                <div class="col-4">
+                @*<div class="col-4">
                     <div class="footNav text-purple" onclick="window.location.href='#'"><i class="glyphicon glyphicon-blackboard"></i>班级</div>
-                </div>
-                <div class="col-4">
-                    <div class="footNav text-brown" onclick="window.location.href='/WxRelated/Center'"><i class="glyphicon glyphicon-user"></i>我的</div>
+                </div>*@
+                <div class="col-6">
+                    <div class="footNav" id="navCenterDiv" onclick="window.location.href='/WxRelated/Center'"><i class="glyphicon glyphicon-user"></i>我的</div>
                 </div>
             </div>
     </footer>

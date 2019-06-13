@@ -180,11 +180,15 @@
             }
         }
     });
-    $("#previousBtn").click(function(){
+    $("#previousBtn").click(function () {
+        if ($("#previousBtn").css("cursor") == "not-allowed")
+            return;
         glbPageIndex--;
         getPhotosInfo();
     })
-    $("#nextBtn").click(function(){
+    $("#nextBtn").click(function () {
+        if ($("#nextBtn").css("cursor") == "not-allowed")
+            return;
         glbPageIndex++;
         getPhotosInfo();
     })
@@ -309,7 +313,7 @@
     function getPhotosInfo() {
         $("#photoDiv").empty();
         $.ajax({
-            url: "/GrowthRelated/Album/getPhotosInfo",
+            url: "/GrowthRelated/Album/GetPhotosInfo",
             type: "GET",
             data: {
                 "aId": glbAlbumId,

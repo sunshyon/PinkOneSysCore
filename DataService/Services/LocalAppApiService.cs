@@ -10,13 +10,11 @@ using Utility;
 
 namespace DataService
 {
-    public class ApiService:IApiService
+    public class LocalAppApiService:ILocalAppApiService
     {
         #region 基础部分
-        private static IUnitOfWork _unitOfWork;
         public ModelWxSetting mWxSetting = JsonFileProvider.Instance.GetSettings<ModelWxSetting>();
-        public string baseFileDir = ConfigHelper.AppSettings("BaseFileDir");
-        private string fileWebServer = ConfigHelper.AppSettings("FileWebServer");
+        private ModelJsonRet _mjr;
         /// <summary>
         /// 获取数据单元模块
         /// </summary>
@@ -24,18 +22,23 @@ namespace DataService
         {
             get
             {
+                GC.Collect();
+                //实现一个HttpContext请求管道对应唯一UnitOfWork对象，继而对应唯一DbContext对象,以避免各种DbContext线程安全Bug
+                //由于Http用完即销毁，UnitOfWork、DbContext对象也随之销毁。避免DbContext占用内存
+                IUnitOfWork _unitOfWork = (UnitOfWork)HttpContextCore.GetItem("LAppUnitOfWork");
                 if (_unitOfWork == null)
                 {
                     _unitOfWork = new UnitOfWork();
+                    HttpContextCore.AddItem("LAppUnitOfWork", _unitOfWork);
                 }
                 return _unitOfWork;
             }
         }
-        private ModelJsonRet _mjr; 
+       
         /// <summary>
         /// 构造函数
         /// </summary>
-        public ApiService()
+        public LocalAppApiService()
         {
             _mjr = new ModelJsonRet()
             {
@@ -53,6 +56,7 @@ namespace DataService
             GC.SuppressFinalize(this);
         }
         #endregion
+
 
         #region 考勤API服务
         /// <summary>
@@ -307,7 +311,7 @@ namespace DataService
             var cards = UnitOfWork.Repository<SYS_Card>().GetEntitiesAsync(x => x.SchoolId == school.ID && x.Status == (byte)CardStatus.正常).Result.ToList();
 
             //学生
-            List<ModelApiStu> mastulist = new List<ModelApiStu>();
+            List<ModelLocalAppStu> mastulist = new List<ModelLocalAppStu>();
             foreach (var s in stus)
             {
                 
@@ -317,7 +321,7 @@ namespace DataService
                 {
                     cardList.Add(c.CardNo);
                 }
-                mastulist.Add(new ModelApiStu()
+                mastulist.Add(new ModelLocalAppStu()
                 {
                     StuId=s.ID,
                     StuName=s.StuName,
@@ -325,7 +329,7 @@ namespace DataService
                 });
             }
             //职员
-            List<ModelApiStaff> mastafflist = new List<ModelApiStaff>();
+            List<ModelLocalAppStaff> mastafflist = new List<ModelLocalAppStaff>();
             foreach (var s in staffs)
             {
                 var sCardList = cards.Where(x => x.CardMasterId == s.ID && x.CardType == (byte)CardType.职员卡).ToList();
@@ -334,7 +338,7 @@ namespace DataService
                 {
                     cardList.Add(c.CardNo);
                 }
-                mastafflist.Add(new ModelApiStaff()
+                mastafflist.Add(new ModelLocalAppStaff()
                 {
                     StaffId = s.ID,
                     StaffName = s.StaffName,

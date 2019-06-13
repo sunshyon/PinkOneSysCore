@@ -46,7 +46,7 @@
                     <h4 class="text-uppercase">校园统计</h4>
                     <div class="row">
                         <div class="col-xs-4 col-md-4">
-                            <div class="box box-body summary" onclick="GoToPage('','/SchoolRelated/Student');">
+                            <div class="box box-body summary" onclick="window.location.href='/SchoolRelated/Student';">
                                 <h6 class="text-uppercase">学生人数</h6>
                                 <div class="flexbox mt-2">
                                     <span class="glyphicon glyphicon-education text-danger font-size-30"></span>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="col-xs-4 col-md-4">
-                            <div class="box box-body summary" onclick="GoToPage('','/SchoolRelated/Class');">
+                            <div class="box box-body summary" onclick="window.location.href='/SchoolRelated/Class';">
                                 <h6 class="text-uppercase">班级数</h6>
                                 <div class="flexbox mt-2">
                                     <span class="glyphicon glyphicon-blackboard font-size-30 text-primary"></span>
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                         <div class="col-xs-4 col-md-4">
-                            <div class="box box-body summary" onclick="GoToPage('','/SchoolRelated/Staff');">
+                            <div class="box box-body summary" onclick="window.location.href='/SchoolRelated/Staff';">
                                 <h6 class="text-uppercase">职工人数</h6>
                                 <div class="flexbox mt-2">
                                     <span class="glyphicon glyphicon-user  text-purple font-size-30"></span>
@@ -167,9 +167,11 @@
             type: "GET",
             success: function (result) {
                 if (result.code == 1) {
-                    
+
                 }
-               
+                else {
+                    handleAjaxErr(result);
+                }
             },
             error: function () {
                 swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
@@ -230,6 +232,7 @@
 
     //学生考勤详情
     function classAttDetail(id) {
-        GoToPage("", "/AttendanceRelated/StudentAtt/StuAttNowById?classId="+id);
+        //GoToPage("", "/AttendanceRelated/StudentAtt/StuAttNowById?classId="+id);
+        window.location.href = "/AttendanceRelated/StudentAtt/StuAttNowById?classId=" + id;
     }
 </script>

@@ -314,7 +314,8 @@
 
     //刷新
     $("#refresh").click(function () {
-        GoToPage("", "/SchoolRelated/SchoolManage");
+        //GoToPage("", "/SchoolRelated/SchoolManage");
+        window.location.href = "/SchoolRelated/SchoolManage";
     })
 
     //头像处理
@@ -443,7 +444,8 @@
                 if (result.code == 1) {
                     swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
                     setTimeout(function () {
-                        GoToPage("", "/SchoolRelated/SchoolManage");
+                        //GoToPage("", "/SchoolRelated/SchoolManage");
+                        window.location.href = "/SchoolRelated/SchoolManage";
                     }, 1000);
                 }
                 else {
@@ -476,7 +478,8 @@
                 if (result.code == 1) {
                     swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
                     setTimeout(function () {
-                        GoToPage("", "/SchoolRelated/SchoolManage");
+                        //GoToPage("", "/SchoolRelated/SchoolManage");
+                         window.location.href = "/SchoolRelated/SchoolManage";
                     }, 1000);
                 }
                 else {
@@ -511,7 +514,8 @@
                     if (result.code == 1) {
                         swal({ title: "", text: "成功", type: "success", timer: 700, showConfirmButton: false });
                         setTimeout(function () {
-                            GoToPage("", "/SchoolRelated/SchoolManage");
+                            //GoToPage("", "/SchoolRelated/SchoolManage");
+                             window.location.href = "/SchoolRelated/SchoolManage";
                         }, 1000);
                     }
                     else {

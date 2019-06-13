@@ -29,13 +29,27 @@ namespace Utility
         {
             return Current.Session.GetString(SesionStr);
         }
+        /// <summary>
+        /// 添加条目数据
+        /// </summary>
         public static void AddItem(string key,object value)
         {
             Current.Items.Add(key, value);
         }
+        /// <summary>
+        /// 获取条目数据
+        /// </summary>
         public static object GetItem(string key)
         {
             Current.Items.TryGetValue(key, out object value);
+            return value;
+        }
+        /// <summary>
+        /// 获取Cookie
+        /// </summary>
+        public static string GetCookie(string key)
+        {
+            Current.Request.Cookies.TryGetValue(key,out string value);
             return value;
         }
     }

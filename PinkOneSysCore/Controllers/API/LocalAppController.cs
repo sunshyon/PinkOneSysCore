@@ -12,11 +12,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PinkOneSysCore.Controllers.API
 {
-    public class LocalAppController : BaseApiController
+    public class LocalAppController : ControllerBase
     {
         private string baseFileDir = ConfigHelper.AppSettings("BaseFileDir");
         private string apiWebServer= ConfigHelper.AppSettings("ApiWebServer"); 
         private string fileWebServer= ConfigHelper.AppSettings("FileWebServer");
+        public ModelJsonRet mjResult;
+        public ILocalAppApiService Service { get; set; }
+        public LocalAppController()
+        {
+            Service = new LocalAppApiService();
+            mjResult = new ModelJsonRet()
+            {
+                code = 0,
+                errMsg = string.Empty,
+                content = string.Empty
+            };
+        }
+
         [HttpPost, Route("api/LocalApp/OAuth")]
         public ModelJsonRet OAuth()
         {

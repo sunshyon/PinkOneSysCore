@@ -174,7 +174,10 @@ namespace DataService
                             school.WxPublicInfoId = newPWxPubInfo.ID;
                     }
                     else
+                    {
                         school.WxPublicInfoId = pWxPubInfo.ID;
+                        UnitOfWork.Repository<SYS_School>().UpdateEntity(school);
+                    }
                 }
                 else
                 {

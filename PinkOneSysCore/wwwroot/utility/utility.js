@@ -8,7 +8,7 @@ function handleAjaxErr(result) {
         window.location.href = result.split(',')[1];
     }
     else if (typeof(result) === 'string' && result.indexOf("错误") >= 0) {
-        swal({ title: "", text: "发生错误", type: "error", timer: 2000, showConfirmButton: false });
+        swal({ title: "", text: "非常抱歉，系统突然抽风了，请及时联系相关人员", type: "error", timer: 2000, showConfirmButton: false });
     }
     else {
         swal({ title: "", text: result.errMsg, type:'warning' });

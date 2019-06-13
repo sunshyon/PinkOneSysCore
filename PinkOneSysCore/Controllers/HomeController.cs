@@ -61,14 +61,15 @@ namespace PinkOneSysCore.Controllers
 
         public JsonResult Test()
         {
-            var baseDir = System.AppDomain.CurrentDomain.BaseDirectory;
-            System.Drawing.Image img = System.Drawing.Image.FromFile(baseDir + "\\TempFiles\\test2.jpg");
+            //var baseDir = System.AppDomain.CurrentDomain.BaseDirectory;
+            //System.Drawing.Image img = System.Drawing.Image.FromFile(baseDir + "\\TempFiles\\test2.jpg");
             //System.Drawing.Bitmap b= Utility.ImgHelper.ImageCut(img);
             //b.Save(baseDir + "\\TempFiles\\test2_1.jpg");
-            Utility.ImgHelper.ImageCompress(img, baseDir + "\\TempFiles\\test2_2.jpg");
+            //Utility.ImgHelper.ImageCompress(img, baseDir + "\\TempFiles\\test2_2.jpg");
             //img.Clone();
-            img.Dispose();
-            //Utility.ImgHelper.ImageCompress(b, baseDir + "\\TempFiles\\test2_3.jpg");
+
+            var a = 0;
+            var b = 1 / a;
             return Json(mjResult);
         }
 

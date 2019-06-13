@@ -31,9 +31,9 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetStaffInfo(string query)
+        public JsonResult GetStaffInfo(string query,int pageIndex)
         {
-            var res = Service.GetStaffInfo(query);
+            var res = Service.GetStaffInfo(query, pageIndex);
             if (res.Length > 6)
             {
                 mjResult.code = 1;
@@ -46,9 +46,9 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
             return Json(mjResult);
         }
         [HttpPost]
-        public JsonResult AddOrModifyStaff(byte type,string entity)
+        public JsonResult AddOrModifyStaff(byte type,string entity, string cardNo)
         {
-            var res = Service.AddOrModifyStaff(type, entity);
+            var res = Service.AddOrModifyStaff(type, entity,cardNo);
             if (res.Contains("OK"))
             {
                 mjResult.code = 1;
@@ -81,6 +81,7 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
             var res = Service.DelStaffById(id);
             if (res > 0)
             {
+                //Service.RefreshEntities("");
                 mjResult.code = 1;
                 mjResult.content = res.ToString();
             }

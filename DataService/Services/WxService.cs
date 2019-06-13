@@ -332,6 +332,9 @@ namespace DataService
                         {
                             parent.OpenId = wxUser.openid;
                             parent.NickName = wxUser.nickname;
+                            parent.Name = wxUser.nickname;
+                            parent.Phone = "";
+                            parent.RelationType = (byte)RelationType.未填;
                             parent.Status = 1;
                             parent.AvatarPic = wxUser.headimgurl;
                             parent.SchoolId = stu.SchoolId;

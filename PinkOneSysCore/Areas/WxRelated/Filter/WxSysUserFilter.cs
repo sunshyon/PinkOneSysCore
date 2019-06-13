@@ -22,7 +22,7 @@ namespace PinkOneSysCore.Areas.WxRelated
             if (string.IsNullOrEmpty(value))
                 value = string.Empty;
             var mSysWxUser = JsonHelper.JsonToT<ModelSysWxUser>(value);
-            if (mSysWxUser==null&&mSysWxUser.UserType <=0)
+            if (mSysWxUser==null||mSysWxUser.UserType <=0)
             {
                 var XRWStrs = filterContext.HttpContext.Request.Headers["X-Requested-With"].ToString();
                 if (null != XRWStrs && XRWStrs.Contains("XMLHttpRequest"))

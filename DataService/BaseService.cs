@@ -39,9 +39,13 @@ namespace DataService
         {
             if (null == mlUser)
             {
-                mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.UserLogin));
-                if (mlUser != null)
-                    HttpContextCore.SetSession(ComConst.UserLogin, JsonHelper.ToJson(mlUser));
+                mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetCookie(ComConst.UserLogin));
+                if (mlUser == null)
+                {
+                    mlUser = JsonHelper.JsonToT<ModelLoginUser>(HttpContextCore.GetSession(ComConst.UserLogin));
+                    if (mlUser != null)
+                        HttpContextCore.SetSession(ComConst.UserLogin, JsonHelper.ToJson(mlUser));
+                }
             }
             mjRet = new ModelJsonRet
             {
@@ -69,12 +73,12 @@ namespace DataService
                     }
                 case "class":
                     {
-                        List<SYS_Class> list = JsonHelper.JsonToT<List<SYS_Class>>(HttpContextCore.GetSession(ComConst.Session_ClassList));
+                        List<SYS_Class> list = null;//JsonHelper.JsonToT<List<SYS_Class>>(HttpContextCore.GetSession(ComConst.Session_ClassList));
                         if (null == list)
                         {
                             list = UnitOfWork.Repository<SYS_Class>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == 1).Result.OrderBy(x => x.Grade).ToList();
                         }
-                        HttpContextCore.SetSession(ComConst.Session_ClassList, JsonHelper.ToJson(list));
+                        //HttpContextCore.SetSession(ComConst.Session_ClassList, JsonHelper.ToJson(list));
                         res = (list == null ? new List<SYS_Class>() : list);
                         break;
                     }
@@ -91,19 +95,46 @@ namespace DataService
                     }
                 case "staff":
                     {
-                        List<SYS_Staff> list = JsonHelper.JsonToT<List<SYS_Staff>>(HttpContextCore.GetSession(ComConst.Session_StaffList));
+                        List<SYS_Staff> list = null;//JsonHelper.JsonToT<List<SYS_Staff>>(HttpContextCore.GetSession(ComConst.Session_StaffList));
                         if (null == list)
                         {
                             list = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StaffStatus.在职).Result.OrderBy(x => x.RoleLevel).ToList();
                         }
-                        HttpContextCore.SetSession(ComConst.Session_StaffList, JsonHelper.ToJson(list));
+                        //HttpContextCore.SetSession(ComConst.Session_StaffList, JsonHelper.ToJson(list));
                         res = (list == null ? new List<SYS_Staff>() : list);
                         break;
                     }
             }
             return res;
         }
-
+        /// <summary>
+        /// 刷新存储的Session
+        /// </summary>
+        public void RefreshEntities(string entityName)
+        {
+            if (null == mlUser || mlUser.School == null)
+                return;
+            int schoolId = mlUser.School.ID;
+            switch (entityName)
+            {
+                case "class":
+                    {
+                        List<SYS_Class> list = UnitOfWork.Repository<SYS_Class>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == 1).Result.OrderBy(x => x.Grade).ToList();
+                        HttpContextCore.SetSession(ComConst.Session_ClassList, JsonHelper.ToJson(list));
+                        break;
+                    }
+                case "stu":
+                    {
+                        break;
+                    }
+                case "staff":
+                    {
+                        List<SYS_Staff> list = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.SchoolId == schoolId && x.Status == (byte)StaffStatus.在职).Result.OrderBy(x => x.RoleLevel).ToList();
+                        HttpContextCore.SetSession(ComConst.Session_StaffList, JsonHelper.ToJson(list));
+                        break;
+                    }
+            }
+        }
         /// <summary>
         /// 释放资源
         /// </summary>

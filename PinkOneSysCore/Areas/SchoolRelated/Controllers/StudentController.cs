@@ -27,9 +27,9 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
 
 
         [HttpGet]
-        public JsonResult GetStuInfo(string nameQuery,int classQuery)
+        public JsonResult GetStuInfo(string nameQuery,int classQuery,int pageIndex)
         {
-            var res = Service.GetStuInfo(nameQuery, classQuery);
+            var res = Service.GetStuInfo(nameQuery, classQuery, pageIndex);
             if (res.Length > 6)
             {
                 mjResult.code = 1;
@@ -117,6 +117,12 @@ namespace PinkOneSysCore.Areas.SchoolRelated.Controllers
             {
                 mjResult.errMsg = res;
             }
+            return Json(mjResult);
+        }
+
+        public JsonResult OperateCard(byte type,long cardId)
+        {
+            mjResult = Service.OperateCard(type, cardId);
             return Json(mjResult);
         }
     }

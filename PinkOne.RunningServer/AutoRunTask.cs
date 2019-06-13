@@ -66,7 +66,7 @@ namespace PinkOne.RunningServer
         /// </summary>
         private void Update_Handle()
         {
-            var sleep = 2000;//5s
+            var sleep = 2*1000;//2s
             while (true)
             {
                 Thread.Sleep(sleep);//休眠
@@ -75,6 +75,7 @@ namespace PinkOne.RunningServer
 
                 UpdateAttStatus();//更新考勤状态
 
+                Thread.Sleep(sleep);//休眠 半小时
             }
         }
         #endregion
@@ -82,7 +83,7 @@ namespace PinkOne.RunningServer
         #region 函数
         private int UpdateWxToken()
         {
-            var sleep = 5000 *60;//5min
+            var sleep = 1000*60*30;//30min
             try
             {
                 var dbContext = new PinkOneMngSysContext();
@@ -95,7 +96,7 @@ namespace PinkOne.RunningServer
                         ModelWxJsTicket ticket = WXOAuthApiHelper.GetWxJsTicket(token);
                         if (null != ticket)
                         {
-                            string sql = "update Wx_Setting set UpdateTime='{0}', AccessToken='{1}', JsApiTicket='{2}' where ID="+ wpi.ID;
+                            string sql = "update Wx_PublicInfo set UpdateTime='{0}', AccessToken='{1}', JsApiTicket='{2}' where ID=" + wpi.ID;
                             sql = string.Format(sql, DateTime.Now, token.access_token, ticket.ticket);
                             var isOK= adoHelper.ExecuteNonQueryCmd(sql);
                             if (isOK > 0)
@@ -103,9 +104,7 @@ namespace PinkOne.RunningServer
                                 Console.WriteLine("UpdateWxToken："+DateTime.Now+" "+wpi.AppName+"Token更新成功");
                             }
                         }
-                        sleep = token.expires_in * 60;
-                        if (sleep > 5000 * 60)
-                            sleep -= 5000 * 60;
+                        //sleep = token.expires_in * 60;
                     }
                     else
                     {

@@ -70,7 +70,7 @@
         </div>
     </section>
 @{ 
-    var stuName = ViewBag.StuName;
+    var stuName = Html.Raw(ViewBag.StuName);
     stuName=stuName == null?"":stuName;
 }
     <script>
@@ -138,7 +138,8 @@
 
         //返回
         $("#backBtn").click(function () {
-            GoToPage("", "/AttendanceRelated/StudentAtt/StuAttNow");
+            //GoToPage("", );
+            window.location.href = "/AttendanceRelated/StudentAtt/StuAttNow";
         })
 
         //使能搜索事件

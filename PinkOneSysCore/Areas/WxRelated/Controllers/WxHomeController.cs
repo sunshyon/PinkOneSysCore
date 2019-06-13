@@ -10,22 +10,17 @@ namespace PinkOneSysCore.Areas.WxRelated.Controllers
 {
     public class WxHomeController : WxBaseController<IWxService>
     {
-        //[OAuthFilter]
+        [OAuthFilter]
         public ActionResult Index()
         {
             ViewBag.SchoolName = "陪绮在线";
-            var mWxUserInfo = JsonHelper.JsonToT<ModelWxUserInfo>(GetCookie(ComConst.Wx_ModelWxUserInfo));
-
+            var mWxUserInfo = JsonHelper.JsonToT<ModelWxUserInfo>(GetSession(ComConst.Wx_ModelWxUserInfo));
+           
             var mSysWxUser = new ModelSysWxUser()
             {
                 UserType = 0,
             };
 
-#if DEBUG
-            //测试用
-            mSysWxUser = Service.GetSysWxUserModelTest();
-#endif
-            
             if (mWxUserInfo != null)
             {
                 Service.UpdateWxUserInfo(mWxUserInfo);//更新微信用户信息

@@ -15,7 +15,6 @@ namespace Domain
         public string Phone { get; set; }
         public string IdNumber { get; set; }
         public int SchoolId { get; set; }
-        public string CardNo { get; set; }
         public string AvatarPic { get; set; }
         public byte? Sex { get; set; }
         public short? CityId { get; set; }

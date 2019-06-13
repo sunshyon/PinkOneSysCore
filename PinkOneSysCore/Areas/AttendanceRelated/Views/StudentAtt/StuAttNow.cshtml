@@ -140,7 +140,8 @@
 
     //查看签到详情
     function stuAttDetail(stuName) {
-        GoToPage("", "/AttendanceRelated/StudentAtt/StuAttDetailByName?stuName=" + stuName);
+        //GoToPage("", "/AttendanceRelated/StudentAtt/StuAttDetailByName?stuName=" + stuName);
+        window.location.href = "/AttendanceRelated/StudentAtt/StuAttDetailByName?stuName=" + stuName;
     }
   
     //手动添加学生考勤记录

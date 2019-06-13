@@ -33,5 +33,11 @@ namespace Utility
             }
             return obj.ToObject<T>();
         }
+        public static T ObjToObj<T>(object obj)
+        {
+           
+            var tmp = JsonHelper.ToJson(obj);
+            return JsonHelper.JsonToT<T>(tmp);
+        }
     }
 }

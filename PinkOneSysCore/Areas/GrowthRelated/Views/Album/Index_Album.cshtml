@@ -247,7 +247,21 @@
                 }
             }
         }
-    });
+     });
+      $("#previousBtn").click(function () {
+         if ($("#previousBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex--;
+        getAlbumsInfo();
+    })
+    $("#nextBtn").click(function () {
+        if ($("#nextBtn").css("cursor") == "not-allowed")
+            return;
+        glbPageIndex++;
+        getAlbumsInfo();
+    })
+    pageVue.chagePageData();
+
 
     //使能搜索事件
     $("#queryIpt").bind("input propertychange", function () {

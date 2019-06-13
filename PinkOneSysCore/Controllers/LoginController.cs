@@ -21,9 +21,9 @@ namespace PinkOneSysCore.Controllers
             return View("Index_AdminLogin");
         }
 
-        public ActionResult Verify(byte acutType, string name, string pwd)
+        public ActionResult Verify(string name, string pwd)
         {
-            var user = Service.GetUserLoginInfo(acutType,name, pwd);
+            var user = Service.GetUserLoginInfo(name, pwd);
             if (user.School!=null)
             {
                 mlUser = user;

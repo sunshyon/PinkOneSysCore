@@ -10,7 +10,7 @@ namespace DataService
 {
     public interface ILoginService:IBaseService
     {
-        ModelLoginUser GetUserLoginInfo(byte accountType, string name, string pwd);
+        ModelLoginUser GetUserLoginInfo(string name, string pwd);
         SYS_Admin GetAdminLoginInfo(string name, string pwd);
     }
 }

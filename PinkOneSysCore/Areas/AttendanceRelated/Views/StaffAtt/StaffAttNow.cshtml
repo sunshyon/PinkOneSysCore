@@ -126,7 +126,8 @@
 
     //查看签到详情
     function staffAttDetail(staffName) {
-        GoToPage("", "/AttendanceRelated/StaffAtt/StaffAttDetailByName?staffName=" + staffName);
+        //GoToPage("", "/AttendanceRelated/StaffAtt/StaffAttDetailByName?staffName=" + staffName);
+        window.location.href = "/AttendanceRelated/StaffAtt/StaffAttDetailByName?staffName=" + staffName;
     }
     
     //手动添加考勤记录

@@ -31,7 +31,7 @@ namespace PinkOneSysCore.Areas.GrowthRelated.Controllers
         [HttpGet]
         public JsonResult GetAlbumsInfo(string nQuery, int cQuery,int pageIndex)
         {
-            mjResult = Service.GetAlbumsInfo(nQuery, cQuery,1);
+            mjResult = Service.GetAlbumsInfo(nQuery, cQuery, pageIndex);
             
             return Json(mjResult);
         }
@@ -63,7 +63,6 @@ namespace PinkOneSysCore.Areas.GrowthRelated.Controllers
             if (isOK)
             {
                 //删除文件夹
-                //apiWebServer = "http://localhost:64973/";
                 var del_url = apiWebServer + "api/FileApi/DelFolder";
                 var realtivePath = mlUser.School.ID + "//Photos//" + aId + "//";
                 var folderPath = baseFileDir + realtivePath;
