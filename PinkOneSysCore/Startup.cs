@@ -59,6 +59,9 @@ namespace PinkOneSysCore
             //数据库连接
             services.AddDbContext<PinkOneMngSysContext>(options => options.UseSqlServer("Server=212.64.49.60;Database=PinkOneMngSys;user id=admin;password=Pinkone_2019;"));
 
+            //SignalR
+            services.AddSignalR();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 //全局配置Json序列化处理
                 .AddJsonOptions(options=> {
@@ -93,6 +96,9 @@ namespace PinkOneSysCore
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
+            app.UseSignalR(routes=> {
+                routes.MapHub<StaffChatHub>("/staffChatHub");
+            });
 
             //配置HttpContext
             Utility.HttpContextCore.Configure(app.ApplicationServices.GetRequiredService<Microsoft.AspNetCore.Http.IHttpContextAccessor>());

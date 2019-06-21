@@ -26,6 +26,8 @@ namespace DataService
                 var staff = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.PinkoneAccount.Equals(name) && x.PinkonePassword == pwd && x.Status == (byte)StaffStatus.在职).Result.FirstOrDefault();
                 if (null != staff)
                 {
+                    if (staff.AvatarPic!=null&&staff.AvatarPic.Contains("base64"))
+                        staff.AvatarPic = "";
                     school = UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == staff.SchoolId).Result.FirstOrDefault();
                     if (null != school)
                     {

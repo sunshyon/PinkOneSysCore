@@ -90,15 +90,31 @@ namespace DataService
         /// </summary>
         public string GetUserInfo(int id)
         {
-
-            var school = UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == id && x.Status == (byte)SchoolStatus.正常).Result.FirstOrDefault();
+            object user = null;
+            byte userType = 0;
+            if (mlUser.Staff == null)
+            {
+                userType = 1;
+                user = UnitOfWork.Repository<SYS_School>().GetEntitiesAsync(x => x.ID == id).Result.FirstOrDefault();
+            }
+            else
+            {
+                userType = 2;
+                var staff = UnitOfWork.Repository<SYS_Staff>().GetEntitiesAsync(x => x.ID == mlUser.Staff.ID).Result.FirstOrDefault();
+                if(staff.AvatarPic==null|| staff.AvatarPic.Length < 6)
+                {
+                    staff.AvatarPic = "/Images/unknown_user_avatar.jpg";
+                }
+                user = staff;
+            }
             var notices = UnitOfWork.Repository<SYS_Notice>().GetEntitiesAsync(x => x.SchoolId == id && (x.Type == (byte)NoticeType.陪绮发给学校 || x.Type == (byte)NoticeType.学校内部)
              && x.StartDate <= DateTime.Now && x.EndDate >= DateTime.Now).Result.OrderBy(x => x.NoticeLevel).ToList();
 
             var json = new
             {
-                school = school,
-                notices = notices
+                userType,
+                user,
+                notices
             };
             return JsonHelper.ToJson(json);
         }

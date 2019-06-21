@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    @*<link rel="icon" href="../../../images/favicon.ico">*@
+    <link rel="shortcut icon" type="image/x-icon" href="/Images/pinkone.ico" />
 
     <title>Pink One 校园管理系统</title>
 
@@ -66,18 +66,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
 
-   
-
-   
-
-
+    <!--jquery-cookie/-->
+    <script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <!-- Fab Admin App -->
     <script src="~/template-bootstrap/js/template.js" charset="utf-8"></script>
-
     <!--Vue-->
     <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+    <!--signalr-->
+    <script src="~/signalr/dist/browser/signalr.js"></script>
     <!--MyJs-->
     <script src="~/utility/utility.js?v=@DateTime.Now.ToString("yyyyMMdd")"></script>
+
     <style>
         .table thead tr th {
             font-weight: bold;
@@ -105,11 +104,15 @@
         #refresh {
             display: none;
         }
+        
     </style>
 
+    <script>
+       
+    </script>
 </head>
 
-<body  class="hold-transition skin-pink sidebar-mini">
+<body class="hold-transition skin-pink sidebar-mini">
     <div class="wrapper">
         <header class="main-header">
             <!-- Logo -->
@@ -145,30 +148,12 @@
                                 <input type="text" class="form-control" placeholder="Search &amp; enter"> <a class="srh-btn"><i class="ti-close"></i></a>
                             </form>
                         </li>*@
-                        
-                        <!-- Notifications -->
-                        <li class="dropdown notifications-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="mdi mdi-bell"></i>
+
+                        <!-- chatNotice -->
+                        <li class="dropdown notifications-menu hidden-uty" onclick="window.location.href='/TeachingAssistant/Chat'" style="cursor:pointer;">
+                            <a >
+                                <i id="chatNoticeI" class="fa fa-wechat"></i>
                             </a>
-                            <ul class="dropdown-menu scale-up">
-                                <li class="header">暂无通知</li>
-                                @*<li>
-                                    <ul class="menu inner-content-div">
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-users text-aqua"></i> Curabitur id eros quis nunc suscipit blandit.
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-warning text-yellow"></i> Duis malesuada justo eu sapien elementum, in semper diam posuere.
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="footer"><a href="#">View all</a></li>*@
-                            </ul>
                         </li>
 
                     </ul>
@@ -184,7 +169,7 @@
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="@*user-profile*@ treeview">
                         <a href="index.html">
-                            <img id="userAvatar" style="max-height:52px;margin-right:10px;"/>
+                            <img id="userAvatar" style="max-height:52px;margin-right:10px;" />
                             <span id="usernameSpan"></span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-right pull-right"></i>
@@ -221,6 +206,19 @@
                     </li>
                     <li class="treeview ">
                         <a href="#">
+                            <i class="fa fa-briefcase"></i>
+                            <span>教学助手</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="chatRoomLi"><a href="/TeachingAssistant/Chat"><i class="fa fa-circle-thin"></i>聊天室</a></li>
+                            <li id="dataShareLi"><a href="#"><i class="fa fa-circle-thin"></i>资料共享</a></li>
+                        </ul>
+                    </li>
+                    <li id="crewLi" class="treeview">
+                        <a href="#">
                             <i class="fa fa-users"></i>
                             <span>人员管理</span>
                             <span class="pull-right-container">
@@ -243,28 +241,28 @@
                         <ul class="treeview-menu">
                             <li class="treeview menu-open">
                                 <a href="#">
-                                    <i class="fa fa-circle-thin"></i>学生考勤
+                                    @*<i class="fa fa-circle-thin"></i>*@学生考勤
                                     <span class="pull-right-container">
                                         <i class="fa fa-angle-right pull-right"></i>
                                     </span>
                                 </a>
                                 <ul class="treeview-menu" style="display:block;">
-                                    <li id="stuAttNowLi"><a href="/AttendanceRelated/StudentAtt/StuAttNow"><i class="fa fa-circle"></i>实时签到</a></li>
-                                    <li id="stuAttDetailLi"><a href="/AttendanceRelated/StudentAtt/StuAttDetail"><i class="fa fa-circle"></i>考勤明细</a></li>
-                                    <li id="stuAttMouthLi"><a href="/AttendanceRelated/StudentAtt/StuAttMouth"><i class="fa fa-circle"></i>按月统计</a></li>
+                                    <li id="stuAttNowLi"><a href="/AttendanceRelated/StudentAtt/StuAttNow"><i class="fa fa-circle-thin"></i>实时签到</a></li>
+                                    <li id="stuAttDetailLi"><a href="/AttendanceRelated/StudentAtt/StuAttDetail"><i class="fa fa-circle-thin"></i>考勤明细</a></li>
+                                    <li id="stuAttMouthLi"><a href="/AttendanceRelated/StudentAtt/StuAttMouth"><i class="fa fa-circle-thin"></i>按月统计</a></li>
                                 </ul>
                             </li>
-                            <li class="treeview menu-open">
+                            <li id="staffAttLi" class="treeview menu-open">
                                 <a href="#">
-                                    <i class="fa fa-circle-thin"></i>职员考勤
+                                    @*<i class="fa fa-circle-thin"></i>*@职员考勤
                                     <span class="pull-right-container">
                                         <i class="fa fa-angle-right pull-right"></i>
                                     </span>
                                 </a>
                                 <ul class="treeview-menu" style="display:block;">
-                                    <li id="staffAttNowLi"><a href="/AttendanceRelated/StaffAtt/StaffAttNow"><i class="fa fa-circle"></i>实时签到</a></li>
-                                    <li id="staffAttDetailLi"><a href="/AttendanceRelated/StaffAtt/StaffAttDetail"><i class="fa fa-circle"></i>考勤明细</a></li>
-                                    <li id="staffAttMouthLi"><a href="/AttendanceRelated/StaffAtt/StaffAttMouth"><i class="fa fa-circle"></i>按月统计</a></li>
+                                    <li id="staffAttNowLi"><a href="/AttendanceRelated/StaffAtt/StaffAttNow"><i class="fa fa-circle-thin"></i>实时签到</a></li>
+                                    <li id="staffAttDetailLi"><a href="/AttendanceRelated/StaffAtt/StaffAttDetail"><i class="fa fa-circle-thin"></i>考勤明细</a></li>
+                                    <li id="staffAttMouthLi"><a href="/AttendanceRelated/StaffAtt/StaffAttMouth"><i class="fa fa-circle-thin"></i>按月统计</a></li>
                                 </ul>
                             </li>
                             <li><a href="#"><i class="fa fa-id-card hidden-uty"></i>卡管理</a></li>
@@ -273,7 +271,7 @@
                             </li>
                         </ul>
                     </li>
-                    
+
                     <li id="schoolMngLi">
                         <a href="/SchoolRelated/SchoolManage">
                             <i class="fa fa-gears"></i> <span>校园设置</span>
@@ -282,52 +280,26 @@
                             </span>
                         </a>
                     </li>
-                    @*<li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-pie-chart"></i>
-                            <span>报表</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-right pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu"></ul>
-                    </li>*@
-                    @*<li class="header nav-small-cap">其他</li>*@
-
-                    @*<li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-file-text-o"></i>
-                            <span>使用说明</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-right pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                           
-                        </ul>
-                    </li>*@
-
                 </ul>
             </section>
         </aside>
         <div id="contentWrapper" class="content-wrapper">
-            
             <!--各页面主体-->
             @RenderBody()
+
         </div>
-        <footer class="main-footer">
+       
+        @*<footer class="main-footer">
             <div class="pull-right d-none d-sm-inline-block">
                 <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
                     <li class="nav-item">
-                        @*<a class="nav-link" href="javascript:void(0)">FAQ</a>*@
+                        啊手动阀
                     </li>
                     <li class="nav-item">
-                        @*<a class="nav-link" href="#">Purchase Now</a>*@
                     </li>
                 </ul>
             </div>
-            <small> &copy; @DateTime.Now.ToString("yyyy") <a>PinkOne 陪绮幼教 &ensp; 苏ICP备19027433号-1 &ensp; </a>   All Rights Reserved.</small>
-        </footer>
+        </footer>*@
 
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-light">
@@ -340,10 +312,10 @@
             <div class="tab-content">
                 <!-- Home tab content -->
                 <div class="tab-pane" id="control-sidebar-home-tab">
-                    
+
 
                 </div>
-               
+
             </div>
         </aside>
         <!-- /.control-sidebar -->
@@ -352,11 +324,12 @@
     </div>
     <!-- ./wrapper -->
 
-    
-
     <script>
-        var glbSchool;
+        var glbUser;
         var glbNoticeArr;
+        var userName = "";
+        var avatar = "";
+        
         //获取用户信息
         if ($("#usernameSpan").html() == "") {
             $(function () {
@@ -366,12 +339,26 @@
                     success: function (result) {
                         if (result.code == 1) {
                             var json = JSON.parse(result.content)
-                            glbSchool = json.school;
+                            glbUser = json.user;
                             glbNoticeArr = json.notices;
-                            $("#usernameSpan").html(glbSchool.SchoolName);
-                            if (glbSchool.AvatarPic != null && glbSchool.AvatarPic.length > 10) {
-                                $("#userAvatar").attr("src", glbSchool.AvatarPic);
-                                glbImgStr = glbSchool.AvatarPic;
+                            if (json.userType == 1) {//school user
+                                $("#chatRoomLi").hide();
+                                userName = glbUser.SchoolName;
+                                avatar = glbUser.AvatarPic;
+                            }
+                            else {// staff user
+                                userName = glbUser.StaffName;
+                                avatar = glbUser.AvatarPic;
+                                handleUserMenuPermission();
+                                //checkStaffChatMsg();
+                                startStaffChatSignalR();
+                                $("#chatNoticeI").parent().parent().removeClass("hidden-uty");
+                            }
+
+                            $("#usernameSpan").html(userName);
+                            if (avatar != null && avatar.length > 10) {
+                                $("#userAvatar").attr("src", avatar);
+                                glbImgStr = avatar;
                             }
                             if (glbNoticeArr != undefined && glbNoticeArr.length > 0) {
                                 $("#noticeDiv").show();
@@ -381,7 +368,6 @@
                                     $("#noticeDiv").children().children().eq(1).append(str);
                                 }
                             }
-
                         }
                     },
                     error: function () {
@@ -390,63 +376,155 @@
                 })
             })
         }
+        //处理登录用户主菜单权限
+        function handleUserMenuPermission() {
+            var roleLevel = glbUser.RoleLevel;
+            if (roleLevel >= 3) {//教师级
+                $("#staffManageLi").hide();
+                $("#classManageLi").hide();
+                $("#staffAttLi").hide();
+                $("#schoolMngLi").hide();
+            }
+            if (roleLevel >= 4) {//后勤级
+
+            }
+        }
+
         //管理皮肤
         document.onclick = function (e) {
-            if (e.srcElement!=undefined&&e.srcElement.tagName!=undefined&& e.srcElement.tagName != "A") {
+            if (e.srcElement != undefined && e.srcElement.tagName != undefined && e.srcElement.tagName != "A") {
                 $(".control-sidebar").removeClass("control-sidebar-open");
             }
         };
 
-        /*
-        function GoToPage(li, urlStr) {
-            $("#refreshDiv").fadeIn(100);
-            $("li").removeClass('active');
-            $(li).addClass('active');
-
-            $("#contentWrapper").load(urlStr, function () {
-                $("#refreshDiv").hide();
+        ///--staffChatHub--///
+        function startStaffChatSignalR() {
+            //初始化
+            var connection = new signalR.HubConnectionBuilder().withUrl("/staffChatHub").build();
+            var flag = $("#staffChatPage").val();
+            var staffId = glbUser.ID;
+            //有新消息
+            if (flag == null || flag == undefined || flag == "") {
+                var newMsgArrayStr = localStorage.getItem("staffChat" + staffId);
+                if (newMsgArrayStr != "[object Object]" && newMsgArrayStr != null) {
+                    //提示消息
+                    setInterval(function () {
+                        $("#chatNoticeI").toggle();
+                    }, 700);
+                }
+            }
+            //接受消息
+            connection.on("ReceiveMessage", function (chatObj) {
+                if (flag == null || flag == undefined || flag == "") {
+                    var newMsgArray=new Array();
+                    var newMsgArrayStr = localStorage.getItem("staffChat" + staffId);
+                    if (newMsgArrayStr != "[object Object]" && newMsgArrayStr!=null ) {
+                        newMsgArray = JSON.parse(newMsgArrayStr);
+                    }
+                    newMsgArray.push(chatObj);
+                    localStorage.setItem("staffChat" + staffId, JSON.stringify(newMsgArray))
+                    //提示消息
+                    setInterval(function () {
+                        $("#chatNoticeI").toggle();
+                    }, 700);
+                    return;
+                }
+                if (glbUserSelf.userName == chatObj.userName && glbUserSelf.staffId == chatObj.staffId) {
+                    return;
+                }
+                var htmlStr = createChatHtml(1, chatObj);
+                $("#chatBoxDiv").append(htmlStr);
+                //滚动条到最底部
+                var scrollHeight = $('#chatBoxDiv').prop("scrollHeight");
+                $('#chatBoxDiv').animate({ scrollTop: scrollHeight }, 500);
+                $(".slimScrollBar").css("top", scrollHeight);
+            });
+            //联系人列表实时变化
+            connection.on("chatUserChange", (onlineData) => {
+                if (flag == null || flag == undefined||flag=="") {
+                    return;
+                }
+                $(".user-state").removeClass("text-success");
+                $(".user-state").html("离线");
+                //if (onlineData.schoolIdList.length > 0) {
+                //    var ids = onlineData.schoolIdList;
+                //    for (var i = 0; i < ids.length; i++) {
+                //        $("#schoolState" + ids[i]).addClass("text-success");
+                //        $("#schoolState" + ids[i]).html("在线");
+                //    }
+                //}
+                if (onlineData.staffIdList.length > 0) {
+                    var ids = onlineData.staffIdList;
+                    for (var i = 0; i < ids.length; i++) {
+                        $("#staffState" + ids[i]).addClass("text-success");
+                        $("#staffState" + ids[i]).html("在线");
+                    }
+                }
+            })
+            //启动
+            connection.start().then(function () {
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+            //掉线重连
+            connection.onclose(async () => {
+                await connection.start();
+            })
+            //发送消息
+            $("#staffChatSendBtn").on("click", function (event) {
+                var msg = $("#message").val();
+                //msg = msg.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                var date = new Date();
+                var timeNow = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
+                var chatObj = {
+                    schoolId: glbUserSelf.schoolId,
+                    userName: glbUserSelf.userName,
+                    staffId: glbUserSelf.staffId,
+                    avatar: glbUserSelf.avatar,
+                    targetUserType: 0,
+                    targetUserId: 0,
+                    time: timeNow,
+                    msg: msg
+                };
+                //渲染自己的消息
+                var htmlStr = createChatHtml(2, chatObj);
+                $("#chatBoxDiv").append(htmlStr);
+                //滚动条到最底部
+                var scrollHeight = $('#chatBoxDiv').prop("scrollHeight");
+                $('#chatBoxDiv').animate({ scrollTop: scrollHeight }, 500);
+                $(".slimScrollBar").css("top", scrollHeight);
+                //调用集线器方法
+                connection.invoke("SendSchoolMsg", JSON.stringify(chatObj)).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                $("#message").val("");
+                event.preventDefault();
             });
         }
-        //学生管理
-        $("#stuManageLi").click(function () {
-            GoToPage(this,"/SchoolRelated/Student");
-        })
-        //职员管理
-        $("#staffManageLi").click(function () {
-            GoToPage(this,"/SchoolRelated/Staff");
-        })
-        //班级管理
-        $("#classManageLi").click(function () {
-            GoToPage(this,"/SchoolRelated/Class");
-        })
-        //学生考勤实时统计
-        $("#stuAttNowLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttNow");
-        })
-         //学生考勤详情
-        $("#stuAttDetailLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttDetail");
-        })
-         //学生考勤按月统计
-        $("#stuAttMouthLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StudentAtt/StuAttMouth");
-        })
-        //职员考勤实时统计
-        $("#staffAttNowLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttNow");
-        })
-        //职员考勤详情
-        $("#staffAttDetailLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttDetail");
-        })
-        //职员考勤按月统计
-        $("#staffAttMouthLi").click(function () {
-            GoToPage(this,"/AttendanceRelated/StaffAtt/StaffAttMouth");
-        })
-        //学校管理页面
-        $("#schoolMngLi").click(function () {
-            GoToPage(this, "/SchoolRelated/SchoolManage");
-        })
+
+        /*
+        //----查看该用户是否有新消息---//
+        function checkStaffChatMsg() {
+            //初始化
+            var connection = new signalR.HubConnectionBuilder().withUrl("/staffChatHub").build();
+            //启动
+            connection.start().then(function () {
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+            //掉线重连
+            connection.onclose(async () => {
+                await connection.start();
+            })
+            //循环查询
+            setInterval(function () {
+                connection.invoke("CheckUserMsg");
+            }, 1000 * 5);
+            //发现新消息
+            connection.on("haveNewMsg", (msgCount) => {
+                alert(msgCount);
+            });
+        }
         */
     </script>
 

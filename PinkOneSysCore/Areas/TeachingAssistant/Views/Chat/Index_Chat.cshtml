@@ -1,0 +1,266 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .media{
+        padding:0.5rem!important;
+    }
+    .direct-chat-img{
+        width:42px !important;
+        height:42px !important;
+    }
+</style>
+    <input class="hidden-uty" id="staffChatPage" value="1"/>
+    <section class="content-header">
+        <h1>
+            教学助手--聊天室&ensp;@*<button class="btn btn-default btn-sm" id="refresh"><i class="fa fa-refresh fa-lg"></i></button>*@
+        </h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Home" style="color:#007bff!important;"><i class="fa fa-dashboard"></i> 主页</a></li>
+            <li class="breadcrumb-item"><a href="#">教学助手</a></li>
+            <li class="breadcrumb-item active"><a href="#">聊天室</a></li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-sm-3" style="min-width:190px;">
+                <div class="box">
+                    <div class="box-header with-border bg-lighter">
+                        <h3 class="box-title">用户列表</h3>
+                    </div>
+                    <div class="box-body p-0">
+                        <div id="chatContactDiv" class="media-list media-list-hover media-list-divided ">
+                            <div class="media media-single">
+                                <img src="/Images/unknown_user_avatar.jpg" />
+                                <a href="#">
+                                    <img class="avatar avatar-xl" src="" alt="">
+                                </a>
+                                <div class="media-body">
+                                    <h6><a href="#">Sarah Conner</a></h6>
+                                    <small class="text-green">在线</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-9">
+                <div class="box direct-chat">
+                    <div class="box-header with-border bg-lighter">
+                        <h3 class="box-title">消息框</h3>
+                    </div>
+                    <div class="box-body">
+                        <div id="chatBoxDiv" class="direct-chat-messages chat-app">
+                            <!-- Message. Default to the left -->
+                            @*<div class="direct-chat-msg mb-30">
+                                <div class="clearfix float-left">
+                                    <div><small class="direct-chat-name">孙秀勇</small></div>
+                                    <img class="direct-chat-img avatar" src="" alt="">
+                                </div>
+                                <div class="direct-chat-text">
+                                    <small class="direct-chat-timestamp">2019/6/18 16:40</small>
+                                    <p>
+                                        大家好，我是xxxa
+                                    </p>
+                                </div>
+                            </div>*@
+                            <!-- Message to the right -->
+                            @*<div class="direct-chat-msg right mb-30">
+                                <div class="clearfix float-right">
+                                    <div><small class="direct-chat-name float-right">我</small></div>
+                                    <img class="direct-chat-img avatar" src="" alt="">
+                                </div>
+                                <div class="direct-chat-text mr-20" >
+                                    <small class="direct-chat-timestamp float-left">2019/6/18 16:40</small>
+                                    <p>
+                                        欢迎加入阳光大家庭
+                                    </p>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                            <div class="input-group">
+                                <input type="text" id="message" placeholder="" class="form-control">
+                                <div id="staffChatSendBtn" class="input-group-addon bg-success" style="cursor:pointer;">
+                                    <div class="align-self-end gap-items">
+                                        <span >发&emsp;送</span>
+                                        @*<span class="publisher-btn file-group">
+                                            <i class="fa fa-paperclip file-browser"></i>
+                                            <input type="file">
+                                        </span>
+                                        <a class="publisher-btn" href="#"><i class="fa fa-smile-o"></i></a>
+                                        <a class="publisher-btn" href="#"><i class="fa fa-paper-plane"></i></a>*@
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+    //变量
+    
+    //初始化
+    $("#chatRoomLi").parent().parent().addClass("active");
+    $("#chatRoomLi").addClass("active");
+
+    initChatDivs();//聊天div
+    window.onresize = function () {
+        initChatDivs();
+    }
+    function initChatDivs() {
+        var h1 = window.innerHeight - 250;
+        if (h1 < 500)
+            h1 = 500;
+        var h2 = h1 - 72;
+        $('#chatContactDiv').slimScroll({
+            height: h1.toString()
+          });
+        $('#chatBoxDiv').slimScroll({
+            height: h2.toString()
+	      });
+    }
+
+    //创建聊天消息实体type->1：好友的消息，2：自己的消息
+    function createChatHtml(type, chatObj) {
+        var str = "";
+        if (chatObj.avatar == null || chatObj.avatar.length < 6)
+            chatObj.avatar = "/Images/unknown_user_avatar.jpg";
+        if (type == 1) {
+            str = '<div class="direct-chat-msg mb-30"><div class="clearfix float-left">' +
+                '<div><small class="direct-chat-name">' + chatObj.userName + '</small></div><img class="direct-chat-img avatar" src="' + chatObj.avatar + '"></div>' +
+                '<div class="direct-chat-text"><small class="direct-chat-timestamp">' + chatObj.time + '</small><p>' + chatObj.msg + '</p></div></div>';
+        }
+        else {
+            str = '<div class="direct-chat-msg right mb-30"><div class="clearfix float-right">' +
+                '<div><small class="direct-chat-name float-right">我</small></div><img class="direct-chat-img avatar" src="' + chatObj.avatar + '"></div>' +
+                '<div class="direct-chat-text mr-20"><small class="direct-chat-timestamp float-left">' + chatObj.time + '</small><p>' + chatObj.msg + '</p></div></div>';
+        }
+        return str;
+    }
+
+    getChatInfo();
+    function getChatInfo() {
+         $.ajax({
+            url: "/TeachingAssistant/Chat/GetChatInfo",
+            type: "POST",
+            success: function (result) {
+                if (result.code == 1) {
+                    glbUserSelf = result.content.userSelf;
+                    $("#chatContactDiv").html(result.content.userListHtml);
+                    
+                    //startChatSignalR();
+
+                    var newMsgArray = new Array();
+                    var newMsgArrayStr = localStorage.getItem("staffChat" + glbUserSelf.staffId);
+                    if (newMsgArrayStr != "[object Object]" && newMsgArrayStr!=null ) {
+                        newMsgArray = JSON.parse(newMsgArrayStr);
+                    }
+                    if (newMsgArray.length > 0) {
+                        for (var i = 0; i < newMsgArray.length; i++) {
+                            renderReceivedMsg(newMsgArray[i]);
+                        }
+                    }
+                    //if (newMsgArray.length <= 0) {
+                    localStorage.removeItem("staffChat" + glbUserSelf.staffId);
+                    //}
+                }
+                else {
+                    handleAjaxErr(result);
+                }
+            },
+            error: function () {
+                swal({ title: "", text: "网络开小差了", type: "warning", timer: 2000, showConfirmButton: false });
+            }
+        })
+    }
+
+    //渲染接收到的消息
+    function renderReceivedMsg(chatObj) {
+         var htmlStr = createChatHtml(1, chatObj);
+            $("#chatBoxDiv").append(htmlStr);
+            //滚动条到最底部
+            var scrollHeight = $('#chatBoxDiv').prop("scrollHeight");
+            $('#chatBoxDiv').animate({ scrollTop: scrollHeight }, 500);
+            $(".slimScrollBar").css("top", scrollHeight);
+    }
+
+    ///--chatHub--///
+    function startChatSignalR() {
+        //初始化
+        var connection = new signalR.HubConnectionBuilder().withUrl("/staffChatHub").build();
+        //接受消息
+        connection.on("ReceiveMessage", function (chatObj) {
+            //var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            if (glbUserSelf.userName == chatObj.userName && glbUserSelf.staffId == chatObj.staffId) {
+                return;
+            }
+            renderReceivedMsg(chatObj);
+        });
+        //联系人列表实时变化
+        connection.on("chatUserChange", (onlineData) => {
+            $(".user-state").removeClass("text-success");
+            $(".user-state").html("离线");
+            //if (onlineData.schoolIdList.length > 0) {
+            //    var ids = onlineData.schoolIdList;
+            //    for (var i = 0; i < ids.length; i++) {
+            //        $("#schoolState" + ids[i]).addClass("text-success");
+            //        $("#schoolState" + ids[i]).html("在线");
+            //    }
+            //}
+            if (onlineData.staffIdList.length > 0) {
+                var ids = onlineData.staffIdList;
+                for (var i = 0; i < ids.length; i++) {
+                    $("#staffState" + ids[i]).addClass("text-success");
+                    $("#staffState" + ids[i]).html("在线");
+                }
+            }
+        })
+        //启动
+        connection.start().then(function () {
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+        //掉线重连
+        connection.onclose(async () => {
+            await connection.start();
+        })
+        //发送消息
+        $("#staffChatSendBtn").on("click", function (event) {
+            var msg = $("#message").val();
+            //msg = msg.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var date = new Date();
+            var timeNow = date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate() +" "+date.getHours()+":"+date.getMinutes();
+            var chatObj = {
+                schoolId:glbUserSelf.schoolId,
+                userName: glbUserSelf.userName,
+                staffId:glbUserSelf.staffId,
+                avatar: glbUserSelf.avatar,
+                targetUserType: 0,
+                targetUserId:0,
+                time:timeNow,
+                msg:msg
+            };
+            //渲染自己的消息
+            var htmlStr = createChatHtml(2, chatObj);
+            $("#chatBoxDiv").append(htmlStr);
+            //滚动条到最底部
+            var scrollHeight = $('#chatBoxDiv').prop("scrollHeight");
+            $('#chatBoxDiv').animate({ scrollTop: scrollHeight }, 500);
+            $(".slimScrollBar").css("top", scrollHeight);
+            //调用集线器方法
+            connection.invoke("SendSchoolMsg", JSON.stringify(chatObj)).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+    }
+</script>
+

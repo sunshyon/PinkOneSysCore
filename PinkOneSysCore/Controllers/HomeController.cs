@@ -47,12 +47,9 @@ namespace PinkOneSysCore.Controllers
         [HttpGet]
         public JsonResult GetUserInfo()
         {
-            var key = "schoolInfo" + mlUser.School.ID;
-            var res = Utility.MemoryCacheHelper.GetCache<string>(key);
-            if (res == null || res == "")
-                res = Service.GetUserInfo(mlUser.School.ID);
+            
+            var res = Service.GetUserInfo(mlUser.School.ID);
            
-            Utility.MemoryCacheHelper.SetCache(key, res, 5);
             mjResult.code = 1;
             mjResult.content = res;
 
