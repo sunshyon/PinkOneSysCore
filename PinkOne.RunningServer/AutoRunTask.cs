@@ -125,7 +125,8 @@ namespace PinkOne.RunningServer
             try
             {
                 //操作
-                if (DateTime.Now.Hour >= 0&& DateTime.Now.Hour<=2)
+                var dateNow = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                if (dateNow.Hour >= 0&& dateNow.Hour<=2)
                 {
                     string sql = "update SYS_Student set AttStatus=3 where Status=1 and AttStatus<>3";
                     var p = new[]
@@ -139,7 +140,7 @@ namespace PinkOne.RunningServer
                         Console.WriteLine("UpdateAttStatus：" + DateTime.Now + " " + "所有学生考勤状态复位成功");
                     }
                 }
-                if (DateTime.Now.Hour >=1&& DateTime.Now.Hour <= 3)
+                if (dateNow.Hour >=1&& dateNow.Hour <= 3)
                 {
                     string sql = "update SYS_Staff set AttStatus=3 where Status=1 and AttStatus<>3";
                     var p = new[]

@@ -196,7 +196,7 @@
     function startChatSignalR() {
         //初始化
         var connection = new signalR.HubConnectionBuilder().withUrl("/staffChatHub").build();
-        //接受消息
+        //接受消息(供后台调用)
         connection.on("ReceiveMessage", function (chatObj) {
             //var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             if (glbUserSelf.userName == chatObj.userName && glbUserSelf.staffId == chatObj.staffId) {

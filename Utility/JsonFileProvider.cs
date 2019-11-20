@@ -31,7 +31,7 @@ namespace Utility
         /// <summary>
         /// 文件对应文件夹
         /// </summary>
-        private string mFIleFolder = @"Config\";
+        private string mFIleFolder = @"Config/";
         #endregion
 
         #region 内嵌延时实体
@@ -55,7 +55,7 @@ namespace Utility
         #region 构造函数
         public JsonFileProvider()
         {
-            mFilePath = Directory.GetCurrentDirectory() +"\\"+ mFIleFolder;
+            mFilePath = Directory.GetCurrentDirectory() +"//"+ mFIleFolder;
         }
         #endregion
 
